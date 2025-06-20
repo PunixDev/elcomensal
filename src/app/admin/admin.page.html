@@ -1,0 +1,251 @@
+<ion-menu contentId="main-content" type="overlay">
+  <ion-header>
+    <ion-toolbar color="primary">
+      <ion-title>
+        <ion-icon
+          name="settings"
+          slot="start"
+          style="margin-right: 8px"
+        ></ion-icon>
+        Panel Admin
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <ion-item (click)="goToCategorias()">
+        <ion-icon name="albums" slot="start"></ion-icon>
+        Categorías
+      </ion-item>
+      <ion-item (click)="goToProductos()">
+        <ion-icon name="fast-food" slot="start"></ion-icon>
+        Platos y Bebidas
+      </ion-item>
+      <ion-item (click)="goToGenerarQR()">
+        <ion-icon name="qr-code" slot="start"></ion-icon>
+        Generar QR
+      </ion-item>
+      <ion-item (click)="logout()">
+        <ion-icon name="log-out" slot="start"></ion-icon>
+        Cerrar sesión
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon
+        name="settings"
+        slot="start"
+        style="margin-right: 8px"
+      ></ion-icon>
+      Panel de Administración
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content id="main-content" [fullscreen]="true">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" class="ion-text-center">
+        <h2>
+          <ion-icon
+            name="person-circle"
+            style="font-size: 2rem; vertical-align: middle"
+          ></ion-icon>
+          Bienvenido al panel de administración
+        </h2>
+        <p>
+          <ion-icon
+            name="help-circle"
+            style="vertical-align: middle"
+          ></ion-icon>
+          Selecciona una opción del menú para gestionar el restaurante.
+        </p>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <ion-card *ngIf="comandas.length">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="receipt" slot="start"></ion-icon>
+              Comandas recibidas
+            </ion-card-title>
+            <ion-button color="danger" size="small" (click)="limpiarComandas()">
+              <ion-icon name="trash" slot="start"></ion-icon>
+              Limpiar comandas
+            </ion-button>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ng-container *ngFor="let mesa of (comandasPorMesa | keyvalue)">
+                <ion-item-divider color="light">
+                  <ion-label>
+                    <strong>Mesa {{mesa.key}}</strong>
+                  </ion-label>
+                  <ion-button
+                    *ngIf="mesaSolicitaPago(mesa.value)"
+                    color="warning"
+                    size="small"
+                    disabled
+                    style="margin-right: 8px"
+                  >
+                    Solicita pago
+                  </ion-button>
+                  <ion-button
+                    color="tertiary"
+                    size="small"
+                    (click)="marcarMesaPagada(mesa.key)"
+                  >
+                    Pagado
+                  </ion-button>
+                  <ion-button
+                    *ngIf="mesaSolicitaPago(mesa.value)"
+                    color="primary"
+                    size="small"
+                    (click)="verInformeMesa(mesa.key)"
+                  >
+                    Ver informe
+                  </ion-button>
+                </ion-item-divider>
+                <ion-item *ngFor="let comanda of mesa.value">
+                  <ion-label>
+                    <strong>Fecha:</strong> {{comanda.fecha | date:'short'}}<br />
+                    <strong>Pedido:</strong>
+                    <ul>
+                      <li *ngFor="let item of comanda.items">
+                        {{item.nombre}} x{{item.cantidad}}
+                        <span *ngIf="item.opciones.length"
+                          >- Opciones: {{item.opciones.join(', ')}}</span
+                        >
+                      </li>
+                    </ul>
+                    <div style="margin-top: 0.5em">
+                      <strong>Estado:</strong>
+                      <span [ngSwitch]="comanda.estado">
+                        <span
+                          *ngSwitchCase="'preparando'"
+                          style="color: orange; font-weight: bold"
+                          >En preparación</span
+                        >
+                        <span
+                          *ngSwitchCase="'preparado'"
+                          style="color: green; font-weight: bold"
+                          >Preparado</span
+                        >
+                        <span
+                          *ngSwitchCase="'pago_pendiente'"
+                          style="color: #c77d00; font-weight: bold"
+                          >Pago pendiente</span
+                        >
+                        <span
+                          *ngSwitchDefault
+                          style="color: gray; font-weight: bold"
+                          >Recibido</span
+                        >
+                      </span>
+                    </div>
+                  </ion-label>
+                  <ion-button
+                    color="warning"
+                    size="small"
+                    (click)="actualizarEstadoComanda(comandas.indexOf(comanda), 'preparando')"
+                    *ngIf="comanda.estado !== 'preparando' && comanda.estado !== 'preparado' && comanda.estado !== 'pago_pendiente'"
+                  >
+                    En preparación
+                  </ion-button>
+                  <ion-button
+                    color="success"
+                    size="small"
+                    (click)="actualizarEstadoComanda(comandas.indexOf(comanda), 'preparado')"
+                    *ngIf="comanda.estado === 'preparando'"
+                  >
+                    Preparado
+                  </ion-button>
+                </ion-item>
+              </ng-container>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+        <ion-card *ngIf="!comandas.length">
+          <ion-card-content>No hay comandas pendientes.</ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-modal [isOpen]="mostrarInforme" (didDismiss)="cerrarInformeMesa()">
+  <ion-header>
+    <ion-toolbar color="primary">
+      <ion-title>Informe de mesa</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="cerrarInformeMesa()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Resumen de pedidos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list *ngIf="informeMesa && informeMesa.length">
+          <ion-item *ngFor="let comanda of informeMesa">
+            <ion-label>
+              <strong>Fecha:</strong> {{comanda?.fecha | date:'short'}}<br />
+              <ul>
+                <li *ngFor="let item of comanda?.items">
+                  {{item?.nombre}} x{{item?.cantidad}}
+                  <span *ngIf="item?.opciones?.length"
+                    >- Opciones: {{item.opciones.join(', ')}}</span
+                  >
+                  <span
+                    style="
+                      margin-left: 10px;
+                      color: var(--ion-color-success);
+                      font-weight: bold;
+                    "
+                  >
+                    {{(getPrecioProducto(item?.id) * item?.cantidad) |
+                    currency:'EUR':'symbol':'1.2-2'}}
+                  </span>
+                </li>
+              </ul>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <div style="margin-top: 2em; text-align: right">
+          <ion-card
+            color="light"
+            style="display: inline-block; min-width: 220px"
+          >
+            <ion-card-content
+              style="
+                font-size: 1.3em;
+                font-weight: bold;
+                color: var(--ion-color-primary);
+              "
+            >
+              Suma total del pedido:<br />
+              <span style="font-size: 1.5em"
+                >{{informeTotal | currency:'EUR':'symbol':'1.2-2'}}</span
+              >
+            </ion-card-content>
+          </ion-card>
+        </div>
+        <div *ngIf="informeMesa && !informeMesa.length" style="margin: 1em 0">
+          No hay pedidos para esta mesa.
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-content>
+</ion-modal>

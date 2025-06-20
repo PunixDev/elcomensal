@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="goToAdmin()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon
+        name="qr-code"
+        slot="start"
+        style="margin-right: 8px"
+      ></ion-icon>
+      Generar QR de mesa
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="12" size-md="6" size-lg="4">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Generar QR para una mesa</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-input
+              label="Número o nombre de mesa"
+              [(ngModel)]="mesa"
+              placeholder="Ej: 1, 2, VIP, Terraza..."
+              type="text"
+            ></ion-input>
+            <ion-button
+              expand="block"
+              color="primary"
+              (click)="generarQR()"
+              style="margin-top: 1em"
+            >
+              <ion-icon name="qr-code" slot="start"></ion-icon>
+              Generar QR
+            </ion-button>
+            <div *ngIf="qrUrl" style="margin-top: 2em; text-align: center">
+              <img
+                [src]="qrUrl"
+                alt="QR Mesa"
+                style="background: #fff; padding: 8px; border-radius: 8px"
+              />
+              <div
+                style="
+                  margin-top: 1em;
+                  font-size: 0.9em;
+                  color: var(--ion-color-medium);
+                "
+              >
+                URL: <a [href]="qrUrl" target="_blank">{{qrUrl}}</a>
+              </div>
+              <ion-button
+                expand="block"
+                color="success"
+                (click)="descargarQR()"
+                style="margin-top: 1em"
+              >
+                <ion-icon name="download" slot="start"></ion-icon>
+                Descargar QR
+              </ion-button>
+              <ion-button
+                expand="block"
+                color="tertiary"
+                (click)="imprimirQR()"
+                style="margin-top: 0.5em"
+              >
+                <ion-icon name="print" slot="start"></ion-icon>
+                Imprimir QR
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

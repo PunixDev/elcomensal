@@ -1,0 +1,268 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon
+        name="fast-food"
+        slot="start"
+        style="margin-right: 8px"
+      ></ion-icon>
+      Platos y Bebidas
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <ion-item>
+          <ion-icon name="pizza" slot="start"></ion-icon>
+          <ion-input
+            placeholder="Nombre del producto"
+            [(ngModel)]="nuevoNombre"
+          ></ion-input>
+          <ion-select placeholder="Categoría" [(ngModel)]="nuevaCategoria">
+            <ion-select-option
+              *ngFor="let cat of categorias"
+              [value]="cat.nombre"
+              >{{cat.nombre}}</ion-select-option
+            >
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="document-text" slot="start"></ion-icon>
+          <ion-textarea
+            placeholder="Descripción"
+            [(ngModel)]="nuevaDescripcion"
+          ></ion-textarea>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="leaf" slot="start"></ion-icon>
+          <ion-textarea
+            placeholder="Ingredientes"
+            [(ngModel)]="nuevosIngredientes"
+          ></ion-textarea>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="options" slot="start"></ion-icon>
+          <ion-input
+            placeholder="Nueva opción"
+            [(ngModel)]="opcionTemp"
+          ></ion-input>
+          <ion-button fill="clear" color="primary" (click)="agregarOpcion()">
+            <ion-icon name="add-circle" slot="icon-only"></ion-icon>
+            Añadir opción
+          </ion-button>
+        </ion-item>
+        <ion-list *ngIf="nuevasOpciones.length">
+          <ion-item *ngFor="let op of nuevasOpciones; let i = index">
+            <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+            <ion-label>{{op}}</ion-label>
+            <ion-button
+              fill="clear"
+              color="danger"
+              slot="end"
+              (click)="eliminarOpcion(i)"
+            >
+              <ion-icon name="trash"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+        <ion-item>
+          <ion-icon name="image" slot="start"></ion-icon>
+          <input
+            type="file"
+            accept="image/*"
+            (change)="onImageSelected($event)"
+          />
+        </ion-item>
+        <ion-item>
+          <ion-icon name="cash" slot="start"></ion-icon>
+          <ion-input
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="Precio"
+            [(ngModel)]="nuevoPrecio"
+          ></ion-input>
+        </ion-item>
+        <ion-button expand="block" color="success" (click)="agregarProducto()">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Añadir Producto
+        </ion-button>
+        <div *ngIf="nuevaImagen">
+          <img
+            [src]="nuevaImagen"
+            alt="Vista previa"
+            style="max-width: 100px; margin-top: 10px"
+          />
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <ion-list>
+          <ng-container *ngFor="let producto of productos">
+            <ion-item *ngIf="editando !== producto.id">
+              <ion-avatar slot="start" *ngIf="producto.imagen">
+                <img [src]="producto.imagen" alt="Imagen producto" />
+              </ion-avatar>
+              <ion-label>
+                <h3>
+                  <ion-icon
+                    name="restaurant"
+                    style="vertical-align: middle"
+                  ></ion-icon>
+                  {{ producto.nombre }}
+                  <span
+                    style="
+                      color: var(--ion-color-success);
+                      font-weight: bold;
+                      margin-left: 10px;
+                    "
+                    >{{ producto.precio | currency:'EUR':'symbol':'1.2-2'
+                    }}</span
+                  >
+                </h3>
+                <p>
+                  <ion-icon
+                    name="pricetag"
+                    style="vertical-align: middle"
+                  ></ion-icon>
+                  {{ producto.categoria }}
+                </p>
+                <p *ngIf="producto.descripcion">
+                  <ion-icon
+                    name="document-text"
+                    style="vertical-align: middle"
+                  ></ion-icon>
+                  <strong>Descripción:</strong> {{producto.descripcion}}
+                </p>
+                <p *ngIf="producto.ingredientes">
+                  <ion-icon
+                    name="leaf"
+                    style="vertical-align: middle"
+                  ></ion-icon>
+                  <strong>Ingredientes:</strong> {{producto.ingredientes}}
+                </p>
+                <div *ngIf="producto.opciones && producto.opciones.length">
+                  <ion-icon
+                    name="options"
+                    style="vertical-align: middle"
+                  ></ion-icon>
+                  <strong>Opciones:</strong>
+                  <ul>
+                    <li *ngFor="let op of producto.opciones">
+                      <ion-icon
+                        name="checkmark-circle"
+                        style="vertical-align: middle"
+                      ></ion-icon>
+                      {{op}}
+                    </li>
+                  </ul>
+                </div>
+              </ion-label>
+              <ion-button
+                fill="clear"
+                color="primary"
+                slot="end"
+                (click)="iniciarEdicion(producto)"
+              >
+                <ion-icon name="create"></ion-icon>
+                Editar
+              </ion-button>
+              <ion-button
+                fill="clear"
+                color="danger"
+                slot="end"
+                (click)="eliminarProducto(producto.id)"
+              >
+                <ion-icon name="trash"></ion-icon>
+                Eliminar
+              </ion-button>
+            </ion-item>
+            <ion-item *ngIf="editando === producto.id">
+              <ion-input [(ngModel)]="editNombre"></ion-input>
+              <ion-select [(ngModel)]="editCategoria">
+                <ion-select-option
+                  *ngFor="let cat of categorias"
+                  [value]="cat.nombre"
+                  >{{cat.nombre}}</ion-select-option
+                >
+              </ion-select>
+              <ion-textarea
+                placeholder="Descripción"
+                [(ngModel)]="editDescripcion"
+              ></ion-textarea>
+              <ion-textarea
+                placeholder="Ingredientes"
+                [(ngModel)]="editIngredientes"
+              ></ion-textarea>
+              <ion-input
+                placeholder="Nueva opción"
+                [(ngModel)]="editOpcionTemp"
+              ></ion-input>
+              <ion-button
+                fill="clear"
+                color="primary"
+                (click)="agregarEditOpcion()"
+              >
+                <ion-icon name="add-circle" slot="start"></ion-icon>
+                Añadir opción
+              </ion-button>
+              <ion-list *ngIf="editOpciones.length">
+                <ion-item *ngFor="let op of editOpciones; let i = index">
+                  <ion-label>{{op}}</ion-label>
+                  <ion-button
+                    fill="clear"
+                    color="danger"
+                    slot="end"
+                    (click)="eliminarEditOpcion(i)"
+                  >
+                    <ion-icon name="trash"></ion-icon>
+                  </ion-button>
+                </ion-item>
+              </ion-list>
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onEditImageSelected($event)"
+              />
+              <ion-item>
+                <ion-icon name="cash" slot="start"></ion-icon>
+                <ion-input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="Precio"
+                  [(ngModel)]="editPrecio"
+                ></ion-input>
+              </ion-item>
+              <ion-button
+                fill="clear"
+                color="success"
+                slot="end"
+                (click)="guardarEdicion(producto.id)"
+              >
+                <ion-icon name="checkmark"></ion-icon>
+                Guardar
+              </ion-button>
+              <ion-button
+                fill="clear"
+                color="medium"
+                slot="end"
+                (click)="cancelarEdicion()"
+              >
+                <ion-icon name="close"></ion-icon>
+                Cancelar
+              </ion-button>
+            </ion-item>
+          </ng-container>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

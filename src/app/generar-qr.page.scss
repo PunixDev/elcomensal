@@ -1,0 +1,32 @@
+/* Estilos básicos para la página de generación de QR */
+ion-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+img[alt="QR Mesa"] {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Asegurando que el botón de retroceso sea visible en todos los dispositivos */
+ion-header ion-toolbar ion-buttons,
+ion-toolbar ion-buttons[slot="start"] {
+  display: flex !important;
+  min-width: 48px;
+  max-width: 56px;
+  align-items: center;
+  visibility: visible !important;
+  z-index: 10;
+}
+ion-toolbar ion-button {
+  display: flex !important;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--ion-color-light, #fff) !important;
+}
+ion-toolbar ion-icon[name="arrow-back"] {
+  font-size: 24px !important;
+  color: var(--ion-color-light, #fff) !important;
+  z-index: 11;
+}
