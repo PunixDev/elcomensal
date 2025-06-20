@@ -1,0 +1,7 @@
+{
+  "name": "baradmin",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
