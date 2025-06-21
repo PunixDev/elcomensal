@@ -5,6 +5,7 @@
         name="restaurant"
         slot="start"
         style="margin-right: 8px"
+        aria-hidden="true"
       ></ion-icon>
       Bienvenido
     </ion-title>
@@ -19,15 +20,20 @@
           <ion-icon
             name="bar-chart"
             style="font-size: 2rem; vertical-align: middle"
+            aria-hidden="true"
           ></ion-icon>
           ¡Bienvenido a BarAdmin!
         </h2>
         <p>
-          <ion-icon name="cafe" style="vertical-align: middle"></ion-icon>
+          <ion-icon
+            name="cafe"
+            style="vertical-align: middle"
+            aria-hidden="true"
+          ></ion-icon>
           Gestiona tu restaurante de forma fácil y moderna.
         </p>
         <ion-button color="primary" (click)="goToLogin()">
-          <ion-icon name="log-in" slot="start"></ion-icon>
+          <ion-icon name="log-in" slot="start" aria-hidden="true"></ion-icon>
           Acceder como administrador
         </ion-button>
       </ion-col>

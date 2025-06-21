@@ -48,8 +48,13 @@ import { Router } from '@angular/router';
 export class GenerarQrPage {
   mesa: string = '';
   qrUrl: string = '';
+  barId: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    // Obtener barId del usuario logado (ajusta según tu lógica de login)
+    const usuario = localStorage.getItem('usuario');
+    this.barId = usuario ? usuario : 'bar-demo';
+  }
 
   goToAdmin() {
     this.router.navigate(['/admin']);
@@ -57,9 +62,13 @@ export class GenerarQrPage {
 
   generarQR() {
     if (!this.mesa) return;
-    // URL base de la carta pública
+    // URL base de la carta pública con barId
     const baseUrl =
-      window.location.origin + '/carta?mesa=' + encodeURIComponent(this.mesa);
+      window.location.origin +
+      '/carta/' +
+      encodeURIComponent(this.barId) +
+      '?mesa=' +
+      encodeURIComponent(this.mesa);
     this.qrUrl =
       'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' +
       encodeURIComponent(baseUrl);

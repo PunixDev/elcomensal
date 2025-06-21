@@ -23,6 +23,7 @@ import {
   IonIcon,
 } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria } from '../data.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-productos',
@@ -54,58 +55,62 @@ import { DataService, Producto, Categoria } from '../data.service';
   ],
 })
 export class ProductosPage implements OnInit {
-  productos: Producto[] = [];
-  categorias: Categoria[] = [];
+  productos$: Observable<Producto[]>;
+  categorias$: Observable<Categoria[]>;
   nuevoNombre = '';
   nuevaCategoria = '';
   nuevaImagen: string | null = null;
   nuevaDescripcion = '';
-  nuevosIngredientes = '';
+  nuevosAlergenos = '';
   nuevasOpciones: string[] = [];
   opcionTemp = '';
   nuevoPrecio: number | null = null;
-  editando: number | null = null;
+  editando: string | null = null;
   editNombre = '';
   editCategoria = '';
   editPrecio: number | null = null;
   editImagen: string | null = null;
   editDescripcion = '';
-  editIngredientes = '';
+  editAlergenos = '';
   editOpciones: string[] = [];
   editOpcionTemp = '';
+  barId: string;
+  intentadoAgregar = false;
 
-  constructor(private dataService: DataService) {}
-
-  ngOnInit() {
-    this.productos = this.dataService.getProductos();
-    this.categorias = this.dataService.getCategorias();
+  constructor(private dataService: DataService) {
+    this.barId = this.dataService.getBarId();
+    this.productos$ = this.dataService.getProductos(this.barId);
+    this.categorias$ = this.dataService.getCategorias(this.barId);
   }
 
+  ngOnInit() {}
+
   agregarProducto() {
+    this.intentadoAgregar = true;
     if (
+      this.nuevoNombre &&
       this.nuevoNombre.trim() &&
       this.nuevaCategoria &&
       this.nuevoPrecio != null
     ) {
-      const nuevo: Producto = {
-        id: Date.now(),
+      const nuevo = {
         nombre: this.nuevoNombre.trim(),
         categoria: this.nuevaCategoria,
         precio: this.nuevoPrecio,
         imagen: this.nuevaImagen || null,
         descripcion: this.nuevaDescripcion,
-        ingredientes: this.nuevosIngredientes,
+        alergenos: this.nuevosAlergenos,
         opciones: [...this.nuevasOpciones],
       };
-      this.productos.push(nuevo);
-      this.dataService.saveProductos(this.productos);
+      this.dataService.addProducto(this.barId, nuevo);
       this.nuevoNombre = '';
       this.nuevaCategoria = '';
       this.nuevoPrecio = null;
       this.nuevaImagen = null;
       this.nuevaDescripcion = '';
-      this.nuevosIngredientes = '';
+      this.nuevosAlergenos = '';
       this.nuevasOpciones = [];
+      this.intentadoAgregar = false;
     }
   }
 
@@ -120,9 +125,8 @@ export class ProductosPage implements OnInit {
     }
   }
 
-  eliminarProducto(id: number) {
-    this.productos = this.productos.filter((p) => p.id !== id);
-    this.dataService.saveProductos(this.productos);
+  eliminarProducto(id: string) {
+    this.dataService.deleteProducto(this.barId, id);
   }
 
   iniciarEdicion(producto: Producto) {
@@ -132,7 +136,7 @@ export class ProductosPage implements OnInit {
     this.editPrecio = producto.precio;
     this.editImagen = producto.imagen || null;
     this.editDescripcion = producto.descripcion || '';
-    this.editIngredientes = producto.ingredientes || '';
+    this.editAlergenos = producto.alergenos || '';
     this.editOpciones = producto.opciones ? [...producto.opciones] : [];
   }
 
@@ -147,30 +151,25 @@ export class ProductosPage implements OnInit {
     }
   }
 
-  guardarEdicion(id: number) {
-    const prod = this.productos.find((p) => p.id === id);
+  guardarEdicion(id: string) {
     if (
-      prod &&
+      this.editando &&
       this.editNombre.trim() &&
       this.editCategoria &&
       this.editPrecio != null
     ) {
-      prod.nombre = this.editNombre.trim();
-      prod.categoria = this.editCategoria;
-      prod.precio = this.editPrecio;
-      prod.imagen = this.editImagen || null;
-      prod.descripcion = this.editDescripcion;
-      prod.ingredientes = this.editIngredientes;
-      prod.opciones = [...this.editOpciones];
-      this.dataService.saveProductos(this.productos);
-      this.editando = null;
-      this.editNombre = '';
-      this.editCategoria = '';
-      this.editPrecio = null;
-      this.editImagen = null;
-      this.editDescripcion = '';
-      this.editIngredientes = '';
-      this.editOpciones = [];
+      const producto: Producto = {
+        id: this.editando,
+        nombre: this.editNombre.trim(),
+        categoria: this.editCategoria,
+        precio: this.editPrecio,
+        imagen: this.editImagen || null,
+        descripcion: this.editDescripcion,
+        alergenos: this.editAlergenos,
+        opciones: [...this.editOpciones],
+      };
+      this.dataService.updateProducto(this.barId, producto);
+      this.cancelarEdicion();
     }
   }
 

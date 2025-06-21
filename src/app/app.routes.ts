@@ -29,12 +29,27 @@ export const routes: Routes = [
     loadComponent: () => import('./login/login.page').then((m) => m.LoginPage),
   },
   {
-    path: 'carta',
+    path: 'carta/:barId',
     loadComponent: () => import('./carta.page').then((m) => m.CartaPage),
+  },
+  {
+    path: 'carta',
+    redirectTo: 'home',
+    pathMatch: 'full',
   },
   {
     path: 'generar-qr',
     loadComponent: () =>
       import('./generar-qr.page').then((m) => m.GenerarQrPage),
+  },
+  {
+    path: 'registro',
+    loadComponent: () =>
+      import('./registro/registro.page').then((m) => m.RegistroPage),
+  },
+  {
+    path: 'recuperar',
+    loadComponent: () =>
+      import('./recuperar/recuperar.page').then((m) => m.RecuperarPage),
   },
 ];

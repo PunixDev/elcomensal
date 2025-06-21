@@ -5,9 +5,22 @@
         name="restaurant"
         slot="start"
         style="margin-right: 8px"
+        aria-hidden="true"
       ></ion-icon>
-      Carta
+      {{textos.carta || 'Carta'}}
     </ion-title>
+    <ion-buttons slot="end">
+      <div id="google_translate_element"></div>
+      <select
+        [(ngModel)]="idioma"
+        (change)="setIdioma(idioma)"
+        style="min-width: 120px; margin-left: 1em"
+      >
+        <option *ngFor="let lang of idiomas" [value]="lang.code">
+          {{lang.label}}
+        </option>
+      </select>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -15,7 +28,7 @@
   <ion-grid>
     <ion-row>
       <ion-col size="12" class="ion-text-center">
-        <h2 *ngIf="mesa">Mesa {{ mesa }}</h2>
+        <h2 *ngIf="mesa">{{textos.mesa || 'Mesa'}} {{ mesa }}</h2>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -29,13 +42,16 @@
           [ngClass]="{'categoria-activa': categoriaSeleccionada === cat.nombre}"
           style="border-radius: 0; margin: 0 0.5em; font-weight: bold"
         >
-          {{cat.nombre}}
+          {{cat.nombreTrad || cat.nombre}}
         </ion-button>
       </ion-col>
     </ion-row>
     <ion-row *ngIf="categoriaSeleccionada">
       <ion-col size="12">
-        <h3><ion-icon name="albums"></ion-icon> {{categoriaSeleccionada}}</h3>
+        <h3>
+          <ion-icon name="albums" aria-hidden="true"></ion-icon>
+          {{categoriaSeleccionada}}
+        </h3>
         <ion-list>
           <ng-container
             *ngFor="let prod of getProductosPorCategoriaSeleccionada()"
@@ -43,7 +59,7 @@
             <ion-item>
               <ion-label>
                 <h4>
-                  {{ prod.nombre }}
+                  {{ prod.nombreTrad || prod.nombre }}
                   <span
                     style="
                       color: var(--ion-color-success);
@@ -54,28 +70,37 @@
                     {{ prod.precio | currency:'EUR':'symbol':'1.2-2' }}
                   </span>
                 </h4>
-                <p *ngIf="prod.descripcion">{{prod.descripcion}}</p>
-                <p *ngIf="prod.ingredientes">
-                  <strong>Ingredientes:</strong> {{prod.ingredientes}}
+                <p *ngIf="prod.descripcion">
+                  {{prod.descripcionTrad || prod.descripcion}}
+                </p>
+                <p *ngIf="prod.alergenos">
+                  <strong>{{textos.alergenos || 'Alergenos'}}:</strong>
+                  {{prod.alergenosTrad || prod.alergenos}}
                 </p>
                 <div *ngIf="prod.opciones && prod.opciones.length">
-                  <strong>Opciones:</strong>
-                  <ion-button
-                    size="small"
-                    *ngFor="let op of prod.opciones"
-                    (click)="toggleOpcion(prod, op)"
-                    [color]="seleccionados[prod.id] && seleccionados[prod.id].opciones.includes(op) ? 'primary' : 'medium'"
-                    >{{op}}</ion-button
+                  <strong>{{textos.opciones || 'Opciones'}}:</strong>
+                  <ion-segment
+                    [ngModel]="getOpcionSeleccionada(prod)"
+                    (ngModelChange)="onSeleccionOpcion(prod, $event)"
                   >
+                    <ion-segment-button
+                      *ngFor="let op of prod.opciones; let i = index"
+                      [value]="op"
+                    >
+                      {{prod.opcionesTrad && prod.opcionesTrad[i] ?
+                      prod.opcionesTrad[i] : op}}
+                    </ion-segment-button>
+                  </ion-segment>
                 </div>
               </ion-label>
               <ion-button
                 fill="solid"
                 color="success"
                 (click)="agregarProducto(prod)"
+                [disabled]="!puedeAgregarProducto(prod)"
               >
                 <ion-icon name="add-circle" slot="start"></ion-icon>
-                Añadir
+                {{textos.anadir || 'Añadir'}}
               </ion-button>
               <ion-button
                 fill="solid"
@@ -84,7 +109,7 @@
                 *ngIf="seleccionados[prod.id] && seleccionados[prod.id].cantidad"
               >
                 <ion-icon name="remove-circle" slot="start"></ion-icon>
-                Quitar
+                {{textos.quitar || 'Quitar'}}
               </ion-button>
               <span
                 *ngIf="seleccionados[prod.id] && seleccionados[prod.id].cantidad"
@@ -104,11 +129,14 @@
       <ion-col size="12">
         <ion-card color="warning">
           <ion-card-header>
-            <ion-card-title>Pago solicitado</ion-card-title>
+            <ion-card-title
+              >{{textos.pagoSolicitado || 'Pago solicitado'}}</ion-card-title
+            >
           </ion-card-header>
           <ion-card-content>
-            El pago de esta mesa ha sido solicitado. No se pueden añadir más
-            productos hasta que el administrador confirme el pago.
+            {{textos.pagoSolicitadoMsg || 'El pago de esta mesa ha sido
+            solicitado. No se pueden añadir más productos hasta que el
+            administrador confirme el pago.'}}
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -117,14 +145,17 @@
       <ion-col size="12">
         <ion-card>
           <ion-card-header>
-            <ion-card-title>Resumen del pedido</ion-card-title>
+            <ion-card-title
+              >{{textos.resumen || 'Resumen del pedido'}}</ion-card-title
+            >
           </ion-card-header>
           <ion-card-content>
             <ul>
               <li *ngFor="let id of seleccionadosKeys()">
                 {{getNombreProducto(id)}} x{{seleccionados[id].cantidad}}
                 <span *ngIf="seleccionados[id].opciones.length"
-                  >- Opciones: {{seleccionados[id].opciones.join(', ')}}</span
+                  >- {{textos.opciones || 'Opciones'}}:
+                  {{seleccionados[id].opciones.join(', ')}}</span
                 >
                 <span
                   style="
@@ -146,11 +177,12 @@
                 font-weight: bold;
               "
             >
-              Total: {{getTotalPedido() | currency:'EUR':'symbol':'1.2-2'}}
+              {{textos.total || 'Total'}}: {{getTotalPedido() |
+              currency:'EUR':'symbol':'1.2-2'}}
             </div>
             <ion-button expand="block" color="primary" (click)="enviarPedido()">
               <ion-icon name="send" slot="start"></ion-icon>
-              Enviar pedido
+              {{textos.enviarPedido || 'Enviar pedido'}}
             </ion-button>
           </ion-card-content>
         </ion-card>
@@ -162,10 +194,13 @@
       <ion-col size="12">
         <ion-card>
           <ion-card-header>
-            <ion-card-title>Sin pedido</ion-card-title>
+            <ion-card-title
+              >{{textos.sinPedido || 'Sin pedido'}}</ion-card-title
+            >
           </ion-card-header>
           <ion-card-content>
-            No hay productos en el pedido de esta mesa.
+            {{textos.noProductos || 'No hay productos en el pedido de esta
+            mesa.'}}
           </ion-card-content>
         </ion-card>
       </ion-col>

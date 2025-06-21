@@ -19,6 +19,7 @@ import {
   IonIcon,
 } from '@ionic/angular/standalone';
 import { DataService, Categoria } from '../data.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-categorias',
@@ -46,34 +47,31 @@ import { DataService, Categoria } from '../data.service';
   ],
 })
 export class CategoriasPage implements OnInit {
-  categorias: Categoria[] = [];
+  categorias$: Observable<Categoria[]>;
   nuevaCategoria = '';
-  editando: number | null = null;
+  editando: string | null = null;
   editNombre = '';
+  barId: string;
 
-  constructor(private dataService: DataService) {}
-
-  ngOnInit() {
-    this.categorias = this.dataService.getCategorias();
+  constructor(private dataService: DataService) {
+    this.barId = this.dataService.getBarId();
+    this.categorias$ = this.dataService.getCategorias(this.barId);
   }
+
+  ngOnInit() {}
 
   agregarCategoria() {
     if (this.nuevaCategoria.trim()) {
-      const nueva: Categoria = {
-        id: Date.now(),
+      const nueva = {
         nombre: this.nuevaCategoria.trim(),
       };
-      this.categorias.push(nueva);
-      this.dataService.saveCategorias(this.categorias);
+      this.dataService.addCategoria(this.barId, nueva);
       this.nuevaCategoria = '';
     }
   }
 
-  eliminarCategoria(id: number) {
-    this.categorias = this.categorias.filter((c) => c.id !== id);
-    this.dataService.saveCategorias(this.categorias);
-    // Forzar recarga desde localStorage para asegurar actualización
-    this.categorias = this.dataService.getCategorias();
+  eliminarCategoria(id: string) {
+    this.dataService.deleteCategoria(this.barId, id);
   }
 
   iniciarEdicion(categoria: Categoria) {
@@ -81,15 +79,15 @@ export class CategoriasPage implements OnInit {
     this.editNombre = categoria.nombre;
   }
 
-  guardarEdicion(id: number) {
-    const cat = this.categorias.find((c) => c.id === id);
-    if (cat && this.editNombre.trim()) {
-      cat.nombre = this.editNombre.trim();
-      this.dataService.saveCategorias(this.categorias);
+  guardarEdicion(id: string) {
+    if (this.editando && this.editNombre.trim()) {
+      const categoria: Categoria = {
+        id: this.editando,
+        nombre: this.editNombre.trim(),
+      };
+      this.dataService.updateCategoria(this.barId, categoria);
       this.editando = null;
       this.editNombre = '';
-      // Forzar recarga desde localStorage para asegurar actualización
-      this.categorias = this.dataService.getCategorias();
     }
   }
 

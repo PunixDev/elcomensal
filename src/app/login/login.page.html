@@ -32,6 +32,22 @@
           <ion-button expand="block" color="primary" type="submit"
             >Entrar</ion-button
           >
+          <ion-button
+            expand="block"
+            fill="clear"
+            color="secondary"
+            [routerLink]="['/registro']"
+          >
+            ¿Eres un bar nuevo? Regístrate aquí
+          </ion-button>
+          <ion-button
+            expand="block"
+            fill="clear"
+            color="tertiary"
+            [routerLink]="['/recuperar']"
+          >
+            ¿Olvidaste tu contraseña?
+          </ion-button>
           <ion-text color="danger" *ngIf="error">{{error}}</ion-text>
         </form>
       </ion-col>

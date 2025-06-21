@@ -20,8 +20,15 @@ import {
   IonCardContent,
   IonButtons,
   IonModal,
+  IonSegment,
+  IonSegmentButton,
 } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria } from './data.service';
+import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+
+declare var google: any;
 
 @Component({
   selector: 'app-carta',
@@ -47,52 +54,194 @@ import { DataService, Producto, Categoria } from './data.service';
     IonCardContent,
     IonButtons,
     IonModal,
+    FormsModule,
+    IonSegment,
+    IonSegmentButton,
     CommonModule,
   ],
 })
 export class CartaPage implements OnInit {
   mesa: string = '';
-  categorias: Categoria[] = [];
+  categorias$: Observable<Categoria[]>;
+  productos$: Observable<Producto[]>;
+  comandas$: Observable<any[]>;
   productos: Producto[] = [];
-  seleccionados: { [id: number]: { cantidad: number; opciones: string[] } } =
+  categorias: Categoria[] = [];
+  historialComandasMesa: any[] = [];
+  seleccionados: { [id: string]: { cantidad: number; opciones: string[] } } =
     {};
+  opcionSeleccionTemp: { [id: string]: string } = {};
   comandaMesa: any = null;
   categoriaSeleccionada: string = '';
-  historialComandasMesa: any[] = [];
   pagoSolicitado: boolean = false;
+  barId: string = '';
+  mostrarResumenPago: boolean = false;
+  idioma: string = 'es';
+  idiomas = [
+    { code: 'es', label: 'Español' },
+    { code: 'en', label: 'English' },
+    { code: 'fr', label: 'Français' },
+    { code: 'it', label: 'Italiano' },
+    { code: 'de', label: 'Deutsch' },
+  ];
+  textos: any = {};
+  textosBase: any = {
+    carta: 'Carta',
+    mesa: 'Mesa',
+    resumen: 'Resumen del pedido',
+    total: 'Total',
+    enviarPedido: 'Enviar pedido',
+    sinPedido: 'Sin pedido',
+    noProductos: 'No hay productos en el pedido de esta mesa.',
+    pagoSolicitado: 'Pago solicitado',
+    pagoSolicitadoMsg:
+      'El pago de esta mesa ha sido solicitado. No se pueden añadir más productos hasta que el administrador confirme el pago.',
+    alergenos: 'Alergenos',
+    opciones: 'Opciones',
+    anadir: 'Añadir',
+    quitar: 'Quitar',
+    categoria: 'Categoría',
+    precio: 'Precio',
+  };
 
   constructor(
     private dataService: DataService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private http: HttpClient
+  ) {
+    this.barId = this.dataService.getBarId();
+    this.categorias$ = this.dataService.getCategorias(this.barId);
+    this.productos$ = this.dataService.getProductos(this.barId);
+    this.comandas$ = this.dataService.getComandas(this.barId);
+  }
 
   ngOnInit() {
-    this.categorias = this.dataService.getCategorias();
-    this.productos = this.dataService.getProductos();
-    this.route.queryParams.subscribe((params) => {
-      this.mesa = params['mesa'] || '';
-      this.cargarComandaMesa();
+    this.route.queryParams.subscribe((qparams) => {
+      this.mesa = qparams['mesa'] || '';
+      this.comandas$.subscribe((comandas) => {
+        this.historialComandasMesa = comandas
+          .filter((c: any) => c.mesa == this.mesa)
+          .sort(
+            (a: any, b: any) =>
+              new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+          );
+        this.comandaMesa = this.historialComandasMesa[0] || null;
+        this.pagoSolicitado = this.historialComandasMesa.some(
+          (c: any) => c.estado === 'pago_pendiente'
+        );
+      });
     });
-    if (this.categorias.length) {
-      this.categoriaSeleccionada = this.categorias[0].nombre;
+    this.categorias$.subscribe((cats) => {
+      this.categorias = cats;
+      if (this.categorias.length) {
+        this.categoriaSeleccionada = this.categorias[0].nombre;
+      }
+    });
+    this.productos$.subscribe((prods) => {
+      this.productos = prods;
+    });
+    this.setIdioma('es');
+    this.initGoogleTranslate();
+  }
+
+  initGoogleTranslate() {
+    if ((window as any).google && (window as any).google.translate) {
+      this.renderGoogleTranslate();
+    } else {
+      const script = document.createElement('script');
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      document.body.appendChild(script);
+      (window as any).googleTranslateElementInit = () => {
+        this.renderGoogleTranslate();
+      };
     }
   }
 
-  solicitarPago() {
-    // Marca todas las comandas de la mesa como 'pago_pendiente' para que el admin lo vea
-    const comandas = JSON.parse(localStorage.getItem('comandas') || '[]');
-    let modificado = false;
-    comandas.forEach((c: any) => {
-      if (c.mesa == this.mesa && c.estado !== 'pagado') {
-        c.estado = 'pago_pendiente';
-        modificado = true;
-      }
+  renderGoogleTranslate() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'es',
+      includedLanguages: 'es,en,fr,it,de',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      autoDisplay: false
+    }, 'google_translate_element');
+  }
+
+  setIdioma(idioma: string) {
+    this.idioma = idioma;
+    // Traduce textos base
+    const keys = Object.keys(this.textosBase);
+    const traducciones: any = {};
+    let pendientes = keys.length;
+    keys.forEach((k) => {
+      this.traducir(this.textosBase[k], idioma).then((trad) => {
+        traducciones[k] = trad;
+        pendientes--;
+        if (pendientes === 0) {
+          this.textos = traducciones;
+        }
+      });
     });
-    if (modificado) {
-      localStorage.setItem('comandas', JSON.stringify(comandas));
+    // Traduce categorías
+    if (this.categorias && this.categorias.length) {
+      this.categorias.forEach((cat) => {
+        this.traducir(cat.nombre, idioma).then(
+          (trad) => (cat.nombreTrad = trad)
+        );
+      });
     }
-    this.mostrarResumenPago = true;
-    this.pagoSolicitado = true;
+    // Traduce productos
+    if (this.productos && this.productos.length) {
+      this.productos.forEach((prod) => {
+        this.traducir(prod.nombre, idioma).then(
+          (trad) => (prod.nombreTrad = trad)
+        );
+        if (prod.descripcion) {
+          this.traducir(prod.descripcion, idioma).then(
+            (trad) => (prod.descripcionTrad = trad)
+          );
+        }
+        if (prod.alergenos) {
+          this.traducir(prod.alergenos, idioma).then(
+            (trad) => (prod.alergenosTrad = trad)
+          );
+        }
+        if (prod.opciones && prod.opciones.length) {
+          if (!prod.opcionesTrad) prod.opcionesTrad = [];
+          prod.opciones.forEach((op, idx) => {
+            this.traducir(op, idioma).then(
+              (trad) => (prod.opcionesTrad![idx] = trad)
+            );
+          });
+        }
+      });
+    }
+  }
+
+  traducir(texto: string, idioma: string): Promise<string> {
+    if (!texto || idioma === 'es') return Promise.resolve(texto);
+    return this.http
+      .post<any>('https://translate.argosopentech.com/translate', {
+        q: texto,
+        source: 'es',
+        target: idioma,
+        format: 'text',
+      })
+      .toPromise()
+      .then((res) => res.translatedText)
+      .catch(() => texto);
+  }
+
+  solicitarPago() {
+    this.comandas$.subscribe((comandas) => {
+      this.historialComandasMesa
+        .filter((c: any) => c.mesa == this.mesa && c.estado !== 'pagado')
+        .forEach((c: any) => {
+          c.estado = 'pago_pendiente';
+          this.dataService.updateComanda(this.barId, c);
+        });
+      this.mostrarResumenPago = true;
+      this.pagoSolicitado = true;
+    });
   }
 
   // Al cargar comandas, detecta si hay pago solicitado
@@ -117,6 +266,21 @@ export class CartaPage implements OnInit {
   }
 
   enviarPedido() {
+    // Validar que todos los productos con opciones tengan al menos una seleccionada
+    for (const id of this.seleccionadosKeys()) {
+      const prod = this.productos.find((p) => p.id === id);
+      if (prod && prod.opciones && prod.opciones.length > 0) {
+        if (
+          !this.seleccionados[id].opciones ||
+          this.seleccionados[id].opciones.length === 0
+        ) {
+          alert(
+            'Debes seleccionar una opción para el producto: ' + prod.nombre
+          );
+          return;
+        }
+      }
+    }
     const pedido = {
       mesa: this.mesa,
       fecha: new Date().toISOString(),
@@ -129,28 +293,59 @@ export class CartaPage implements OnInit {
           opciones: this.seleccionados[id].opciones,
         };
       }),
+      estado: 'pendiente', // Estado inicial para la comanda
     };
-    // Guardar pedido en localStorage (simulación de backend)
-    const pedidos = JSON.parse(localStorage.getItem('comandas') || '[]');
-    pedidos.push(pedido);
-    localStorage.setItem('comandas', JSON.stringify(pedidos));
+    this.dataService.addComanda(this.barId, pedido);
     this.seleccionados = {};
+    this.opcionSeleccionTemp = {};
     alert('¡Pedido enviado!');
-    this.cargarComandaMesa();
   }
 
   pagarMesa() {
     this.mostrarResumenPago = true;
   }
 
-  mostrarResumenPago: boolean = false;
+  // Devuelve true si el producto requiere opción y no se ha seleccionado ninguna
+  productoRequiereOpcionNoSeleccionada(producto: Producto): boolean {
+    return !!(
+      producto.opciones &&
+      producto.opciones.length > 0 &&
+      (!this.seleccionados[producto.id] ||
+        !this.seleccionados[producto.id].opciones ||
+        this.seleccionados[producto.id].opciones.length === 0)
+    );
+  }
+
+  // Nueva función para saber si el botón añadir debe estar habilitado
+  puedeAgregarProducto(prod: Producto): boolean {
+    if (prod.opciones && prod.opciones.length > 0) {
+      return !!this.opcionSeleccionTemp[prod.id];
+    }
+    return true;
+  }
+
+  // Nueva función para manejar la selección única de opción sin modificar el resumen
+  onSeleccionOpcion(producto: Producto, opcion: string) {
+    this.opcionSeleccionTemp[producto.id] = opcion;
+  }
 
   agregarProducto(producto: Producto) {
     if (this.pagoSolicitado) return;
+    let opcionSeleccionada = '';
+    if (producto.opciones && producto.opciones.length > 0) {
+      opcionSeleccionada = this.opcionSeleccionTemp[producto.id];
+      if (!opcionSeleccionada) {
+        alert('Debes seleccionar una opción para este producto.');
+        return;
+      }
+    }
     if (!this.seleccionados[producto.id]) {
       this.seleccionados[producto.id] = { cantidad: 1, opciones: [] };
     } else {
       this.seleccionados[producto.id].cantidad++;
+    }
+    if (producto.opciones && producto.opciones.length > 0) {
+      this.seleccionados[producto.id].opciones = [opcionSeleccionada];
     }
   }
 
@@ -176,8 +371,8 @@ export class CartaPage implements OnInit {
     }
   }
 
-  seleccionadosKeys(): number[] {
-    return Object.keys(this.seleccionados).map((id: string) => +id);
+  seleccionadosKeys(): string[] {
+    return Object.keys(this.seleccionados);
   }
 
   seleccionarCategoria(nombre: string) {
@@ -190,12 +385,12 @@ export class CartaPage implements OnInit {
     );
   }
 
-  getNombreProducto(id: number) {
+  getNombreProducto(id: string) {
     const prod = this.productos.find((p) => p.id === id);
     return prod ? prod.nombre : '';
   }
 
-  getPrecioProducto(id: number): number {
+  getPrecioProducto(id: string): number {
     const prod = this.productos.find((p) => p.id === id);
     return prod ? prod.precio : 0;
   }
@@ -218,5 +413,9 @@ export class CartaPage implements OnInit {
         }, 0)
       );
     }, 0);
+  }
+
+  getOpcionSeleccionada(producto: Producto): string {
+    return this.opcionSeleccionTemp[producto.id] || '';
   }
 }

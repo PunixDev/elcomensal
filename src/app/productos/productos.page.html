@@ -18,19 +18,13 @@
   <ion-grid>
     <ion-row>
       <ion-col size="12">
-        <ion-item>
+        <ion-item [color]="!nuevoNombre && intentadoAgregar ? 'danger' : ''">
           <ion-icon name="pizza" slot="start"></ion-icon>
           <ion-input
             placeholder="Nombre del producto"
             [(ngModel)]="nuevoNombre"
+            required
           ></ion-input>
-          <ion-select placeholder="Categoría" [(ngModel)]="nuevaCategoria">
-            <ion-select-option
-              *ngFor="let cat of categorias"
-              [value]="cat.nombre"
-              >{{cat.nombre}}</ion-select-option
-            >
-          </ion-select>
         </ion-item>
         <ion-item>
           <ion-icon name="document-text" slot="start"></ion-icon>
@@ -42,8 +36,8 @@
         <ion-item>
           <ion-icon name="leaf" slot="start"></ion-icon>
           <ion-textarea
-            placeholder="Ingredientes"
-            [(ngModel)]="nuevosIngredientes"
+            placeholder="Alergenos"
+            [(ngModel)]="nuevosAlergenos"
           ></ion-textarea>
         </ion-item>
         <ion-item>
@@ -67,7 +61,7 @@
               slot="end"
               (click)="eliminarOpcion(i)"
             >
-              <ion-icon name="trash"></ion-icon>
+              <ion-icon name="trash-sharp"></ion-icon>
             </ion-button>
           </ion-item>
         </ion-list>
@@ -79,7 +73,7 @@
             (change)="onImageSelected($event)"
           />
         </ion-item>
-        <ion-item>
+        <ion-item [color]="!nuevoPrecio && intentadoAgregar ? 'danger' : ''">
           <ion-icon name="cash" slot="start"></ion-icon>
           <ion-input
             type="number"
@@ -87,7 +81,22 @@
             step="0.01"
             placeholder="Precio"
             [(ngModel)]="nuevoPrecio"
+            required
           ></ion-input>
+        </ion-item>
+        <ion-item [color]="!nuevaCategoria && intentadoAgregar ? 'danger' : ''">
+          <ion-icon name="albums" slot="start"></ion-icon>
+          <ion-select
+            required
+            placeholder="Categoría"
+            [(ngModel)]="nuevaCategoria"
+          >
+            <ion-select-option
+              *ngFor="let cat of categorias$ | async"
+              [value]="cat.nombre"
+              >{{cat.nombre}}</ion-select-option
+            >
+          </ion-select>
         </ion-item>
         <ion-button expand="block" color="success" (click)="agregarProducto()">
           <ion-icon name="add" slot="start"></ion-icon>
@@ -105,7 +114,7 @@
     <ion-row>
       <ion-col size="12">
         <ion-list>
-          <ng-container *ngFor="let producto of productos">
+          <ng-container *ngFor="let producto of productos$ | async">
             <ion-item *ngIf="editando !== producto.id">
               <ion-avatar slot="start" *ngIf="producto.imagen">
                 <img [src]="producto.imagen" alt="Imagen producto" />
@@ -123,17 +132,13 @@
                       font-weight: bold;
                       margin-left: 10px;
                     "
-                    >{{ producto.precio | currency:'EUR':'symbol':'1.2-2'
-                    }}</span
                   >
+                    {{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}
+                  </span>
                 </h3>
-                <p>
-                  <ion-icon
-                    name="pricetag"
-                    style="vertical-align: middle"
-                  ></ion-icon>
+                <div style="font-size: 0.95em; color: #666; margin-top: 2px">
                   {{ producto.categoria }}
-                </p>
+                </div>
                 <p *ngIf="producto.descripcion">
                   <ion-icon
                     name="document-text"
@@ -141,12 +146,8 @@
                   ></ion-icon>
                   <strong>Descripción:</strong> {{producto.descripcion}}
                 </p>
-                <p *ngIf="producto.ingredientes">
-                  <ion-icon
-                    name="leaf"
-                    style="vertical-align: middle"
-                  ></ion-icon>
-                  <strong>Ingredientes:</strong> {{producto.ingredientes}}
+                <p *ngIf="producto.alergenos">
+                  <strong>Alergenos:</strong> {{producto.alergenos}}
                 </p>
                 <div *ngIf="producto.opciones && producto.opciones.length">
                   <ion-icon
@@ -180,7 +181,7 @@
                 slot="end"
                 (click)="eliminarProducto(producto.id)"
               >
-                <ion-icon name="trash"></ion-icon>
+                <ion-icon name="trash-sharp"></ion-icon>
                 Eliminar
               </ion-button>
             </ion-item>
@@ -188,7 +189,7 @@
               <ion-input [(ngModel)]="editNombre"></ion-input>
               <ion-select [(ngModel)]="editCategoria">
                 <ion-select-option
-                  *ngFor="let cat of categorias"
+                  *ngFor="let cat of categorias$ | async"
                   [value]="cat.nombre"
                   >{{cat.nombre}}</ion-select-option
                 >
@@ -198,8 +199,8 @@
                 [(ngModel)]="editDescripcion"
               ></ion-textarea>
               <ion-textarea
-                placeholder="Ingredientes"
-                [(ngModel)]="editIngredientes"
+                placeholder="Alergenos"
+                [(ngModel)]="editAlergenos"
               ></ion-textarea>
               <ion-input
                 placeholder="Nueva opción"
@@ -222,7 +223,7 @@
                     slot="end"
                     (click)="eliminarEditOpcion(i)"
                   >
-                    <ion-icon name="trash"></ion-icon>
+                    <ion-icon name="trash-outline"></ion-icon>
                   </ion-button>
                 </ion-item>
               </ion-list>

@@ -16,7 +16,9 @@ import {
   IonButton,
   IonText,
 } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { DataService } from '../data.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -39,25 +41,37 @@ import { Router } from '@angular/router';
     IonText,
     CommonModule,
     FormsModule,
+    RouterModule,
   ],
 })
 export class LoginPage implements OnInit {
   usuario = '';
   password = '';
   error = '';
+  loading = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private dataService: DataService) {}
 
   ngOnInit() {}
 
-  login() {
-    // Usuario y contraseña fijos para demo
-    if (this.usuario === 'admin' && this.password === 'admin') {
-      this.error = '';
-      localStorage.setItem('isLoggedIn', 'true');
-      this.router.navigate(['/admin']);
-    } else {
-      this.error = 'Usuario o contraseña incorrectos';
+  async login() {
+    this.error = '';
+    this.loading = true;
+    try {
+      const result = await this.dataService.loginMultiBar(
+        this.usuario,
+        this.password
+      );
+      if (result) {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('usuario', result.barId); // Guardar barId real
+        this.router.navigate(['/admin']);
+      } else {
+        this.error = 'Usuario o contraseña incorrectos';
+      }
+    } catch (e) {
+      this.error = 'Error de conexión o de base de datos';
     }
+    this.loading = false;
   }
 }

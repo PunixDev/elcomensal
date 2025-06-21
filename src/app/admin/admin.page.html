@@ -6,6 +6,7 @@
           name="settings"
           slot="start"
           style="margin-right: 8px"
+          aria-hidden="true"
         ></ion-icon>
         Panel Admin
       </ion-title>
@@ -14,19 +15,19 @@
   <ion-content>
     <ion-list>
       <ion-item (click)="goToCategorias()">
-        <ion-icon name="albums" slot="start"></ion-icon>
+        <ion-icon name="albums" slot="start" aria-hidden="true"></ion-icon>
         Categorías
       </ion-item>
       <ion-item (click)="goToProductos()">
-        <ion-icon name="fast-food" slot="start"></ion-icon>
+        <ion-icon name="fast-food" slot="start" aria-hidden="true"></ion-icon>
         Platos y Bebidas
       </ion-item>
       <ion-item (click)="goToGenerarQR()">
-        <ion-icon name="qr-code" slot="start"></ion-icon>
+        <ion-icon name="qr-code" slot="start" aria-hidden="true"></ion-icon>
         Generar QR
       </ion-item>
       <ion-item (click)="logout()">
-        <ion-icon name="log-out" slot="start"></ion-icon>
+        <ion-icon name="log-out" slot="start" aria-hidden="true"></ion-icon>
         Cerrar sesión
       </ion-item>
     </ion-list>
@@ -43,6 +44,7 @@
         name="settings"
         slot="start"
         style="margin-right: 8px"
+        aria-hidden="true"
       ></ion-icon>
       Panel de Administración
     </ion-title>
@@ -78,7 +80,11 @@
               Comandas recibidas
             </ion-card-title>
             <ion-button color="danger" size="small" (click)="limpiarComandas()">
-              <ion-icon name="trash" slot="start"></ion-icon>
+              <ion-icon
+                name="trash-sharp"
+                slot="start"
+                aria-hidden="true"
+              ></ion-icon>
               Limpiar comandas
             </ion-button>
           </ion-card-header>
@@ -155,7 +161,7 @@
                   <ion-button
                     color="warning"
                     size="small"
-                    (click)="actualizarEstadoComanda(comandas.indexOf(comanda), 'preparando')"
+                    (click)="actualizarEstadoComanda(comanda, 'preparando')"
                     *ngIf="comanda.estado !== 'preparando' && comanda.estado !== 'preparado' && comanda.estado !== 'pago_pendiente'"
                   >
                     En preparación
@@ -163,7 +169,7 @@
                   <ion-button
                     color="success"
                     size="small"
-                    (click)="actualizarEstadoComanda(comandas.indexOf(comanda), 'preparado')"
+                    (click)="actualizarEstadoComanda(comanda, 'preparado')"
                     *ngIf="comanda.estado === 'preparando'"
                   >
                     Preparado
@@ -175,6 +181,54 @@
         </ion-card>
         <ion-card *ngIf="!comandas.length">
           <ion-card-content>No hay comandas pendientes.</ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="usuarioLogado === 'admin'">
+      <ion-col size="12">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Gestión de usuarios</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <form (ngSubmit)="agregarUsuario()">
+              <ion-item>
+                <ion-label position="floating">Nuevo usuario</ion-label>
+                <ion-input
+                  [(ngModel)]="nuevoUsuario"
+                  name="nuevoUsuario"
+                  required
+                ></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">Contraseña</ion-label>
+                <ion-input
+                  [(ngModel)]="nuevaPassword"
+                  name="nuevaPassword"
+                  type="password"
+                  required
+                ></ion-input>
+              </ion-item>
+              <ion-button expand="block" color="success" type="submit">
+                <ion-icon name="person-add" slot="start"></ion-icon>
+                Añadir usuario
+              </ion-button>
+            </form>
+            <ion-list *ngIf="(usuarios$ | async)?.length">
+              <ion-item *ngFor="let u of usuarios$ | async">
+                <ion-label>{{u.usuario}}</ion-label>
+                <ion-button
+                  color="danger"
+                  fill="clear"
+                  slot="end"
+                  (click)="eliminarUsuario(u.usuario)"
+                  *ngIf="u.usuario !== 'admin'"
+                >
+                  <ion-icon name="trash-sharp"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
@@ -198,52 +252,75 @@
         <ion-card-title>Resumen de pedidos</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-list *ngIf="informeMesa && informeMesa.length">
-          <ion-item *ngFor="let comanda of informeMesa">
-            <ion-label>
-              <strong>Fecha:</strong> {{comanda?.fecha | date:'short'}}<br />
-              <ul>
-                <li *ngFor="let item of comanda?.items">
-                  {{item?.nombre}} x{{item?.cantidad}}
-                  <span *ngIf="item?.opciones?.length"
-                    >- Opciones: {{item.opciones.join(', ')}}</span
-                  >
-                  <span
-                    style="
-                      margin-left: 10px;
-                      color: var(--ion-color-success);
-                      font-weight: bold;
-                    "
-                  >
-                    {{(getPrecioProducto(item?.id) * item?.cantidad) |
-                    currency:'EUR':'symbol':'1.2-2'}}
-                  </span>
-                </li>
-              </ul>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-        <div style="margin-top: 2em; text-align: right">
-          <ion-card
-            color="light"
-            style="display: inline-block; min-width: 220px"
+        <div id="informe-mesa">
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              gap: 8px;
+              margin-bottom: 1em;
+            "
+            class="no-print"
           >
-            <ion-card-content
-              style="
-                font-size: 1.3em;
-                font-weight: bold;
-                color: var(--ion-color-primary);
-              "
+            <ion-button color="primary" (click)="imprimirInformeMesa()">
+              <ion-icon name="print" slot="start"></ion-icon>
+              Imprimir
+            </ion-button>
+            <ion-button color="secondary" (click)="descargarInformeMesa()">
+              <ion-icon name="download" slot="start"></ion-icon>
+              Descargar PDF
+            </ion-button>
+            <ion-button color="tertiary" (click)="descargarInforme()">
+              <ion-icon name="document-text" slot="start"></ion-icon>
+              Descargar TXT
+            </ion-button>
+          </div>
+          <ion-list *ngIf="informeMesa && informeMesa.length">
+            <ion-item *ngFor="let comanda of informeMesa">
+              <ion-label>
+                <strong>Fecha:</strong> {{comanda?.fecha | date:'short'}}<br />
+                <ul>
+                  <li *ngFor="let item of comanda?.items">
+                    {{item?.nombre}} x{{item?.cantidad}}
+                    <span *ngIf="item?.opciones?.length">
+                      - Opciones: {{item.opciones.join(', ')}}
+                    </span>
+                    <span
+                      style="
+                        margin-left: 10px;
+                        color: var(--ion-color-success);
+                        font-weight: bold;
+                      "
+                    >
+                      {{(getPrecioProducto(item?.id) * item?.cantidad) |
+                      currency:'EUR':'symbol':'1.2-2'}}
+                    </span>
+                  </li>
+                </ul>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+          <div
+            *ngIf="informeMesa && informeMesa.length"
+            style="margin-top: 1.5em; text-align: right"
+          >
+            <ion-card
+              color="success"
+              style="display: inline-block; min-width: 220px"
             >
-              Suma total del pedido:<br />
-              <span style="font-size: 1.5em"
-                >{{informeTotal | currency:'EUR':'symbol':'1.2-2'}}</span
+              <ion-card-content
+                style="font-size: 1.3em; font-weight: bold; color: white"
               >
-            </ion-card-content>
-          </ion-card>
-        </div>
-        <div *ngIf="informeMesa && !informeMesa.length" style="margin: 1em 0">
-          No hay pedidos para esta mesa.
+                Suma total del pedido:<br />
+                <span style="font-size: 1.5em">
+                  {{informeTotal | currency:'EUR':'symbol':'1.2-2'}}
+                </span>
+              </ion-card-content>
+            </ion-card>
+          </div>
+          <div *ngIf="informeMesa && !informeMesa.length" style="margin: 1em 0">
+            No hay pedidos para esta mesa.
+          </div>
         </div>
       </ion-card-content>
     </ion-card>
