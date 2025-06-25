@@ -1,0 +1,84 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Fraccionar pago - Mesa {{mesa}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="volver()">
+        <ion-icon name="arrow-back"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title
+        >Selecciona productos para fraccionar el pago</ion-card-title
+      >
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list *ngIf="unidadesAgrupadas.length">
+        <ion-item-divider color="light">Productos</ion-item-divider>
+        <ion-item *ngFor="let unidad of unidadesAgrupadas">
+          <ion-label>
+            <b>{{unidad.nombre}}</b>
+            <span *ngIf="unidad._opciones.length">
+              ({{unidad._opciones.join(', ')}})</span
+            >
+            <br />
+            <small
+              >Total: {{unidad.cantidad}} | Pagados:
+              {{unidadesTachadas(unidad)}} | Pendientes:
+              {{unidadesPendientes(unidad)}}</small
+            >
+          </ion-label>
+          <ion-button
+            size="small"
+            color="medium"
+            (click)="restarSeleccion(unidad)"
+            [disabled]="(seleccionadasAgrupadas[unidad._key]||0)===0"
+            >-</ion-button
+          >
+          <span
+            style="min-width: 2em; display: inline-block; text-align: center"
+            >{{seleccionadasAgrupadas[unidad._key]||0}}</span
+          >
+          <ion-button
+            size="small"
+            color="primary"
+            (click)="sumarSeleccion(unidad)"
+            [disabled]="(seleccionadasAgrupadas[unidad._key]||0)>=unidadesPendientes(unidad)"
+            >+</ion-button
+          >
+        </ion-item>
+      </ion-list>
+      <div *ngIf="!unidadesAgrupadas.length">
+        No hay productos para esta mesa.
+      </div>
+      <ion-button
+        expand="block"
+        color="success"
+        (click)="marcarPagados()"
+        [disabled]="!getTotalSeleccionado()"
+        style="margin-top: 1em"
+      >
+        Marcar pagados (tachar seleccionados)
+      </ion-button>
+      <div style="margin-top: 1.5em; text-align: right">
+        <ion-card
+          color="success"
+          style="display: inline-block; min-width: 220px"
+        >
+          <ion-card-content
+            style="font-size: 1.3em; font-weight: bold; color: white"
+          >
+            Total seleccionado:<br />
+            <span style="font-size: 1.5em">
+              {{getTotalSeleccionado() | currency:'EUR':'symbol':'1.2-2'}}
+            </span>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

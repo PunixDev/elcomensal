@@ -9,8 +9,10 @@ import {
   IonCol,
   IonButton,
   IonIcon,
+  IonButtons,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -26,9 +28,13 @@ import { Router } from '@angular/router';
     IonCol,
     IonButton,
     IonIcon,
+    IonButtons,
+    CommonModule,
   ],
 })
 export class HomePage {
+  logoExists = true;
+
   constructor(private router: Router) {}
 
   goToLogin() {

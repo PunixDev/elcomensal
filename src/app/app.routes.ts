@@ -52,4 +52,19 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./recuperar/recuperar.page').then((m) => m.RecuperarPage),
   },
+  {
+    path: 'suscripcion',
+    loadComponent: () =>
+      import('./suscripcion/suscripcion.page').then((m) => m.SuscripcionPage),
+  },
+  {
+    path: 'historial',
+    loadComponent: () =>
+      import('./historial.page').then((m) => m.HistorialPage),
+  },
+  {
+    path: 'informe-mesa/:mesa',
+    loadComponent: () =>
+      import('./informe-mesa.page').then((m) => m.InformeMesaPage),
+  },
 ];

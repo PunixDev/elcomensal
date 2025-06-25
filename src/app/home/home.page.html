@@ -1,42 +1,129 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
     <ion-title>
-      <ion-icon
-        name="restaurant"
-        slot="start"
-        style="margin-right: 8px"
-        aria-hidden="true"
-      ></ion-icon>
-      Bienvenido
+      <img
+        src="assets/5.png"
+        alt="ElRestauranteQR"
+        style="
+          width: 2em;
+          height: 2em;
+          border-radius: 8px;
+          margin-right: 8px;
+          vertical-align: middle;
+          display: inline-block;
+        "
+      />
+      ElRestauranteQR
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="light" (click)="goToLogin()">
+        <ion-icon name="log-in" slot="start"></ion-icon>
+        Acceso Admin
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-grid>
-    <ion-row class="ion-justify-content-center">
-      <ion-col size="12" size-md="6" class="ion-text-center">
-        <h2>
-          <ion-icon
-            name="bar-chart"
-            style="font-size: 2rem; vertical-align: middle"
-            aria-hidden="true"
-          ></ion-icon>
-          ¡Bienvenido a BarAdmin!
-        </h2>
-        <p>
-          <ion-icon
-            name="cafe"
-            style="vertical-align: middle"
-            aria-hidden="true"
-          ></ion-icon>
-          Gestiona tu restaurante de forma fácil y moderna.
-        </p>
-        <ion-button color="primary" (click)="goToLogin()">
-          <ion-icon name="log-in" slot="start" aria-hidden="true"></ion-icon>
-          Acceder como administrador
+<ion-content [fullscreen]="true" class="home-hero-bg">
+  <section class="home-hero-section">
+    <div class="home-hero-text">
+      <img
+        src="assets/5.png"
+        alt="ElRestauranteQR"
+        class="home-logo"
+        *ngIf="logoExists"
+      />
+      <h1 class="home-title">
+        <ion-icon
+          name="rocket"
+          style="font-size: 2.2rem; vertical-align: middle; color: #ffb300"
+        ></ion-icon>
+        La revolución digital para tu bar
+      </h1>
+      <h2 class="home-subtitle">
+        Ahorra tiempo, vende más y haz felices a tus clientes
+      </h2>
+      <ul class="home-benefits">
+        <li>
+          <ion-icon name="time" color="success"></ion-icon>
+          <span>Reduce esperas y errores en comandas</span>
+        </li>
+        <li>
+          <ion-icon name="happy" color="warning"></ion-icon>
+          <span>Mejora la satisfacción y experiencia del cliente</span>
+        </li>
+        <li>
+          <ion-icon name="cash" color="primary"></ion-icon>
+          <span>Incrementa la rotación y el ticket medio</span>
+        </li>
+        <li>
+          <ion-icon name="stats-chart" color="tertiary"></ion-icon>
+          <span>Control total y análisis de tu negocio en tiempo real</span>
+        </li>
+        <li>
+          <ion-icon name="cloud-upload" color="medium"></ion-icon>
+          <span>Sin instalaciones, accede desde cualquier lugar</span>
+        </li>
+      </ul>
+      <div class="home-cta">
+        <ion-button color="success" size="large" (click)="goToLogin()">
+          <ion-icon name="log-in" slot="start"></ion-icon>
+          ¡Quiero ahorrar tiempo y vender más!
         </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+      </div>
+    </div>
+    <div class="home-hero-images">
+      <img src="assets/1.jpg" alt="Pantalla 1" class="home-app-img img1" />
+      <img src="assets/2.jpg" alt="Pantalla 2" class="home-app-img img2" />
+      <img src="assets/3.jpg" alt="Pantalla 3" class="home-app-img img3" />
+      <img src="assets/4.jpg" alt="Pantalla 4" class="home-app-img img4" />
+    </div>
+  </section>
+  <section class="home-section home-section-dark">
+    <div class="home-section-content">
+      <h2>¿Por qué elegir ElRestauranteQR?</h2>
+      <p>
+        <ion-icon name="star" color="warning"></ion-icon>
+        Porque tu tiempo y el de tus camareros vale oro. Automatiza pedidos,
+        elimina errores y ofrece una experiencia moderna que hará que tus
+        clientes repitan.
+      </p>
+      <p>
+        <ion-icon name="heart" color="danger"></ion-icon>
+        Tus clientes podrán pedir y pagar desde la mesa, ver la carta en su
+        móvil y tú tendrás el control total desde cualquier lugar.
+      </p>
+    </div>
+  </section>
+  <section class="home-section">
+    <div class="home-section-content">
+      <h2>Resultados reales</h2>
+      <ul class="home-results">
+        <li>
+          <ion-icon name="trending-up" color="success"></ion-icon> +30% más
+          rotación de mesas
+        </li>
+        <li>
+          <ion-icon name="thumbs-up" color="primary"></ion-icon> +40%
+          satisfacción del cliente
+        </li>
+        <li>
+          <ion-icon name="alarm" color="tertiary"></ion-icon> -50% tiempo de
+          espera
+        </li>
+        <li>
+          <ion-icon name="cash" color="warning"></ion-icon> +20% ticket medio
+        </li>
+      </ul>
+    </div>
+  </section>
+  <section class="home-section home-section-cta">
+    <div class="home-section-content">
+      <h2>¿Listo para transformar tu bar?</h2>
+      <ion-button color="primary" size="large" (click)="goToLogin()">
+        <ion-icon name="log-in" slot="start"></ion-icon>
+        Empieza ahora gratis
+      </ion-button>
+    </div>
+  </section>
 </ion-content>

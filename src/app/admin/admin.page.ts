@@ -74,6 +74,8 @@ export class AdminPage implements OnInit {
   barId: string;
   productos: any[] = [];
   mesaActual: string = ''; // Nueva variable para guardar la mesa actual
+  isSubscribed: boolean = false;
+  trialActive: boolean = false;
 
   constructor(private router: Router, private dataService: DataService) {
     this.barId = this.dataService.getBarId();
@@ -99,6 +101,27 @@ export class AdminPage implements OnInit {
     this.productos$.subscribe((productos) => {
       this.productos = productos;
     });
+    // Lógica de suscripción (simulada, requiere backend real para producción)
+    const usuario = localStorage.getItem('usuario');
+    const trialStart = localStorage.getItem('trialStart');
+    const isSubscribed = localStorage.getItem('isSubscribed');
+    if (!trialStart) {
+      // Primer login: inicia trial
+      localStorage.setItem('trialStart', new Date().toISOString());
+      this.trialActive = true;
+    } else {
+      const now = new Date();
+      const trialDate = new Date(trialStart);
+      this.trialActive =
+        now.getTime() - trialDate.getTime() < 30 * 24 * 60 * 60 * 1000;
+    }
+    this.isSubscribed = isSubscribed === 'true';
+    if (!this.isSubscribed && !this.trialActive) {
+      alert(
+        'Tu periodo de prueba ha finalizado. Debes suscribirte para continuar.'
+      );
+      this.router.navigate(['/suscripcion']);
+    }
   }
 
   limpiarComandas() {
@@ -117,9 +140,30 @@ export class AdminPage implements OnInit {
   }
 
   marcarMesaPagada(mesa: string) {
-    (this.comandasPorMesa[mesa] || []).forEach((c) =>
-      this.dataService.deleteComanda(this.barId, c.id)
-    );
+    // Normalizar el nombre de la mesa al guardar en historial
+    const mesaNormalizada = String(mesa).trim().toLowerCase();
+    const pedidosMesa = (this.comandasPorMesa[mesa] || []).map((c) => ({
+      ...c,
+      mesa: mesaNormalizada, // Guardar la mesa normalizada
+      total: c.items.reduce((subtotal: number, item: any) => {
+        const prod = this.productos.find((p: any) => p.id === item.id);
+        return subtotal + (prod ? prod.precio * item.cantidad : 0);
+      }, 0),
+      pagadoEn: new Date().toISOString(),
+      fechaDia: c.fecha
+        ? c.fecha.slice(0, 10)
+        : new Date().toISOString().slice(0, 10),
+    }));
+    // Guardar en historial antes de borrar
+    pedidosMesa.forEach((pedido) => {
+      this.dataService.addHistorial(this.barId, pedido);
+    });
+    (this.comandasPorMesa[mesa] || []).forEach((c) => {
+      this.dataService.deleteComanda(this.barId, c.id);
+    });
+    // Forzar actualización inmediata de la lista de comandas
+    this.comandas = this.comandas.filter((c) => c.mesa !== mesa);
+    this.comandasPorMesa[mesa] = [];
   }
 
   mesaSolicitaPago(comandas: any[]): boolean {
@@ -142,6 +186,7 @@ export class AdminPage implements OnInit {
           }, 0)
         );
       }, 0);
+      console.log('Total de la mesa', mesa, ':', this.informeTotal);
       this.mostrarInforme = true;
       this.mesaActual = mesa; // Guardamos la mesa actual para imprimir/descargar
     });
@@ -200,6 +245,10 @@ export class AdminPage implements OnInit {
 
   goToGenerarQR() {
     this.router.navigate(['/generar-qr']);
+  }
+
+  goToHistorial() {
+    this.router.navigate(['/historial']);
   }
 
   imprimirInformeMesa() {
@@ -275,5 +324,22 @@ export class AdminPage implements OnInit {
     a.download = 'informe_mesa.txt';
     a.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  goToInformeMesa(mesa: string) {
+    this.router.navigate(['/informe-mesa', mesa]);
+  }
+
+  getTotalMesa(comandas: any[]): number {
+    if (!Array.isArray(comandas) || !this.productos) return 0;
+    return comandas.reduce((total, comanda) => {
+      return (
+        total +
+        comanda.items.reduce((subtotal: number, item: any) => {
+          const prod = this.productos.find((p: any) => p.id === item.id);
+          return subtotal + (prod ? prod.precio * item.cantidad : 0);
+        }, 0)
+      );
+    }, 0);
   }
 }

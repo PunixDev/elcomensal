@@ -26,6 +26,18 @@
         <ion-icon name="qr-code" slot="start" aria-hidden="true"></ion-icon>
         Generar QR
       </ion-item>
+      <ion-item (click)="goToHistorial()">
+        <ion-icon name="archive" slot="start" aria-hidden="true"></ion-icon>
+        Historial de pedidos
+      </ion-item>
+      <ion-item *ngIf="!isSubscribed" routerLink="/suscripcion" color="primary">
+        <ion-icon name="card" slot="start" aria-hidden="true"></ion-icon>
+        Suscribirse
+      </ion-item>
+      <ion-item *ngIf="isSubscribed" routerLink="/suscripcion" color="success">
+        <ion-icon name="card" slot="start" aria-hidden="true"></ion-icon>
+        Gestionar suscripción
+      </ion-item>
       <ion-item (click)="logout()">
         <ion-icon name="log-out" slot="start" aria-hidden="true"></ion-icon>
         Cerrar sesión
@@ -47,11 +59,64 @@
         aria-hidden="true"
       ></ion-icon>
       Panel de Administración
+      <span
+        *ngIf="barId"
+        style="font-size: 0.8em; color: #fff; margin-left: 1em"
+      >
+        <ion-icon name="key-outline" style="vertical-align: middle"></ion-icon>
+        <strong>ID:</strong> {{ barId }}
+      </span>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content id="main-content" [fullscreen]="true">
+  <div style="margin: 1em; text-align: center">
+    <ion-card color="light">
+      <ion-card-content>
+        <div *ngIf="isSubscribed; else trialBlock">
+          <ion-label color="success"
+            ><strong>Suscripción activa</strong></ion-label
+          >
+          <ion-button
+            color="primary"
+            routerLink="/suscripcion"
+            style="margin-top: 0.5em"
+          >
+            Gestionar suscripción
+          </ion-button>
+        </div>
+        <ng-template #trialBlock>
+          <div *ngIf="trialActive; else expiredBlock">
+            <ion-label color="warning"
+              ><strong>Prueba gratuita activa</strong></ion-label
+            >
+          </div>
+          <ng-template #expiredBlock>
+            <ion-label color="danger"
+              ><strong>Sin suscripción</strong></ion-label
+            >
+            <ion-button
+              color="medium"
+              expand="block"
+              (click)="goToHistorial()"
+              style="margin-bottom: 0.5em"
+            >
+              <ion-icon name="archive" slot="start"></ion-icon>
+              Historial de pedidos
+            </ion-button>
+            <ion-button
+              color="primary"
+              routerLink="/suscripcion"
+              style="margin-top: 0.5em"
+            >
+              Suscribirse
+            </ion-button>
+          </ng-template>
+        </ng-template>
+      </ion-card-content>
+    </ion-card>
+  </div>
   <ion-grid>
     <ion-row>
       <ion-col size="12" class="ion-text-center">
@@ -108,6 +173,7 @@
                     color="tertiary"
                     size="small"
                     (click)="marcarMesaPagada(mesa.key)"
+                    [disabled]="!mesaSolicitaPago(mesa.value)"
                   >
                     Pagado
                   </ion-button>
@@ -115,10 +181,22 @@
                     *ngIf="mesaSolicitaPago(mesa.value)"
                     color="primary"
                     size="small"
-                    (click)="verInformeMesa(mesa.key)"
+                    (click)="goToInformeMesa(mesa.key)"
                   >
                     Ver informe
                   </ion-button>
+                  <span
+                    *ngIf="mesaSolicitaPago(mesa.value)"
+                    style="
+                      margin-left: 8px;
+                      font-weight: 600;
+                      color: #0070f3;
+                      font-size: 1.08em;
+                    "
+                  >
+                    Total: {{ getTotalMesa(mesa.value) |
+                    currency:'EUR':'symbol':'1.2-2' }}
+                  </span>
                 </ion-item-divider>
                 <ion-item *ngFor="let comanda of mesa.value">
                   <ion-label>
@@ -274,6 +352,21 @@
               <ion-icon name="document-text" slot="start"></ion-icon>
               Descargar TXT
             </ion-button>
+          </div>
+          <div style="margin-bottom: 1em; text-align: center">
+            <ion-card
+              color="success"
+              style="display: inline-block; min-width: 220px"
+            >
+              <ion-card-content
+                style="font-size: 1.3em; font-weight: bold; color: white"
+              >
+                Suma total del pedido:<br />
+                <span style="font-size: 1.5em">
+                  {{informeTotal | currency:'EUR':'symbol':'1.2-2'}}
+                </span>
+              </ion-card-content>
+            </ion-card>
           </div>
           <ion-list *ngIf="informeMesa && informeMesa.length">
             <ion-item *ngFor="let comanda of informeMesa">

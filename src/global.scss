@@ -34,4 +34,421 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+@import "@ionic/angular/css/palettes/dark.system.css";
+
+/* --- ESTILOS DE CARTA (migrados desde carta.page.scss) --- */
+.carta-content {
+  background: #fafbfc;
+  font-family: "Inter", "Roboto", Arial, sans-serif;
+}
+.categorias-scroll {
+  display: flex;
+  overflow-x: auto;
+  padding: 1em 0.5em 0.5em 0.5em;
+  gap: 0.5em;
+  background: #fff;
+}
+.categoria-btn {
+  border: none;
+  background: #f1f3f4;
+  color: #222;
+  border-radius: 999px;
+  padding: 0.5em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+  outline: none;
+  white-space: nowrap;
+}
+.categoria-btn.selected {
+  background: #222;
+  color: #fff;
+}
+.categoria-titulo {
+  padding: 1em 1.2em 0.5em 1.2em;
+  font-size: 1.2em;
+  font-weight: 700;
+  color: #222;
+}
+.productos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 0 0.5em 1.5em 0.5em;
+}
+.producto-card {
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  background: #fff;
+  margin: 0;
+}
+.producto-flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 1em;
+  padding: 0.7em 0.7em 0.7em 0.7em;
+}
+.producto-img-cuadrada {
+  min-width: 90px;
+  max-width: 90px;
+  width: 90px;
+  height: 90px;
+  background: #f6f6f6;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-in;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  margin-right: 0.5em;
+}
+.producto-img-cuadrada img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.2s;
+}
+.producto-img-cuadrada:hover img {
+  transform: scale(1.04);
+}
+.producto-info {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+.producto-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.2em;
+}
+.producto-nombre {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #222;
+}
+.producto-precio {
+  font-size: 1em;
+  color: #888;
+  font-weight: 500;
+  margin-left: 1em;
+}
+.producto-desc {
+  color: #444;
+  font-size: 0.98em;
+  margin-bottom: 0.5em;
+}
+.producto-alergenos {
+  color: #c77d00;
+  font-size: 0.95em;
+  margin-bottom: 0.5em;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+}
+.producto-opciones {
+  margin-bottom: 0.5em;
+}
+.producto-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.5em;
+}
+.producto-cantidad {
+  margin-left: 0.5em;
+  font-weight: 600;
+  color: #222;
+  font-size: 1.1em;
+}
+.pedido-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background: #fff;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+  padding: 0.7em 1em 0.7em 1em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #e0e0e0;
+}
+.pedido-bar-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.05em;
+  margin-bottom: 0.5em;
+  color: #222;
+}
+.pedido-bar-cantidad {
+  font-weight: 500;
+}
+.pedido-bar-total {
+  font-weight: 700;
+  color: #0070f3;
+}
+.pedido-bar-btn {
+  font-size: 1.1em;
+  font-weight: 600;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.estado-pago-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fffbe6;
+  color: #c77d00;
+  font-weight: 500;
+  font-size: 1.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  z-index: 110;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 18px 18px 0 0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.historial-bar {
+  margin: 1.5em 0.5em 1em 0.5em;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 1em 1em 0.5em 1em;
+}
+.historial-titulo {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.7em;
+}
+.historial-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.historial-item {
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 0.7em;
+  margin-bottom: 0.7em;
+}
+.historial-fecha {
+  font-size: 0.98em;
+  color: #888;
+  margin-bottom: 0.2em;
+}
+.historial-estado {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 1em;
+  font-weight: 500;
+  margin-bottom: 0.2em;
+}
+.historial-pedido {
+  margin: 0.2em 0 0 0;
+  padding: 0 0 0 1.2em;
+  color: #444;
+  font-size: 0.97em;
+}
+.historial-total {
+  text-align: right;
+  font-weight: 700;
+  color: #0070f3;
+  font-size: 1.08em;
+  margin-top: 1em;
+}
+.resumen-lista {
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.resumen-item {
+  display: flex;
+  flex-direction: column;
+  background: #f7f7f7;
+  border-radius: 10px;
+  padding: 0.7em 1em;
+  font-size: 1.05em;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+.resumen-nombre {
+  font-weight: 600;
+  color: #222;
+}
+.resumen-cantidad {
+  color: #0070f3;
+  font-weight: 500;
+  margin-left: 0.5em;
+}
+.resumen-precio {
+  color: #888;
+  font-weight: 500;
+  margin-left: auto;
+}
+.resumen-opciones {
+  font-size: 0.97em;
+  color: #666;
+  margin-top: 0.2em;
+}
+.resumen-total {
+  text-align: right;
+  font-size: 1.15em;
+  font-weight: 700;
+  color: #222;
+  margin: 1.5em 1em 1em 0;
+}
+.sin-productos-msg {
+  text-align: center;
+  color: #888;
+  font-size: 1.1em;
+  margin: 2em 0;
+}
+@media (min-width: 481px) {
+  .pedido-bar {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+.solicitar-pago-bar {
+  margin: 0.5em 0;
+  padding: 0 0.5em;
+}
+.modal-imagen-ampliada {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.modal-imagen-contenido {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1em;
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.modal-imagen-contenido img {
+  max-width: 80vw;
+  max-height: 70vh;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #fafbfc;
+}
+.cerrar-modal {
+  position: absolute;
+  top: 0.5em;
+  right: 0.7em;
+  background: transparent;
+  border: none;
+  font-size: 2em;
+  color: #333;
+  cursor: pointer;
+  z-index: 2;
+}
+.ion-content.carta-content,
+ion-content.carta-content {
+  --padding-bottom: 110px !important;
+  padding-bottom: 110px !important;
+}
+
+@media (max-width: 600px) {
+  ion-content.carta-content,
+  .ion-content.carta-content {
+    --padding-bottom: 120px !important;
+    padding-bottom: 120px !important;
+  }
+}
+
+:root {
+  --ion-color-primary: #e2725b;
+  --ion-color-primary-rgb: 226, 114, 91;
+  --ion-color-primary-contrast: #fff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #b95a48;
+  --ion-color-primary-tint: #e98a74;
+}
+
+ion-toolbar[color="primary"],
+.ion-color-primary,
+ion-header,
+ion-toolbar {
+  --background: #e2725b !important;
+  --color: #fff !important;
+}
+
+ion-title,
+ion-toolbar,
+ion-header,
+ion-label,
+ion-button,
+ion-icon,
+ion-item,
+ion-buttons,
+.home-title,
+.home-subtitle,
+.home-section-content h2,
+.home-section-content p,
+.home-benefits li,
+.home-results li {
+  color: initial !important;
+}
+
+.home-hero-bg {
+  background: linear-gradient(135deg, #e2725b 0%, #fff 100%);
+}
+
+.home-section,
+.home-section-content {
+  background: #e2725b !important;
+  color: #fff !important;
+}
+
+.home-section-dark {
+  background: #e2725b !important;
+  color: #fff !important;
+}
+
+.home-section-cta {
+  background: linear-gradient(90deg, #e2725b 0%, #fff 100%) !important;
+}
+
+.home-section-cta h2 {
+  color: #e2725b !important;
+  background: #fff;
+  padding: 0.2em 0.7em;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.home-section-cta ion-button {
+  --background: #fff;
+  --color: #e2725b;
+  font-weight: bold;
+  margin-top: 1.2em;
+}

@@ -6,29 +6,22 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonList,
-  IonItem,
-  IonLabel,
   IonButton,
   IonIcon,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
   IonCardContent,
-  IonButtons,
-  IonModal,
+  IonLabel,
+  IonItem,
   IonSegment,
   IonSegmentButton,
+  IonModal, // Added
+  IonButtons, // Added
 } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria } from './data.service';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
-declare var google: any;
+import { doc, getDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-carta',
@@ -40,31 +33,25 @@ declare var google: any;
     IonHeader,
     IonTitle,
     IonToolbar,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonList,
-    IonItem,
-    IonLabel,
     IonButton,
     IonIcon,
     IonCard,
-    IonCardHeader,
-    IonCardTitle,
     IonCardContent,
-    IonButtons,
-    IonModal,
     FormsModule,
     IonSegment,
     IonSegmentButton,
+    IonModal, // Added
+    IonButtons, // Added
+    IonItem, // Añadido para solucionar error NG8001
+    IonLabel, // Añadido para solucionar error NG8001
     CommonModule,
   ],
 })
 export class CartaPage implements OnInit {
   mesa: string = '';
-  categorias$: Observable<Categoria[]>;
-  productos$: Observable<Producto[]>;
-  comandas$: Observable<any[]>;
+  categorias$: Observable<Categoria[]> = undefined!;
+  productos$: Observable<Producto[]> = undefined!;
+  comandas$: Observable<any[]> = undefined!;
   productos: Producto[] = [];
   categorias: Categoria[] = [];
   historialComandasMesa: any[] = [];
@@ -76,162 +63,114 @@ export class CartaPage implements OnInit {
   pagoSolicitado: boolean = false;
   barId: string = '';
   mostrarResumenPago: boolean = false;
-  idioma: string = 'es';
-  idiomas = [
-    { code: 'es', label: 'Español' },
-    { code: 'en', label: 'English' },
-    { code: 'fr', label: 'Français' },
-    { code: 'it', label: 'Italiano' },
-    { code: 'de', label: 'Deutsch' },
-  ];
-  textos: any = {};
-  textosBase: any = {
-    carta: 'Carta',
-    mesa: 'Mesa',
-    resumen: 'Resumen del pedido',
-    total: 'Total',
-    enviarPedido: 'Enviar pedido',
-    sinPedido: 'Sin pedido',
-    noProductos: 'No hay productos en el pedido de esta mesa.',
-    pagoSolicitado: 'Pago solicitado',
-    pagoSolicitadoMsg:
-      'El pago de esta mesa ha sido solicitado. No se pueden añadir más productos hasta que el administrador confirme el pago.',
-    alergenos: 'Alergenos',
-    opciones: 'Opciones',
-    anadir: 'Añadir',
-    quitar: 'Quitar',
-    categoria: 'Categoría',
-    precio: 'Precio',
-  };
+  modalResumenAbierto = false;
+  mostrarHistorial: boolean = false;
+  mostrarCarta: boolean = true;
+
+  // Variables para imagen y nombre del restaurante
+  restauranteNombre: string = '';
+  restauranteImg: string = '';
+
+  // Imagen ampliada para modal
+  imagenAmpliada: string | null = null;
 
   constructor(
     private dataService: DataService,
-    private route: ActivatedRoute,
-    private http: HttpClient
-  ) {
-    this.barId = this.dataService.getBarId();
-    this.categorias$ = this.dataService.getCategorias(this.barId);
-    this.productos$ = this.dataService.getProductos(this.barId);
-    this.comandas$ = this.dataService.getComandas(this.barId);
-  }
+    private route: ActivatedRoute
+  ) {}
 
-  ngOnInit() {
-    this.route.queryParams.subscribe((qparams) => {
-      this.mesa = qparams['mesa'] || '';
-      this.comandas$.subscribe((comandas) => {
-        this.historialComandasMesa = comandas
-          .filter((c: any) => c.mesa == this.mesa)
-          .sort(
-            (a: any, b: any) =>
-              new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-          );
-        this.comandaMesa = this.historialComandasMesa[0] || null;
-        this.pagoSolicitado = this.historialComandasMesa.some(
-          (c: any) => c.estado === 'pago_pendiente'
-        );
-      });
-    });
-    this.categorias$.subscribe((cats) => {
-      this.categorias = cats;
-      if (this.categorias.length) {
-        this.categoriaSeleccionada = this.categorias[0].nombre;
-      }
-    });
-    this.productos$.subscribe((prods) => {
-      this.productos = prods;
-    });
-    this.setIdioma('es');
-    this.initGoogleTranslate();
-  }
-
-  initGoogleTranslate() {
-    if ((window as any).google && (window as any).google.translate) {
-      this.renderGoogleTranslate();
-    } else {
-      const script = document.createElement('script');
-      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-      document.body.appendChild(script);
-      (window as any).googleTranslateElementInit = () => {
-        this.renderGoogleTranslate();
-      };
-    }
-  }
-
-  renderGoogleTranslate() {
-    new google.translate.TranslateElement({
-      pageLanguage: 'es',
-      includedLanguages: 'es,en,fr,it,de',
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-      autoDisplay: false
-    }, 'google_translate_element');
-  }
-
-  setIdioma(idioma: string) {
-    this.idioma = idioma;
-    // Traduce textos base
-    const keys = Object.keys(this.textosBase);
-    const traducciones: any = {};
-    let pendientes = keys.length;
-    keys.forEach((k) => {
-      this.traducir(this.textosBase[k], idioma).then((trad) => {
-        traducciones[k] = trad;
-        pendientes--;
-        if (pendientes === 0) {
-          this.textos = traducciones;
+  async ngOnInit() {
+    // Usar barId de la ruta si existe (path param), si no, query param, si no, localStorage
+    this.route.paramMap.subscribe(async (params) => {
+      const barIdFromPath = params.get('barId');
+      this.route.queryParams.subscribe(async (qparams) => {
+        this.mesa = qparams['mesa'] || '';
+        if (barIdFromPath) {
+          this.barId = barIdFromPath;
+          localStorage.setItem('barId', this.barId);
+        } else if (qparams['barId']) {
+          this.barId = qparams['barId'];
+          localStorage.setItem('barId', this.barId);
+        } else if (localStorage.getItem('barId')) {
+          this.barId = localStorage.getItem('barId')!;
         }
-      });
-    });
-    // Traduce categorías
-    if (this.categorias && this.categorias.length) {
-      this.categorias.forEach((cat) => {
-        this.traducir(cat.nombre, idioma).then(
-          (trad) => (cat.nombreTrad = trad)
-        );
-      });
-    }
-    // Traduce productos
-    if (this.productos && this.productos.length) {
-      this.productos.forEach((prod) => {
-        this.traducir(prod.nombre, idioma).then(
-          (trad) => (prod.nombreTrad = trad)
-        );
-        if (prod.descripcion) {
-          this.traducir(prod.descripcion, idioma).then(
-            (trad) => (prod.descripcionTrad = trad)
+        if (!this.barId) {
+          console.log(
+            '[DEBUG] barId no encontrado en path, query ni localStorage. Params:',
+            params,
+            'Query:',
+            qparams,
+            'localStorage:',
+            localStorage.getItem('barId')
           );
-        }
-        if (prod.alergenos) {
-          this.traducir(prod.alergenos, idioma).then(
-            (trad) => (prod.alergenosTrad = trad)
+          alert(
+            'No se ha encontrado el identificador del bar. Escanee el QR correcto o contacte con el establecimiento.'
           );
+          return;
         }
-        if (prod.opciones && prod.opciones.length) {
-          if (!prod.opcionesTrad) prod.opcionesTrad = [];
-          prod.opciones.forEach((op, idx) => {
-            this.traducir(op, idioma).then(
-              (trad) => (prod.opcionesTrad![idx] = trad)
+        // Si el barId viene de la URL (usuario no logueado), fuerza la carga desde Firestore
+        console.log('[DEBUG] Llamada a Firestore con barId:', this.barId);
+        this.categorias$ = this.dataService.getCategorias(this.barId);
+        this.productos$ = this.dataService.getProductos(this.barId);
+        this.comandas$ = this.dataService.getComandas(this.barId);
+        this.categorias$.subscribe((cats) => {
+          console.log('[DEBUG] Respuesta Firestore categorias:', cats);
+        });
+        this.productos$.subscribe((prods) => {
+          console.log('[DEBUG] Respuesta Firestore productos:', prods);
+        });
+        this.comandas$.subscribe((comandas) => {
+          console.log('[DEBUG] Respuesta Firestore comandas:', comandas);
+          const antesPago = this.pagoSolicitado;
+          this.historialComandasMesa = comandas
+            .filter((c: any) => c.mesa == this.mesa)
+            .sort(
+              (a: any, b: any) =>
+                new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
             );
-          });
-        }
+          this.comandaMesa = this.historialComandasMesa[0] || null;
+          this.pagoSolicitado = this.historialComandasMesa.some(
+            (c: any) => c.estado === 'pago_pendiente'
+          );
+          // Si ya no hay comandas para la mesa, limpiar la vista local
+          if (this.historialComandasMesa.length === 0) {
+            this.comandaMesa = null;
+            this.pagoSolicitado = false;
+            this.seleccionados = {};
+            this.opcionSeleccionTemp = {};
+          }
+        });
+        this.categorias$.subscribe((cats) => {
+          this.categorias = cats;
+          if (this.categorias.length && !this.categoriaSeleccionada) {
+            this.categoriaSeleccionada = this.categorias[0].nombre;
+          }
+        });
+        this.productos$.subscribe((prods) => {
+          this.productos = prods;
+        });
       });
-    }
+    });
   }
 
-  traducir(texto: string, idioma: string): Promise<string> {
-    if (!texto || idioma === 'es') return Promise.resolve(texto);
-    return this.http
-      .post<any>('https://translate.argosopentech.com/translate', {
-        q: texto,
-        source: 'es',
-        target: idioma,
-        format: 'text',
-      })
-      .toPromise()
-      .then((res) => res.translatedText)
-      .catch(() => texto);
+  async cargarDatosRestaurante() {
+    try {
+      const barDoc = doc(this.dataService['firestore'], `bares/${this.barId}`);
+      const barSnap = await getDoc(barDoc);
+      if (barSnap.exists()) {
+        const data: any = barSnap.data();
+        this.restauranteNombre = data.nombre || '';
+        this.restauranteImg = data.imagen || '';
+      }
+    } catch (e) {
+      this.restauranteNombre = '';
+      this.restauranteImg = '';
+    }
   }
 
   solicitarPago() {
+    // Descargar el historial en PDF antes de solicitar el pago
+    this.descargarInformeMesa();
     this.comandas$.subscribe((comandas) => {
       this.historialComandasMesa
         .filter((c: any) => c.mesa == this.mesa && c.estado !== 'pagado')
@@ -241,24 +180,18 @@ export class CartaPage implements OnInit {
         });
       this.mostrarResumenPago = true;
       this.pagoSolicitado = true;
+      // Recargar la página una sola vez tras solicitar el pago
+      if (!window['pagoRecargado']) {
+        window['pagoRecargado'] = true;
+        setTimeout(() => window.location.reload(), 300);
+      }
     });
   }
 
-  // Al cargar comandas, detecta si hay pago solicitado
-  cargarComandaMesa() {
-    if (!this.mesa) return;
-    const comandas = JSON.parse(localStorage.getItem('comandas') || '[]');
-    this.historialComandasMesa = comandas
-      .filter((c: any) => c.mesa == this.mesa)
-      .sort(
-        (a: any, b: any) =>
-          new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-      );
-    this.comandaMesa = this.historialComandasMesa[0] || null;
-    // Si alguna comanda está en pago_pendiente, bloquea añadir
-    this.pagoSolicitado = this.historialComandasMesa.some(
-      (c: any) => c.estado === 'pago_pendiente'
-    );
+  confirmarSolicitarPago() {
+    if (confirm('¿Desea solicitar el pago?')) {
+      this.solicitarPago();
+    }
   }
 
   cerrarResumenPago() {
@@ -301,8 +234,85 @@ export class CartaPage implements OnInit {
     alert('¡Pedido enviado!');
   }
 
-  pagarMesa() {
-    this.mostrarResumenPago = true;
+  async pagarMesa() {
+    const confirmar = confirm(
+      '¿Quieres descargar el informe de todos los pedidos de la mesa antes de pagar?'
+    );
+    if (confirmar) {
+      this.descargarInformeMesa();
+    }
+    // Limpiar todas las comandas de la mesa
+    this.comandas$.subscribe((comandas) => {
+      const comandasMesa = comandas.filter((c: any) => c.mesa == this.mesa);
+      comandasMesa.forEach((c: any) => {
+        this.dataService.deleteComanda(this.barId, c.id);
+      });
+    });
+    this.mostrarResumenPago = false;
+    this.pagoSolicitado = false;
+    this.comandaMesa = null;
+    this.historialComandasMesa = [];
+    this.seleccionados = {};
+    this.opcionSeleccionTemp = {};
+    alert('La mesa ha sido limpiada.');
+  }
+
+  async descargarInformeMesa() {
+    // Agrupar productos por id+nombre+opciones
+    const agrupados: {
+      [key: string]: {
+        nombre: string;
+        opciones: string[];
+        cantidad: number;
+        precio: number;
+      };
+    } = {};
+    for (const comanda of this.historialComandasMesa) {
+      for (const item of comanda.items) {
+        const prod = this.productos.find((p) => p.id === item.id);
+        if (!prod) continue;
+        const key =
+          item.id +
+          '|' +
+          (item.nombre || '') +
+          '|' +
+          (item.opciones ? item.opciones.join(',') : '');
+        if (!agrupados[key]) {
+          agrupados[key] = {
+            nombre: item.nombre,
+            opciones: item.opciones || [],
+            cantidad: 0,
+            precio: prod.precio,
+          };
+        }
+        agrupados[key].cantidad += item.cantidad;
+      }
+    }
+    // Generar PDF agrupado
+    const jsPDF = (await import('jspdf')).jsPDF;
+    const doc = new jsPDF();
+    let y = 10;
+    doc.setFontSize(16);
+    doc.text(`Informe de mesa ${this.mesa}`, 10, y);
+    y += 10;
+    if (Object.keys(agrupados).length > 0) {
+      doc.setFontSize(13);
+      Object.values(agrupados).forEach((item) => {
+        let linea = `- ${item.nombre}`;
+        if (item.opciones.length) {
+          linea += ` (${item.opciones.join(', ')})`;
+        }
+        linea += ` x${item.cantidad} (${item.precio.toFixed(2)}€ c/u)`;
+        doc.text(linea, 12, y);
+        y += 7;
+      });
+      y += 4;
+      doc.setFontSize(14);
+      doc.text(`Total: ${this.getTotalHistorialMesa().toFixed(2)} €`, 10, y);
+    } else {
+      doc.text('No hay datos para esta mesa.', 10, y);
+    }
+    doc.save(`informe_mesa_${this.mesa}.pdf`);
   }
 
   // Devuelve true si el producto requiere opción y no se ha seleccionado ninguna
@@ -380,6 +390,11 @@ export class CartaPage implements OnInit {
   }
 
   getProductosPorCategoriaSeleccionada() {
+    // Si no hay categoría seleccionada pero hay categorías, selecciona la primera
+    if (!this.categoriaSeleccionada && this.categorias.length) {
+      this.categoriaSeleccionada = this.categorias[0].nombre;
+    }
+    if (!this.categoriaSeleccionada) return this.productos;
     return this.productos.filter(
       (p) => p.categoria === this.categoriaSeleccionada
     );
@@ -417,5 +432,17 @@ export class CartaPage implements OnInit {
 
   getOpcionSeleccionada(producto: Producto): string {
     return this.opcionSeleccionTemp[producto.id] || '';
+  }
+
+  abrirResumenPedido() {
+    this.modalResumenAbierto = true;
+  }
+
+  abrirImagenAmpliada(url: string) {
+    this.imagenAmpliada = url;
+  }
+
+  cerrarImagenAmpliada() {
+    this.imagenAmpliada = null;
   }
 }

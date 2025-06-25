@@ -234,6 +234,31 @@ export class DataService {
     return null;
   }
 
+  // --- Historial de pedidos ---
+  // Guarda un pedido en el historial
+  addHistorial(barId: string, pedido: any) {
+    const ref = collection(this.firestore, `bares/${barId}/historial`);
+    return addDoc(ref, pedido);
+  }
+
+  // Devuelve el historial de pedidos
+  getHistorial(barId: string) {
+    const ref = collection(this.firestore, `bares/${barId}/historial`);
+    const q = query(ref, orderBy('fecha', 'desc'));
+    return collectionData(q, { idField: 'id' });
+  }
+
+  // Devuelve el historial de pedidos filtrado por fecha y mesa
+  getHistorialFiltrado(barId: string, fecha: string, mesa?: string) {
+    const ref = collection(this.firestore, `bares/${barId}/historial`);
+    let filtros = [where('fechaDia', '==', fecha)];
+    if (mesa) {
+      filtros.push(where('mesa', '==', mesa));
+    }
+    const q = query(ref, ...filtros, orderBy('fecha', 'desc'));
+    return collectionData(q, { idField: 'id' });
+  }
+
   // --- Utilidad: obtener barId actual (desde localStorage o auth) ---
   getBarId(): string {
     return localStorage.getItem('usuario') || 'bar-demo';

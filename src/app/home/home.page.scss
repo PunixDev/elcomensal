@@ -25,3 +25,176 @@
 #container a {
   text-decoration: none;
 }
+
+.home-hero-bg {
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  min-height: 100vh;
+}
+
+.home-hero-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5em 0 2em 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 2.5em;
+}
+
+.home-hero-text {
+  flex: 1 1 350px;
+  min-width: 320px;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.home-logo {
+  width: 220px;
+  max-width: 80vw;
+  margin-bottom: 1.2em;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .home-logo {
+    width: 70vw;
+    max-width: 98vw;
+  }
+}
+
+.home-title {
+  font-size: 2.1em;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 0.3em;
+}
+
+.home-subtitle {
+  font-size: 1.25em;
+  font-weight: 600;
+  color: #3880ff;
+  margin-bottom: 1.2em;
+}
+
+.home-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2em 0;
+}
+.home-benefits li {
+  display: flex;
+  align-items: center;
+  font-size: 1.08em;
+  margin-bottom: 0.7em;
+  color: #333;
+}
+.home-benefits ion-icon {
+  font-size: 1.4em;
+  margin-right: 0.7em;
+}
+
+.home-cta {
+  margin-bottom: 2em;
+}
+
+.home-hero-images {
+  flex: 1 1 350px;
+  min-width: 320px;
+  max-width: 480px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2em;
+  justify-content: center;
+  align-items: center;
+}
+.home-app-img {
+  width: 46%;
+  max-width: 210px;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px 0 rgba(56, 128, 255, 0.1);
+  background: #fff;
+  object-fit: cover;
+  margin-bottom: 0.5em;
+}
+
+.home-section {
+  background: #fff;
+  padding: 2.5em 0 2.5em 0;
+  border-bottom: 1px solid #e0e7ff;
+}
+.home-section-dark {
+  background: #f4f6fb;
+}
+.home-section-content {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+.home-section-content h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-bottom: 0.7em;
+  color: #222;
+}
+.home-section-content p {
+  font-size: 1.1em;
+  color: #444;
+  margin-bottom: 1.1em;
+}
+.home-results {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 400px;
+}
+.home-results li {
+  font-size: 1.1em;
+  margin-bottom: 0.7em;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.7em;
+}
+.home-section-cta {
+  background: linear-gradient(90deg, #3880ff 0%, #4dd599 100%);
+}
+.home-section-cta h2 {
+  color: #fff;
+}
+.home-section-cta ion-button {
+  --background: #fff;
+  --color: #3880ff;
+  font-weight: bold;
+  margin-top: 1.2em;
+}
+
+@media (max-width: 900px) {
+  .home-hero-section {
+    flex-direction: column;
+    gap: 1.5em;
+    padding: 1.2em 0 1.2em 0;
+  }
+  .home-hero-images {
+    flex-direction: row;
+    gap: 0.7em;
+  }
+}
+@media (max-width: 600px) {
+  .home-hero-section {
+    padding: 0.5em 0 0.5em 0;
+  }
+  .home-title {
+    font-size: 1.3em;
+  }
+  .home-subtitle {
+    font-size: 1em;
+  }
+  .home-app-img {
+    width: 98%;
+    max-width: 100vw;
+  }
+}

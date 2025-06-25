@@ -21,9 +21,11 @@ import {
   IonBackButton,
   IonTextarea,
   IonIcon,
+  IonItemDivider,
 } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria } from '../data.service';
 import { Observable } from 'rxjs';
+import { CategoryFilterPipe } from './categoryFilter.pipe';
 
 @Component({
   selector: 'app-productos',
@@ -50,8 +52,10 @@ import { Observable } from 'rxjs';
     IonBackButton,
     IonTextarea,
     IonIcon,
+    IonItemDivider,
     CommonModule,
     FormsModule,
+    CategoryFilterPipe,
   ],
 })
 export class ProductosPage implements OnInit {
@@ -76,11 +80,17 @@ export class ProductosPage implements OnInit {
   editOpcionTemp = '';
   barId: string;
   intentadoAgregar = false;
+  categorias: Categoria[] = [];
+  categoriasConOpen: { nombre: string; _open: boolean }[] = [];
 
   constructor(private dataService: DataService) {
     this.barId = this.dataService.getBarId();
     this.productos$ = this.dataService.getProductos(this.barId);
     this.categorias$ = this.dataService.getCategorias(this.barId);
+    this.categorias$.subscribe((cats) => {
+      this.categorias = cats;
+      this.categoriasConOpen = cats.map((cat) => ({ ...cat, _open: false }));
+    });
   }
 
   ngOnInit() {}
