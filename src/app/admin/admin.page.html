@@ -36,11 +36,11 @@
       </ion-item>
       <ion-item *ngIf="!isSubscribed" routerLink="/suscripcion" color="primary">
         <ion-icon name="card" slot="start" aria-hidden="true"></ion-icon>
-        Suscribirse
+        {{ 'ADMIN.SUBSCRIBE' | translate }}
       </ion-item>
       <ion-item *ngIf="isSubscribed" routerLink="/suscripcion" color="success">
         <ion-icon name="card" slot="start" aria-hidden="true"></ion-icon>
-        Gestionar suscripción
+        {{ 'ADMIN.MANAGE_SUBSCRIPTION' | translate }}
       </ion-item>
       <ion-item (click)="logout()">
         <ion-icon name="log-out" slot="start" aria-hidden="true"></ion-icon>
@@ -99,12 +99,16 @@
         <ng-template #trialBlock>
           <div *ngIf="trialActive; else expiredBlock">
             <ion-label color="warning"
-              ><strong>Prueba gratuita activa</strong></ion-label
+              ><strong
+                >{{ 'ADMIN.TRIAL_ACTIVE' | translate }}</strong
+              ></ion-label
             >
           </div>
           <ng-template #expiredBlock>
             <ion-label color="danger"
-              ><strong>Sin suscripción</strong></ion-label
+              ><strong
+                >{{ 'ADMIN.NO_SUBSCRIPTION' | translate }}</strong
+              ></ion-label
             >
             <ion-button
               color="medium"
@@ -113,14 +117,14 @@
               style="margin-bottom: 0.5em"
             >
               <ion-icon name="archive" slot="start"></ion-icon>
-              Historial de pedidos
+              {{ 'NAVIGATION.HISTORY' | translate }}
             </ion-button>
             <ion-button
               color="primary"
               routerLink="/suscripcion"
               style="margin-top: 0.5em"
             >
-              Suscribirse
+              {{ 'ADMIN.SUBSCRIBE' | translate }}
             </ion-button>
           </ng-template>
         </ng-template>
@@ -135,14 +139,14 @@
             name="person-circle"
             style="font-size: 2rem; vertical-align: middle"
           ></ion-icon>
-          Bienvenido al panel de administración
+          {{ 'ADMIN.WELCOME_PANEL' | translate }}
         </h2>
         <p>
           <ion-icon
             name="help-circle"
             style="vertical-align: middle"
           ></ion-icon>
-          Selecciona una opción del menú para gestionar el restaurante.
+          {{ 'ADMIN.SELECT_OPTION' | translate }}
         </p>
       </ion-col>
     </ion-row>
@@ -268,7 +272,9 @@
           </ion-card-content>
         </ion-card>
         <ion-card *ngIf="!comandas.length">
-          <ion-card-content>No hay comandas pendientes.</ion-card-content>
+          <ion-card-content
+            >{{ 'ADMIN.NO_PENDING_ORDERS' | translate }}</ion-card-content
+          >
         </ion-card>
       </ion-col>
     </ion-row>

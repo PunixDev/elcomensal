@@ -82,7 +82,7 @@ export class ProductosPage implements OnInit {
   barId: string;
   intentadoAgregar = false;
   categorias: Categoria[] = [];
-  categoriasConOpen: { nombre: string; _open: boolean }[] = [];
+  categoriasConOpen: { nombre: string; id: string; _open: boolean }[] = [];
 
   constructor(private dataService: DataService) {
     this.barId = this.dataService.getBarId();
@@ -90,7 +90,10 @@ export class ProductosPage implements OnInit {
     this.categorias$ = this.dataService.getCategorias(this.barId);
     this.categorias$.subscribe((cats) => {
       this.categorias = cats;
-      this.categoriasConOpen = cats.map((cat) => ({ ...cat, _open: false }));
+      this.categoriasConOpen = cats.map((cat) => ({
+        ...cat,
+        _open: false,
+      }));
     });
   }
 
@@ -210,5 +213,10 @@ export class ProductosPage implements OnInit {
 
   eliminarEditOpcion(idx: number) {
     this.editOpciones.splice(idx, 1);
+  }
+
+  getNombreCategoria(cat: Categoria | undefined): string {
+    if (!cat) return '';
+    return typeof cat.nombre === 'string' ? cat.nombre : '';
   }
 }

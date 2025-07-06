@@ -153,9 +153,6 @@ export class CartaPage implements OnInit {
         });
         this.categorias$.subscribe((cats) => {
           this.categorias = cats;
-          if (this.categorias.length && !this.categoriaSeleccionada) {
-            this.categoriaSeleccionada = this.categorias[0].nombre;
-          }
         });
         this.productos$.subscribe((prods) => {
           this.productos = prods;
@@ -419,14 +416,19 @@ export class CartaPage implements OnInit {
     return Object.keys(this.seleccionados);
   }
 
-  seleccionarCategoria(nombre: string) {
-    this.categoriaSeleccionada = nombre;
+  seleccionarCategoria(id: string) {
+    this.categoriaSeleccionada = id;
+  }
+
+  getNombreCategoria(cat?: Categoria): string {
+    if (!cat) return '';
+    // Restaurar el comportamiento clásico: solo devolver el string tal cual se guardó
+    return typeof cat.nombre === 'string' ? cat.nombre : '';
   }
 
   getProductosPorCategoriaSeleccionada() {
-    // Si no hay categoría seleccionada pero hay categorías, selecciona la primera
     if (!this.categoriaSeleccionada && this.categorias.length) {
-      this.categoriaSeleccionada = this.categorias[0].nombre;
+      this.categoriaSeleccionada = this.categorias[0].id;
     }
     if (!this.categoriaSeleccionada) return this.productos;
     return this.productos.filter(
@@ -486,5 +488,9 @@ export class CartaPage implements OnInit {
       backdropDismiss: true,
     });
     return await popover.present();
+  }
+
+  getCategoriaSeleccionada(): Categoria | undefined {
+    return this.categorias.find((c) => c.id === this.categoriaSeleccionada);
   }
 }

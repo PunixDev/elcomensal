@@ -22,16 +22,16 @@
   <div class="categorias-scroll">
     <button
       *ngFor="let cat of categorias"
-      (click)="seleccionarCategoria(cat.nombre)"
-      [class.selected]="categoriaSeleccionada === cat.nombre"
+      (click)="seleccionarCategoria(cat.id)"
+      [class.selected]="categoriaSeleccionada === cat.id"
       class="categoria-btn"
     >
-      {{cat.nombre}}
+      {{ getNombreCategoria(cat) }}
     </button>
   </div>
 
   <div class="categoria-titulo" *ngIf="categoriaSeleccionada">
-    <h2>{{categoriaSeleccionada}}</h2>
+    <h2>{{ getNombreCategoria(getCategoriaSeleccionada()) }}</h2>
   </div>
 
   <div class="productos-lista">

@@ -91,7 +91,14 @@
     "VIEW_STATISTICS": "View Statistics",
     "SYSTEM_SETTINGS": "System Settings",
     "USER_MANAGEMENT": "User Management",
-    "REPORTS": "Reports"
+    "REPORTS": "Reports",
+    "SUBSCRIBE": "Subscribe",
+    "MANAGE_SUBSCRIPTION": "Manage subscription",
+    "TRIAL_ACTIVE": "Free trial active",
+    "NO_SUBSCRIPTION": "No subscription",
+    "WELCOME_PANEL": "Welcome to the admin panel",
+    "SELECT_OPTION": "Select an option from the menu to manage the restaurant.",
+    "NO_PENDING_ORDERS": "No pending orders."
   },
   "PRODUCTS": {
     "TITLE": "Product Management",

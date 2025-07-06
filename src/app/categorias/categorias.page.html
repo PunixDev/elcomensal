@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>
       <ion-icon name="albums" slot="start" style="margin-right: 8px"></ion-icon>
-      {{ 'CATEGORIES.TITLE' | translate }}
+      Categorías
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -19,13 +19,13 @@
             name="add-circle"
             style="vertical-align: middle; margin-right: 8px"
           ></ion-icon>
-          {{ 'CATEGORIES.ADD_CATEGORY' | translate }}
+          Añadir categoría
         </h2>
         <div class="form-fields">
           <ion-item class="form-item">
             <ion-icon name="pricetag" slot="start"></ion-icon>
             <ion-input
-              [placeholder]="'CATEGORIES.NAME' | translate"
+              placeholder="Nombre de la categoría"
               [(ngModel)]="nuevaCategoria"
               name="nombreCategoria"
               required
@@ -39,7 +39,7 @@
           class="btn-agregar"
         >
           <ion-icon name="add" slot="start"></ion-icon>
-          {{ 'CATEGORIES.ADD_CATEGORY' | translate }}
+          Añadir categoría
         </ion-button>
       </div>
     </form>
@@ -51,7 +51,7 @@
           <ion-item *ngFor="let categoria of categorias$ | async">
             <ng-container *ngIf="editando !== categoria.id; else editBlock">
               <ion-icon name="pricetag" slot="start"></ion-icon>
-              <ion-label>{{ categoria.nombre }}</ion-label>
+              <ion-label>{{ getNombreCategoria(categoria) }}</ion-label>
               <ion-button
                 fill="clear"
                 color="primary"

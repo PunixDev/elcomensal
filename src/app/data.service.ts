@@ -18,13 +18,11 @@ import { Observable, firstValueFrom } from 'rxjs';
 export interface Categoria {
   id: string;
   nombre: string;
-  nombreTrad?: string;
 }
 
 export interface Producto {
   id: string;
   nombre: string;
-  nombreTrad?: string;
   categoria: string;
   precio: number;
   imagen?: string | null;

@@ -91,7 +91,14 @@
     "VIEW_STATISTICS": "Visualizza Statistiche",
     "SYSTEM_SETTINGS": "Impostazioni Sistema",
     "USER_MANAGEMENT": "Gestione Utenti",
-    "REPORTS": "Report"
+    "REPORTS": "Report",
+    "SUBSCRIBE": "Abbonati",
+    "MANAGE_SUBSCRIPTION": "Gestisci abbonamento",
+    "TRIAL_ACTIVE": "Prova gratuita attiva",
+    "NO_SUBSCRIPTION": "Nessun abbonamento",
+    "WELCOME_PANEL": "Benvenuto nel pannello di amministrazione",
+    "SELECT_OPTION": "Seleziona un'opzione dal menu per gestire il ristorante.",
+    "NO_PENDING_ORDERS": "Nessun ordine in sospeso."
   },
   "PRODUCTS": {
     "TITLE": "Gestione Prodotti",

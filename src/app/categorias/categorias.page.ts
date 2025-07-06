@@ -20,7 +20,6 @@ import {
 } from '@ionic/angular/standalone';
 import { DataService, Categoria } from '../data.service';
 import { Observable } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-categorias',
@@ -45,7 +44,6 @@ import { TranslateModule } from '@ngx-translate/core';
     IonIcon,
     CommonModule,
     FormsModule,
-    TranslateModule,
   ],
 })
 export class CategoriasPage implements OnInit {
@@ -78,13 +76,13 @@ export class CategoriasPage implements OnInit {
 
   iniciarEdicion(categoria: Categoria) {
     this.editando = categoria.id;
-    this.editNombre = categoria.nombre;
+    this.editNombre = categoria.nombre as string;
   }
 
   guardarEdicion(id: string) {
     if (this.editando && this.editNombre.trim()) {
       const categoria: Categoria = {
-        id: this.editando,
+        id: this.editando!,
         nombre: this.editNombre.trim(),
       };
       this.dataService.updateCategoria(this.barId, categoria);
@@ -96,5 +94,10 @@ export class CategoriasPage implements OnInit {
   cancelarEdicion() {
     this.editando = null;
     this.editNombre = '';
+  }
+
+  getNombreCategoria(cat: Categoria): string {
+    if (!cat) return '';
+    return typeof cat.nombre === 'string' ? cat.nombre : '';
   }
 }

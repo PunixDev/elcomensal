@@ -9,7 +9,7 @@
         slot="start"
         style="margin-right: 8px"
       ></ion-icon>
-      {{ 'PRODUCTS.TITLE' | translate }}
+      Productos
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -23,7 +23,7 @@
             name="add-circle"
             style="vertical-align: middle; margin-right: 8px"
           ></ion-icon>
-          {{ 'PRODUCTS.ADD_PRODUCT' | translate }}
+          Añadir producto
         </h2>
         <div class="form-fields">
           <ion-item
@@ -32,7 +32,7 @@
           >
             <ion-icon name="pizza" slot="start"></ion-icon>
             <ion-input
-              [placeholder]="'PRODUCTS.NAME' | translate"
+              placeholder="Nombre del producto"
               [(ngModel)]="nuevoNombre"
               name="nombre"
               required
@@ -41,7 +41,7 @@
           <ion-item class="form-item">
             <ion-icon name="document-text" slot="start"></ion-icon>
             <ion-textarea
-              [placeholder]="'PRODUCTS.DESCRIPTION' | translate"
+              placeholder="Descripción"
               [(ngModel)]="nuevaDescripcion"
               name="descripcion"
             ></ion-textarea>
@@ -49,7 +49,7 @@
           <ion-item class="form-item">
             <ion-icon name="leaf" slot="start"></ion-icon>
             <ion-textarea
-              [placeholder]="'PRODUCTS.ALLERGENS' | translate"
+              placeholder="Alergenos"
               [(ngModel)]="nuevosAlergenos"
               name="alergenos"
             ></ion-textarea>
@@ -57,7 +57,7 @@
           <ion-item class="form-item">
             <ion-icon name="options" slot="start"></ion-icon>
             <ion-input
-              [placeholder]="'PRODUCTS.NEW_OPTION' | translate"
+              placeholder="Nueva opción"
               [(ngModel)]="opcionTemp"
               name="opcionTemp"
             ></ion-input>
@@ -129,8 +129,8 @@
             >
               <ion-select-option
                 *ngFor="let cat of categorias$ | async"
-                [value]="cat.nombre"
-                >{{cat.nombre}}</ion-select-option
+                [value]="cat.id"
+                >{{ getNombreCategoria(cat) }}</ion-select-option
               >
             </ion-select>
           </ion-item>
@@ -142,7 +142,7 @@
           class="btn-agregar"
         >
           <ion-icon name="add" slot="start"></ion-icon>
-          {{ 'PRODUCTS.ADD_PRODUCT' | translate }}
+          Añadir producto
         </ion-button>
       </div>
     </form>
@@ -168,11 +168,13 @@
                 slot="start"
                 *ngIf="cat._open"
               ></ion-icon>
-              <ion-label><strong>{{cat.nombre}}</strong></ion-label>
+              <ion-label
+                ><strong>{{ getNombreCategoria(cat) }}</strong></ion-label
+              >
             </ion-item>
             <div *ngIf="cat._open">
               <ng-container
-                *ngFor="let producto of (productos$ | async) | categoryFilter:cat.nombre"
+                *ngFor="let producto of (productos$ | async) | categoryFilter:cat.id"
               >
                 <ion-item *ngIf="editando !== producto.id">
                   <ion-avatar slot="start" *ngIf="producto.imagen">
@@ -234,7 +236,7 @@
                     (click)="iniciarEdicion(producto)"
                   >
                     <ion-icon name="create"></ion-icon>
-                    {{ 'COMMON.EDIT' | translate }}
+                    Editar
                   </ion-button>
                   <ion-button
                     fill="clear"
@@ -243,34 +245,34 @@
                     (click)="eliminarProducto(producto.id)"
                   >
                     <ion-icon name="trash-sharp"></ion-icon>
-                    {{ 'COMMON.DELETE' | translate }}
+                    Eliminar
                   </ion-button>
                 </ion-item>
                 <ion-item *ngIf="editando === producto.id">
                   <ion-input
                     [(ngModel)]="editNombre"
-                    [placeholder]="'PRODUCTS.NAME' | translate"
+                    placeholder="Nombre del producto"
                   ></ion-input>
                   <ion-select
                     [(ngModel)]="editCategoria"
-                    [placeholder]="'PRODUCTS.CATEGORY' | translate"
+                    placeholder="Categoría"
                   >
                     <ion-select-option
                       *ngFor="let cat of categorias$ | async"
-                      [value]="cat.nombre"
-                      >{{cat.nombre}}</ion-select-option
+                      [value]="cat.id"
+                      >{{ getNombreCategoria(cat) }}</ion-select-option
                     >
                   </ion-select>
                   <ion-textarea
-                    [placeholder]="'PRODUCTS.DESCRIPTION' | translate"
+                    placeholder="Descripción"
                     [(ngModel)]="editDescripcion"
                   ></ion-textarea>
                   <ion-textarea
-                    [placeholder]="'PRODUCTS.ALLERGENS' | translate"
+                    placeholder="Alergenos"
                     [(ngModel)]="editAlergenos"
                   ></ion-textarea>
                   <ion-input
-                    [placeholder]="'PRODUCTS.NEW_OPTION' | translate"
+                    placeholder="Nueva opción"
                     [(ngModel)]="editOpcionTemp"
                   ></ion-input>
                   <ion-button
@@ -279,7 +281,7 @@
                     (click)="agregarEditOpcion()"
                   >
                     <ion-icon name="add-circle" slot="start"></ion-icon>
-                    {{ 'PRODUCTS.ADD_OPTION' | translate }}
+                    Añadir opción
                   </ion-button>
                   <ion-list *ngIf="editOpciones.length">
                     <ion-item *ngFor="let op of editOpciones; let i = index">
@@ -305,7 +307,7 @@
                       type="number"
                       min="0"
                       step="0.01"
-                      [placeholder]="'PRODUCTS.PRICE' | translate"
+                      placeholder="Precio"
                       [(ngModel)]="editPrecio"
                     ></ion-input>
                   </ion-item>
@@ -316,7 +318,7 @@
                     (click)="guardarEdicion(producto.id)"
                   >
                     <ion-icon name="checkmark"></ion-icon>
-                    {{ 'COMMON.SAVE' | translate }}
+                    Guardar
                   </ion-button>
                   <ion-button
                     fill="clear"
@@ -325,7 +327,7 @@
                     (click)="cancelarEdicion()"
                   >
                     <ion-icon name="close"></ion-icon>
-                    {{ 'COMMON.CANCEL' | translate }}
+                    Cancelar
                   </ion-button>
                 </ion-item>
               </ng-container>
