@@ -1,21 +1,27 @@
 import { Component } from '@angular/core';
 import { StripeService } from '../stripe.service';
 import { IonContent, IonButton } from '@ionic/angular/standalone';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-suscripcion',
   standalone: true,
-  imports: [IonContent, IonButton],
+  imports: [IonContent, IonButton, TranslateModule],
   template: `
     <ion-content>
-      <h2>Suscríbete</h2>
-      <p>Prueba gratis 1 mes, luego 15 €/mes.</p>
-      <ion-button (click)="pagar()">Suscribirse</ion-button>
+      <h2>{{ 'SUBSCRIPTION.TITLE' | translate }}</h2>
+      <p>{{ 'SUBSCRIPTION.DESCRIPTION' | translate }}</p>
+      <ion-button (click)="pagar()">{{
+        'SUBSCRIPTION.BUTTON' | translate
+      }}</ion-button>
     </ion-content>
   `,
 })
 export class SuscripcionPage {
-  constructor(private stripeService: StripeService) {}
+  constructor(
+    private stripeService: StripeService,
+    private translate: TranslateService
+  ) {}
 
   async pagar() {
     // Debes obtener el sessionId desde tu backend
@@ -26,7 +32,7 @@ export class SuscripcionPage {
   async getSessionIdFromBackend(): Promise<string> {
     // Llama a tu backend para crear la sesión de Stripe
     // return await this.http.post<{id: string}>('/api/create-checkout-session', {}).toPromise().then(r => r.id);
-    alert('Debes implementar un backend para obtener el sessionId de Stripe.');
+    alert(this.translate.instant('SUBSCRIPTION.STRIPE_ALERT'));
     return '';
   }
 }

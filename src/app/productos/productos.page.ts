@@ -26,6 +26,7 @@ import {
 import { DataService, Producto, Categoria } from '../data.service';
 import { Observable } from 'rxjs';
 import { CategoryFilterPipe } from './categoryFilter.pipe';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-productos',
@@ -52,10 +53,10 @@ import { CategoryFilterPipe } from './categoryFilter.pipe';
     IonBackButton,
     IonTextarea,
     IonIcon,
-    IonItemDivider,
     CommonModule,
     FormsModule,
     CategoryFilterPipe,
+    TranslateModule,
   ],
 })
 export class ProductosPage implements OnInit {

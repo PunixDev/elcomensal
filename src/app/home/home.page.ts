@@ -13,6 +13,7 @@ import {
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
@@ -23,13 +24,11 @@ import { CommonModule } from '@angular/common';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonGrid,
-    IonRow,
-    IonCol,
     IonButton,
     IonIcon,
     IonButtons,
     CommonModule,
+    TranslateModule,
   ],
 })
 export class HomePage {

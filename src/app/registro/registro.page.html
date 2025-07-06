@@ -1,6 +1,12 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Registro de Bar</ion-title>
+    <ion-title>{{ 'REGISTER.TITLE' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentLanguagePopover($event)" fill="clear">
+        <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
+        <ion-icon name="chevron-down" size="small"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
@@ -9,7 +15,9 @@
       <ion-col size="12">
         <form (ngSubmit)="registrarBar()">
           <ion-item>
-            <ion-label position="floating">Nombre del bar</ion-label>
+            <ion-label position="floating"
+              >{{ 'REGISTER.BAR_NAME' | translate }}</ion-label
+            >
             <ion-input
               [(ngModel)]="nombreBar"
               name="nombreBar"
@@ -17,7 +25,9 @@
             ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating">Usuario administrador</ion-label>
+            <ion-label position="floating"
+              >{{ 'REGISTER.ADMIN_USERNAME' | translate }}</ion-label
+            >
             <ion-input
               [(ngModel)]="usuarioAdmin"
               name="usuarioAdmin"
@@ -25,7 +35,9 @@
             ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating">Contraseña</ion-label>
+            <ion-label position="floating"
+              >{{ 'REGISTER.PASSWORD' | translate }}</ion-label
+            >
             <ion-input
               [(ngModel)]="password"
               name="password"
@@ -34,7 +46,9 @@
             ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating">Correo de recuperación</ion-label>
+            <ion-label position="floating"
+              >{{ 'REGISTER.RECOVERY_EMAIL' | translate }}</ion-label
+            >
             <ion-input
               [(ngModel)]="correo"
               name="correo"
@@ -42,9 +56,9 @@
               required
             ></ion-input>
           </ion-item>
-          <ion-button expand="block" color="success" type="submit"
-            >Registrar Bar</ion-button
-          >
+          <ion-button expand="block" color="success" type="submit">
+            {{ 'REGISTER.REGISTER_BUTTON' | translate }}
+          </ion-button>
         </form>
         <ion-text color="danger" *ngIf="error">{{error}}</ion-text>
         <ion-text color="success" *ngIf="exito">{{exito}}</ion-text>

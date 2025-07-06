@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonHeader,
@@ -16,9 +16,14 @@ import {
   IonCardTitle,
   IonCardContent,
   IonButtons,
+  IonMenuButton,
 } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { PopoverController } from '@ionic/angular';
+import { LanguageService } from './language.service';
+import { LanguageSelectorComponent } from './language-selector.component';
 
 @Component({
   selector: 'app-generar-qr',
@@ -40,17 +45,26 @@ import { Router } from '@angular/router';
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
-    IonButtons, // Asegura que IonButtons está importado
+    IonButtons,
+    IonMenuButton,
     CommonModule,
     FormsModule,
+    TranslateModule,
+    LanguageSelectorComponent,
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [PopoverController],
 })
 export class GenerarQrPage {
   mesa: string = '';
   qrUrl: string = '';
   barId: string = '';
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private popoverController: PopoverController,
+    private languageService: LanguageService
+  ) {
     // Obtener barId del usuario logado (ajusta según tu lógica de login)
     const usuario = localStorage.getItem('usuario');
     this.barId = usuario ? usuario : 'bar-demo';
@@ -97,5 +111,22 @@ export class GenerarQrPage {
       `);
       win.document.close();
     }
+  }
+
+  getCurrentLanguageFlag(): string {
+    return this.languageService.getLanguageFlag(
+      this.languageService.getCurrentLanguage()
+    );
+  }
+
+  async presentLanguagePopover(event: any) {
+    const popover = await this.popoverController.create({
+      component: LanguageSelectorComponent,
+      event: event,
+      translucent: true,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    return await popover.present();
   }
 }

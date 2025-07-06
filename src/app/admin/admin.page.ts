@@ -23,9 +23,13 @@ import {
   IonButton,
   IonItemDivider,
   IonModal,
+  PopoverController,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { DataService } from '../data.service';
+import { LanguageService } from '../language.service';
+import { LanguageSelectorComponent } from '../language-selector.component';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -57,6 +61,7 @@ import { Observable } from 'rxjs';
     IonModal,
     CommonModule,
     FormsModule,
+    TranslateModule,
   ],
 })
 export class AdminPage implements OnInit {
@@ -77,7 +82,12 @@ export class AdminPage implements OnInit {
   isSubscribed: boolean = false;
   trialActive: boolean = false;
 
-  constructor(private router: Router, private dataService: DataService) {
+  constructor(
+    private router: Router,
+    private dataService: DataService,
+    private languageService: LanguageService,
+    private popoverController: PopoverController
+  ) {
     this.barId = this.dataService.getBarId();
     this.comandas$ = this.dataService.getComandas(this.barId);
     this.productos$ = this.dataService.getProductos(this.barId);
@@ -251,6 +261,10 @@ export class AdminPage implements OnInit {
     this.router.navigate(['/historial']);
   }
 
+  goToEstadisticas() {
+    this.router.navigate(['/admin/estadisticas']);
+  }
+
   imprimirInformeMesa() {
     // Imprime solo el contenido del informe
     const printContents = document.getElementById('informe-mesa')?.innerHTML;
@@ -341,5 +355,22 @@ export class AdminPage implements OnInit {
         }, 0)
       );
     }, 0);
+  }
+
+  getCurrentLanguageFlag(): string {
+    return this.languageService.getLanguageFlag(
+      this.languageService.getCurrentLanguage()
+    );
+  }
+
+  async presentLanguagePopover(event: any) {
+    const popover = await this.popoverController.create({
+      component: LanguageSelectorComponent,
+      event: event,
+      translucent: true,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    return await popover.present();
   }
 }

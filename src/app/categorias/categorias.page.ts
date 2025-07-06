@@ -20,6 +20,7 @@ import {
 } from '@ionic/angular/standalone';
 import { DataService, Categoria } from '../data.service';
 import { Observable } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-categorias',
@@ -44,6 +45,7 @@ import { Observable } from 'rxjs';
     IonIcon,
     CommonModule,
     FormsModule,
+    TranslateModule,
   ],
 })
 export class CategoriasPage implements OnInit {

@@ -18,7 +18,7 @@
     <ion-buttons slot="end">
       <ion-button color="light" (click)="goToLogin()">
         <ion-icon name="log-in" slot="start"></ion-icon>
-        Acceso Admin
+        {{ 'NAVIGATION.LOGIN' | translate }}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -38,31 +38,25 @@
           name="rocket"
           style="font-size: 2.2rem; vertical-align: middle; color: #ffb300"
         ></ion-icon>
-        La revolución digital para tu bar
+        {{ 'HOME.TITLE' | translate }}
       </h1>
-      <h2 class="home-subtitle">
-        Ahorra tiempo, vende más y haz felices a tus clientes
-      </h2>
+      <h2 class="home-subtitle">{{ 'HOME.WELCOME' | translate }}</h2>
       <ul class="home-benefits">
         <li>
           <ion-icon name="time" color="success"></ion-icon>
-          <span>Reduce esperas y errores en comandas</span>
+          <span>{{ 'HOME.QUICK_ACTIONS' | translate }}</span>
         </li>
         <li>
           <ion-icon name="happy" color="warning"></ion-icon>
-          <span>Mejora la satisfacción y experiencia del cliente</span>
+          <span>{{ 'HOME.POPULAR_PRODUCTS' | translate }}</span>
         </li>
         <li>
           <ion-icon name="cash" color="primary"></ion-icon>
-          <span>Incrementa la rotación y el ticket medio</span>
+          <span>{{ 'HOME.TOTAL_SALES' | translate }}</span>
         </li>
         <li>
           <ion-icon name="stats-chart" color="tertiary"></ion-icon>
-          <span>Control total y análisis de tu negocio en tiempo real</span>
-        </li>
-        <li>
-          <ion-icon name="cloud-upload" color="medium"></ion-icon>
-          <span>Sin instalaciones, accede desde cualquier lugar</span>
+          <span>{{ 'HOME.TODAY_STATS' | translate }}</span>
         </li>
       </ul>
       <div class="home-cta">

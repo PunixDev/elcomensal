@@ -1,6 +1,12 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
-    <ion-title>Iniciar Sesión</ion-title>
+    <ion-title>{{ 'LOGIN.TITLE' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentLanguagePopover($event)" fill="clear">
+        <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
+        <ion-icon name="chevron-down" size="small"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -11,7 +17,9 @@
         <form (ngSubmit)="login()">
           <ion-list lines="none">
             <ion-item>
-              <ion-label position="floating">Usuario</ion-label>
+              <ion-label position="floating"
+                >{{ 'LOGIN.USERNAME' | translate }}</ion-label
+              >
               <ion-input
                 type="text"
                 required
@@ -20,7 +28,9 @@
               ></ion-input>
             </ion-item>
             <ion-item>
-              <ion-label position="floating">Contraseña</ion-label>
+              <ion-label position="floating"
+                >{{ 'LOGIN.PASSWORD' | translate }}</ion-label
+              >
               <ion-input
                 type="password"
                 required
@@ -29,16 +39,16 @@
               ></ion-input>
             </ion-item>
           </ion-list>
-          <ion-button expand="block" color="primary" type="submit"
-            >Entrar</ion-button
-          >
+          <ion-button expand="block" color="primary" type="submit">
+            {{ 'LOGIN.LOGIN_BUTTON' | translate }}
+          </ion-button>
           <ion-button
             expand="block"
             fill="clear"
             color="secondary"
             [routerLink]="['/registro']"
           >
-            ¿Eres un bar nuevo? Regístrate aquí
+            {{ 'LOGIN.NO_ACCOUNT' | translate }}
           </ion-button>
           <ion-button
             expand="block"
@@ -46,7 +56,7 @@
             color="tertiary"
             [routerLink]="['/recuperar']"
           >
-            ¿Olvidaste tu contraseña?
+            {{ 'LOGIN.FORGOT_PASSWORD' | translate }}
           </ion-button>
           <ion-text color="danger" *ngIf="error">{{error}}</ion-text>
         </form>

@@ -1,7 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-button (click)="goToAdmin()" aria-label="Volver a administración">
+      <ion-button
+        (click)="goToAdmin()"
+        aria-label="{{ 'COMMON.BACK' | translate }}"
+      >
         <ion-icon name="arrow-back" aria-hidden="true"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -12,7 +15,7 @@
         style="margin-right: 8px"
         aria-hidden="true"
       ></ion-icon>
-      Generar QR de mesa
+      {{ 'QR_GENERATOR.TITLE' | translate }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -23,13 +26,15 @@
       <ion-col size="12" size-md="6" size-lg="4">
         <ion-card>
           <ion-card-header>
-            <ion-card-title>Generar QR para una mesa</ion-card-title>
+            <ion-card-title
+              >{{ 'QR_GENERATOR.TITLE' | translate }}</ion-card-title
+            >
           </ion-card-header>
           <ion-card-content>
             <ion-input
-              label="Número o nombre de mesa"
+              [label]="'QR_GENERATOR.TABLE_NUMBER' | translate"
               [(ngModel)]="mesa"
-              placeholder="Ej: 1, 2, VIP, Terraza..."
+              [placeholder]="'QR_GENERATOR.TABLE_LABEL' | translate"
               type="text"
             ></ion-input>
             <ion-button
@@ -39,12 +44,12 @@
               style="margin-top: 1em"
             >
               <ion-icon name="qr-code" slot="start"></ion-icon>
-              Generar QR
+              {{ 'QR_GENERATOR.GENERATE_QR' | translate }}
             </ion-button>
             <div *ngIf="qrUrl" style="margin-top: 2em; text-align: center">
               <img
                 [src]="qrUrl"
-                alt="QR Mesa"
+                alt="{{ 'QR_GENERATOR.QR_ALT' | translate }}"
                 style="background: #fff; padding: 8px; border-radius: 8px"
               />
               <div
@@ -54,25 +59,22 @@
                   color: var(--ion-color-medium);
                 "
               >
-                URL: <a [href]="qrUrl" target="_blank">{{qrUrl}}</a>
+                {{ 'QR_GENERATOR.URL_LABEL' | translate }}:
+                <a [href]="qrUrl" target="_blank">{{qrUrl}}</a>
               </div>
               <ion-button
                 expand="block"
                 color="success"
                 (click)="descargarQR()"
-                style="margin-top: 1em"
               >
-                <ion-icon name="download" slot="start"></ion-icon>
-                Descargar QR
+                {{ 'QR_GENERATOR.DOWNLOAD_QR' | translate }}
               </ion-button>
               <ion-button
                 expand="block"
-                color="tertiary"
+                color="secondary"
                 (click)="imprimirQR()"
-                style="margin-top: 0.5em"
               >
-                <ion-icon name="print" slot="start"></ion-icon>
-                Imprimir QR
+                {{ 'QR_GENERATOR.PRINT_QR' | translate }}
               </ion-button>
             </div>
           </ion-card-content>

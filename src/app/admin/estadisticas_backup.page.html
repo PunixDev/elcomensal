@@ -1,0 +1,463 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon
+        name="bar-chart"
+        slot="start"
+        style="margin-right: 8px"
+      ></ion-icon>
+      {{ 'STATISTICS.TITLE' | translate }}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentLanguagePopover($event)" fill="clear">
+        <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
+        <ion-icon name="chevron-down" size="small"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <!-- Botones de navegación -->
+  <div class="navegacion-estadisticas">
+    <ion-segment [(ngModel)]="seccionActiva" (ionChange)="cambiarSeccion()">
+      <ion-segment-button value="ventas">
+        <ion-icon name="bar-chart"></ion-icon>
+        <ion-label>{{ 'STATISTICS.SALES' | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="ranking">
+        <ion-icon name="trophy"></ion-icon>
+        <ion-label>{{ 'STATISTICS.RANKING' | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="ingresos">
+        <ion-icon name="cash"></ion-icon>
+        <ion-label>{{ 'STATISTICS.REVENUE' | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="franjas">
+        <ion-icon name="time"></ion-icon>
+        <ion-label>{{ 'STATISTICS.TIME_SLOTS' | translate }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Contenedor de Estadísticas de Ventas -->
+  <div class="estadisticas-wrapper" *ngIf="seccionActiva === 'ventas'">
+    <h2 class="estadisticas-titulo">
+      <ion-icon
+        name="bar-chart"
+        style="vertical-align: middle; margin-right: 8px"
+      ></ion-icon>
+      {{ 'STATISTICS.SALES_MODULE.TITLE' | translate }}
+    </h2>
+    <div class="estadisticas-filtros">
+      <div class="form-item">
+        <ion-label>{{ 'STATISTICS.FILTERS.DATE_FROM' | translate }}</ion-label>
+        <mat-form-field appearance="fill" class="input-fecha-material">
+          <input
+            matInput
+            [matDatepicker]="pickerInicio"
+            [value]="fechaInicioFormateada"
+            (dateChange)="setFechaInicioMaterial($event)"
+            [placeholder]="fechaInicioFormateada || ('STATISTICS.FILTERS.DATE_FROM' | translate)"
+            readonly
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="pickerInicio"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerInicio></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-item">
+        <ion-label>{{ 'STATISTICS.FILTERS.DATE_TO' | translate }}</ion-label>
+        <mat-form-field appearance="fill" class="input-fecha-material">
+          <input
+            matInput
+            [matDatepicker]="pickerFin"
+            [value]="fechaFinFormateada"
+            (dateChange)="setFechaFinMaterial($event)"
+            [placeholder]="fechaFinFormateada || ('STATISTICS.FILTERS.DATE_TO' | translate)"
+            readonly
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="pickerFin"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-item">
+        <ion-label>{{ 'STATISTICS.FILTERS.PRODUCT' | translate }}</ion-label>
+        <ion-select
+          interface="popover"
+          multiple="true"
+          [placeholder]="'STATISTICS.FILTERS.ALL_PRODUCTS' | translate"
+          [(ngModel)]="productosSeleccionados"
+          (ionChange)="cargarEstadisticas()"
+        >
+          <ion-select-option *ngFor="let p of productos" [value]="p.id">
+            {{p.nombre}}
+          </ion-select-option>
+        </ion-select>
+      </div>
+      <div class="form-item">
+        <ion-label>{{ 'STATISTICS.FILTERS.CATEGORY' | translate }}</ion-label>
+        <ion-select
+          interface="popover"
+          multiple="true"
+          [placeholder]="'STATISTICS.FILTERS.ALL_CATEGORIES' | translate"
+          [(ngModel)]="categorias1Seleccionadas"
+          (ionChange)="cargarEstadisticas()"
+        >
+          <ion-select-option *ngFor="let c of categorias" [value]="c.id">
+            {{c.nombre}}
+          </ion-select-option>
+        </ion-select>
+      </div>
+      <ion-button color="primary" expand="block" (click)="cargarEstadisticas()">
+        <ion-icon name="search" slot="start"></ion-icon>
+        {{ 'STATISTICS.SALES_MODULE.TITLE' | translate }}
+      </ion-button>
+    </div>
+    <div *ngIf="cargando" class="estadisticas-cargando">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>{{ 'COMMON.LOADING' | translate }}</span>
+    </div>
+    <div *ngIf="!cargando && ventasPorProducto.length">
+      <canvas id="ventasChart"></canvas>
+    </div>
+    <div *ngIf="!cargando && !ventasPorProducto.length">
+      <ion-label color="medium">{{ 'STATISTICS.SALES_MODULE.NO_DATA' | translate }}</ion-label>
+    </div>
+  </div>
+
+  <!-- Contenedor: Estadísticas de Productos Más Vendidos -->
+  <div class="estadisticas-wrapper" *ngIf="seccionActiva === 'ranking'">
+    <h2 class="estadisticas-titulo">
+      <ion-icon
+        name="trophy"
+        style="vertical-align: middle; margin-right: 8px"
+      ></ion-icon>
+      {{ 'STATISTICS.RANKING_MODULE.TITLE' | translate }}
+    </h2>
+    <div class="estadisticas-filtros">
+      <div class="form-item">
+        <ion-label>Desde</ion-label>
+        <mat-form-field appearance="fill" class="input-fecha-material">
+          <input
+            matInput
+            [matDatepicker]="pickerInicio2"
+            [value]="fechaInicio2Formateada"
+            (dateChange)="setFechaInicio2Material($event)"
+            [placeholder]="fechaInicio2Formateada || 'Selecciona fecha'"
+            readonly
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="pickerInicio2"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerInicio2></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-item">
+        <ion-label>Hasta</ion-label>
+        <mat-form-field appearance="fill" class="input-fecha-material">
+          <input
+            matInput
+            [matDatepicker]="pickerFin2"
+            [value]="fechaFin2Formateada"
+            (dateChange)="setFechaFin2Material($event)"
+            [placeholder]="fechaFin2Formateada || 'Selecciona fecha'"
+            readonly
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="pickerFin2"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin2></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-item">
+        <ion-label>Categorías</ion-label>
+        <ion-select
+          interface="popover"
+          multiple="true"
+          placeholder="Todas"
+          [(ngModel)]="categorias2Seleccionadas"
+          (ionChange)="cargarRanking()"
+        >
+          <ion-select-option *ngFor="let c of categorias" [value]="c.id">
+            {{c.nombre}}
+          </ion-select-option>
+        </ion-select>
+      </div>
+      <ion-button color="success" expand="block" (click)="cargarRanking()">
+        <ion-icon name="trophy" slot="start"></ion-icon>
+        Ver ranking
+      </ion-button>
+    </div>
+    <div *ngIf="cargandoRanking" class="estadisticas-cargando">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>Cargando ranking...</span>
+    </div>
+    <div *ngIf="!cargandoRanking && ranking.length" class="ranking-container">
+      <div class="ranking-list">
+        <div *ngFor="let item of ranking; index as i" class="ranking-item">
+          <div class="ranking-posicion">{{i + 1}}</div>
+          <div class="ranking-info">
+            <h4>{{item.nombre}}</h4>
+            <p>{{item.categoria}}</p>
+          </div>
+          <div class="ranking-cantidad">{{item.cantidad}} vendidos</div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!cargandoRanking && !ranking.length">
+      <ion-label color="medium"
+        >No hay datos de productos en el rango seleccionado.</ion-label
+      >
+    </div>
+  </div>
+
+  <!-- Contenedor: Estadísticas de Ingresos y Ticket Medio -->
+  <div class="estadisticas-wrapper" *ngIf="seccionActiva === 'ingresos'">
+    <h2 class="estadisticas-titulo">
+      <ion-icon
+        name="cash"
+        style="vertical-align: middle; margin-right: 8px"
+      ></ion-icon>
+      Estadísticas de Ingresos y Ticket Medio
+    </h2>
+    <div class="estadisticas-filtros">
+      <div class="form-item">
+        <ion-label>Desde</ion-label>
+        <mat-form-field appearance="fill" class="input-fecha-material">
+          <input
+            matInput
+            [matDatepicker]="pickerInicio3"
+            [value]="fechaInicio3Formateada"
+            (dateChange)="setFechaInicio3Material($event)"
+            [placeholder]="fechaInicio3Formateada || 'Selecciona fecha'"
+            readonly
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="pickerInicio3"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerInicio3></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-item">
+        <ion-label>Hasta</ion-label>
+        <mat-form-field appearance="fill" class="input-fecha-material">
+          <input
+            matInput
+            [matDatepicker]="pickerFin3"
+            [value]="fechaFin3Formateada"
+            (dateChange)="setFechaFin3Material($event)"
+            [placeholder]="fechaFin3Formateada || 'Selecciona fecha'"
+            readonly
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="pickerFin3"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin3></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-item">
+        <ion-label>Categorías</ion-label>
+        <ion-select
+          interface="popover"
+          multiple="true"
+          placeholder="Todas"
+          [(ngModel)]="categorias3Seleccionadas"
+          (ionChange)="cargarIngresos()"
+        >
+          <ion-select-option *ngFor="let c of categorias" [value]="c.id">
+            {{c.nombre}}
+          </ion-select-option>
+        </ion-select>
+      </div>
+      <ion-button color="warning" expand="block" (click)="cargarIngresos()">
+        <ion-icon name="cash" slot="start"></ion-icon>
+        Ver ingresos
+      </ion-button>
+    </div>
+    <div *ngIf="cargandoIngresos" class="estadisticas-cargando">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>Cargando ingresos...</span>
+    </div>
+    <div
+      *ngIf="!cargandoIngresos && ingresosPorPeriodo.length"
+      class="ingresos-container"
+    >
+      <div class="ingresos-resumen">
+        <div class="resumen-card">
+          <h3>Ingresos Totales</h3>
+          <p class="resumen-valor">
+            {{ingresosTotales | currency:'EUR':'symbol':'1.2-2'}}
+          </p>
+        </div>
+        <div class="resumen-card">
+          <h3>Ticket Medio</h3>
+          <p class="resumen-valor">
+            {{ticketMedio | currency:'EUR':'symbol':'1.2-2'}}
+          </p>
+        </div>
+        <div class="resumen-card">
+          <h3>Total Pedidos</h3>
+          <p class="resumen-valor">{{totalPedidos}}</p>
+        </div>
+      </div>
+      <div class="ingresos-grafico">
+        <canvas id="ingresosChart"></canvas>
+      </div>
+    </div>
+    <div *ngIf="!cargandoIngresos && !ingresosPorPeriodo.length">
+      <ion-label color="medium"
+        >No hay datos de ingresos en el rango seleccionado.</ion-label
+      >
+    </div>
+  </div>
+
+  <!-- Contenedor de Estadísticas por Franjas Horarias -->
+  <div class="estadisticas-wrapper" *ngIf="seccionActiva === 'franjas'">
+    <h2 class="estadisticas-titulo">
+      <ion-icon
+        name="time"
+        style="vertical-align: middle; margin-right: 8px"
+      ></ion-icon>
+      Estadísticas por franjas horarias
+    </h2>
+    <div class="estadisticas-filtros">
+      <div class="form-item">
+        <ion-label>Desde</ion-label>
+        <mat-form-field appearance="fill" class="input-fecha-material">
+          <input
+            matInput
+            [matDatepicker]="pickerInicio4"
+            placeholder="Seleccionar fecha"
+            [value]="fechaInicio4Formateada"
+            (dateChange)="setFechaInicio4Material($event)"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="pickerInicio4"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerInicio4></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-item">
+        <ion-label>Hasta</ion-label>
+        <mat-form-field appearance="fill" class="input-fecha-material">
+          <input
+            matInput
+            [matDatepicker]="pickerFin4"
+            placeholder="Seleccionar fecha"
+            [value]="fechaFin4Formateada"
+            (dateChange)="setFechaFin4Material($event)"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="pickerFin4"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin4></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-item">
+        <ion-label>Categorías</ion-label>
+        <ion-select
+          [(ngModel)]="categorias4Seleccionadas"
+          multiple="true"
+          placeholder="Todas las categorías"
+          (ionChange)="cargarFranjas()"
+        >
+          <ion-select-option
+            *ngFor="let categoria of categorias"
+            [value]="categoria.id"
+            >{{categoria.nombre}}</ion-select-option
+          >
+        </ion-select>
+      </div>
+      <ion-button color="primary" expand="block" (click)="cargarFranjas()">
+        <ion-icon name="time" slot="start"></ion-icon>
+        Ver franjas horarias
+      </ion-button>
+    </div>
+    <div *ngIf="cargandoFranjas" class="estadisticas-cargando">
+      <ion-spinner name="crescent"></ion-spinner>
+      <span>Cargando franjas horarias...</span>
+    </div>
+    <div
+      *ngIf="!cargandoFranjas && ventasPorFranja.length"
+      class="franjas-container"
+    >
+      <!-- Resumen de horas y días pico -->
+      <div class="franjas-resumen">
+        <div class="resumen-card">
+          <h3>Horas Pico</h3>
+          <div class="pico-list">
+            <span *ngFor="let hora of horasPico" class="pico-item"
+              >{{hora}}</span
+            >
+          </div>
+        </div>
+        <div class="resumen-card">
+          <h3>Días Pico</h3>
+          <div class="pico-list">
+            <span *ngFor="let dia of diasPico" class="pico-item">{{dia}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico de franjas horarias -->
+      <div class="franjas-grafico">
+        <canvas id="franjasChart"></canvas>
+      </div>
+
+      <!-- Tabla de franjas horarias -->
+      <div class="franjas-tabla">
+        <h3>Detalle por días de la semana</h3>
+        <div class="tabla-scroll">
+          <table class="franjas-table">
+            <thead>
+              <tr>
+                <th>Hora</th>
+                <th>Lun</th>
+                <th>Mar</th>
+                <th>Mié</th>
+                <th>Jue</th>
+                <th>Vie</th>
+                <th>Sáb</th>
+                <th>Dom</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let hora of ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']"
+              >
+                <td class="hora-col">{{hora}}</td>
+                <td
+                  *ngFor="let dia of ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']"
+                  [class.alta-venta]="getVentasPorFranja(hora, dia) > 20"
+                  [class.media-venta]="getVentasPorFranja(hora, dia) > 10 && getVentasPorFranja(hora, dia) <= 20"
+                  [class.baja-venta]="getVentasPorFranja(hora, dia) <= 10"
+                >
+                  {{getVentasPorFranja(hora, dia)}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!cargandoFranjas && !ventasPorFranja.length">
+      <ion-label color="medium"
+        >No hay datos de franjas horarias en el rango seleccionado.</ion-label
+      >
+    </div>
+  </div>
+</ion-content>

@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../data.service';
 import { Router } from '@angular/router';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-recuperar',
@@ -38,6 +39,7 @@ import { Router } from '@angular/router';
     IonText,
     CommonModule,
     FormsModule,
+    TranslateModule,
   ],
 })
 export class RecuperarPage {
@@ -49,7 +51,11 @@ export class RecuperarPage {
   exito = '';
   mostrarCambio = false;
 
-  constructor(private dataService: DataService, private router: Router) {}
+  constructor(
+    private dataService: DataService,
+    private router: Router,
+    private translate: TranslateService
+  ) {}
 
   async buscarUsuario() {
     this.error = '';
@@ -61,7 +67,7 @@ export class RecuperarPage {
       this.barId = res.barId;
       this.mostrarCambio = true;
     } else {
-      this.error = 'No se encontró ningún usuario con ese correo.';
+      this.error = this.translate.instant('RECOVER.ERROR_NOT_FOUND');
     }
   }
 
@@ -74,10 +80,10 @@ export class RecuperarPage {
         this.usuario,
         this.nuevaPassword
       );
-      this.exito = 'Contraseña actualizada. Ya puedes iniciar sesión.';
+      this.exito = this.translate.instant('RECOVER.SUCCESS');
       setTimeout(() => this.router.navigate(['/login']), 2000);
     } catch (e) {
-      this.error = 'Error al actualizar la contraseña.';
+      this.error = this.translate.instant('RECOVER.ERROR_UPDATE');
     }
   }
 }

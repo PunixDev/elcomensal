@@ -9,108 +9,145 @@
         slot="start"
         style="margin-right: 8px"
       ></ion-icon>
-      Platos y Bebidas
+      {{ 'PRODUCTS.TITLE' | translate }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <ion-item [color]="!nuevoNombre && intentadoAgregar ? 'danger' : ''">
-          <ion-icon name="pizza" slot="start"></ion-icon>
-          <ion-input
-            placeholder="Nombre del producto"
-            [(ngModel)]="nuevoNombre"
-            required
-          ></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-icon name="document-text" slot="start"></ion-icon>
-          <ion-textarea
-            placeholder="Descripción"
-            [(ngModel)]="nuevaDescripcion"
-          ></ion-textarea>
-        </ion-item>
-        <ion-item>
-          <ion-icon name="leaf" slot="start"></ion-icon>
-          <ion-textarea
-            placeholder="Alergenos"
-            [(ngModel)]="nuevosAlergenos"
-          ></ion-textarea>
-        </ion-item>
-        <ion-item>
-          <ion-icon name="options" slot="start"></ion-icon>
-          <ion-input
-            placeholder="Nueva opción"
-            [(ngModel)]="opcionTemp"
-          ></ion-input>
-          <ion-button fill="clear" color="primary" (click)="agregarOpcion()">
-            <ion-icon name="add-circle" slot="icon-only"></ion-icon>
-            Añadir opción
-          </ion-button>
-        </ion-item>
-        <ion-list *ngIf="nuevasOpciones.length">
-          <ion-item *ngFor="let op of nuevasOpciones; let i = index">
-            <ion-icon name="checkmark-circle" slot="start"></ion-icon>
-            <ion-label>{{op}}</ion-label>
-            <ion-button
-              fill="clear"
-              color="danger"
-              slot="end"
-              (click)="eliminarOpcion(i)"
-            >
-              <ion-icon name="trash-sharp"></ion-icon>
+  <div class="form-producto-wrapper">
+    <form (ngSubmit)="agregarProducto()" autocomplete="off">
+      <div class="form-card">
+        <h2 class="form-title">
+          <ion-icon
+            name="add-circle"
+            style="vertical-align: middle; margin-right: 8px"
+          ></ion-icon>
+          {{ 'PRODUCTS.ADD_PRODUCT' | translate }}
+        </h2>
+        <div class="form-fields">
+          <ion-item
+            class="form-item"
+            [color]="!nuevoNombre && intentadoAgregar ? 'danger' : ''"
+          >
+            <ion-icon name="pizza" slot="start"></ion-icon>
+            <ion-input
+              [placeholder]="'PRODUCTS.NAME' | translate"
+              [(ngModel)]="nuevoNombre"
+              name="nombre"
+              required
+            ></ion-input>
+          </ion-item>
+          <ion-item class="form-item">
+            <ion-icon name="document-text" slot="start"></ion-icon>
+            <ion-textarea
+              [placeholder]="'PRODUCTS.DESCRIPTION' | translate"
+              [(ngModel)]="nuevaDescripcion"
+              name="descripcion"
+            ></ion-textarea>
+          </ion-item>
+          <ion-item class="form-item">
+            <ion-icon name="leaf" slot="start"></ion-icon>
+            <ion-textarea
+              [placeholder]="'PRODUCTS.ALLERGENS' | translate"
+              [(ngModel)]="nuevosAlergenos"
+              name="alergenos"
+            ></ion-textarea>
+          </ion-item>
+          <ion-item class="form-item">
+            <ion-icon name="options" slot="start"></ion-icon>
+            <ion-input
+              [placeholder]="'PRODUCTS.NEW_OPTION' | translate"
+              [(ngModel)]="opcionTemp"
+              name="opcionTemp"
+            ></ion-input>
+            <ion-button fill="clear" color="primary" (click)="agregarOpcion()">
+              <ion-icon name="add-circle" slot="icon-only"></ion-icon>
             </ion-button>
           </ion-item>
-        </ion-list>
-        <ion-item>
-          <ion-icon name="image" slot="start"></ion-icon>
-          <input
-            type="file"
-            accept="image/*"
-            (change)="onImageSelected($event)"
-          />
-        </ion-item>
-        <ion-item [color]="!nuevoPrecio && intentadoAgregar ? 'danger' : ''">
-          <ion-icon name="cash" slot="start"></ion-icon>
-          <ion-input
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="Precio"
-            [(ngModel)]="nuevoPrecio"
-            required
-          ></ion-input>
-        </ion-item>
-        <ion-item [color]="!nuevaCategoria && intentadoAgregar ? 'danger' : ''">
-          <ion-icon name="albums" slot="start"></ion-icon>
-          <ion-select
-            required
-            placeholder="Categoría"
-            [(ngModel)]="nuevaCategoria"
-          >
-            <ion-select-option
-              *ngFor="let cat of categorias$ | async"
-              [value]="cat.nombre"
-              >{{cat.nombre}}</ion-select-option
+          <ion-list *ngIf="nuevasOpciones.length" class="opciones-list">
+            <ion-item
+              *ngFor="let op of nuevasOpciones; let i = index"
+              class="opcion-item"
             >
-          </ion-select>
-        </ion-item>
-        <ion-button expand="block" color="success" (click)="agregarProducto()">
-          <ion-icon name="add" slot="start"></ion-icon>
-          Añadir Producto
-        </ion-button>
-        <div *ngIf="nuevaImagen">
-          <img
-            [src]="nuevaImagen"
-            alt="Vista previa"
-            style="max-width: 100px; margin-top: 10px"
-          />
+              <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+              <ion-label>{{op}}</ion-label>
+              <ion-button
+                fill="clear"
+                color="danger"
+                slot="end"
+                (click)="eliminarOpcion(i)"
+              >
+                <ion-icon name="trash-sharp"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-list>
+          <ion-item class="form-item">
+            <ion-icon name="image" slot="start"></ion-icon>
+            <label class="custom-file-label">
+              <ion-icon
+                name="cloud-upload"
+                style="margin-right: 6px"
+              ></ion-icon>
+              <span>Seleccionar imagen</span>
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onImageSelected($event)"
+                class="custom-file-input"
+              />
+            </label>
+          </ion-item>
+          <div *ngIf="nuevaImagen" class="preview-img-wrapper">
+            <img [src]="nuevaImagen" alt="Vista previa" class="preview-img" />
+          </div>
+          <ion-item
+            class="form-item"
+            [color]="!nuevoPrecio && intentadoAgregar ? 'danger' : ''"
+          >
+            <ion-icon name="cash" slot="start"></ion-icon>
+            <ion-input
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Precio"
+              [(ngModel)]="nuevoPrecio"
+              name="precio"
+              required
+            ></ion-input>
+          </ion-item>
+          <ion-item
+            class="form-item"
+            [color]="!nuevaCategoria && intentadoAgregar ? 'danger' : ''"
+          >
+            <ion-icon name="albums" slot="start"></ion-icon>
+            <ion-select
+              required
+              placeholder="Categoría"
+              [(ngModel)]="nuevaCategoria"
+              name="categoria"
+            >
+              <ion-select-option
+                *ngFor="let cat of categorias$ | async"
+                [value]="cat.nombre"
+                >{{cat.nombre}}</ion-select-option
+              >
+            </ion-select>
+          </ion-item>
         </div>
-      </ion-col>
-    </ion-row>
+        <ion-button
+          expand="block"
+          color="success"
+          type="submit"
+          class="btn-agregar"
+        >
+          <ion-icon name="add" slot="start"></ion-icon>
+          {{ 'PRODUCTS.ADD_PRODUCT' | translate }}
+        </ion-button>
+      </div>
+    </form>
+  </div>
+  <ion-grid>
     <ion-row>
       <ion-col size="12">
         <ion-list>
@@ -197,7 +234,7 @@
                     (click)="iniciarEdicion(producto)"
                   >
                     <ion-icon name="create"></ion-icon>
-                    Editar
+                    {{ 'COMMON.EDIT' | translate }}
                   </ion-button>
                   <ion-button
                     fill="clear"
@@ -206,12 +243,18 @@
                     (click)="eliminarProducto(producto.id)"
                   >
                     <ion-icon name="trash-sharp"></ion-icon>
-                    Eliminar
+                    {{ 'COMMON.DELETE' | translate }}
                   </ion-button>
                 </ion-item>
                 <ion-item *ngIf="editando === producto.id">
-                  <ion-input [(ngModel)]="editNombre"></ion-input>
-                  <ion-select [(ngModel)]="editCategoria">
+                  <ion-input
+                    [(ngModel)]="editNombre"
+                    [placeholder]="'PRODUCTS.NAME' | translate"
+                  ></ion-input>
+                  <ion-select
+                    [(ngModel)]="editCategoria"
+                    [placeholder]="'PRODUCTS.CATEGORY' | translate"
+                  >
                     <ion-select-option
                       *ngFor="let cat of categorias$ | async"
                       [value]="cat.nombre"
@@ -219,15 +262,15 @@
                     >
                   </ion-select>
                   <ion-textarea
-                    placeholder="Descripción"
+                    [placeholder]="'PRODUCTS.DESCRIPTION' | translate"
                     [(ngModel)]="editDescripcion"
                   ></ion-textarea>
                   <ion-textarea
-                    placeholder="Alergenos"
+                    [placeholder]="'PRODUCTS.ALLERGENS' | translate"
                     [(ngModel)]="editAlergenos"
                   ></ion-textarea>
                   <ion-input
-                    placeholder="Nueva opción"
+                    [placeholder]="'PRODUCTS.NEW_OPTION' | translate"
                     [(ngModel)]="editOpcionTemp"
                   ></ion-input>
                   <ion-button
@@ -236,7 +279,7 @@
                     (click)="agregarEditOpcion()"
                   >
                     <ion-icon name="add-circle" slot="start"></ion-icon>
-                    Añadir opción
+                    {{ 'PRODUCTS.ADD_OPTION' | translate }}
                   </ion-button>
                   <ion-list *ngIf="editOpciones.length">
                     <ion-item *ngFor="let op of editOpciones; let i = index">
@@ -262,7 +305,7 @@
                       type="number"
                       min="0"
                       step="0.01"
-                      placeholder="Precio"
+                      [placeholder]="'PRODUCTS.PRICE' | translate"
                       [(ngModel)]="editPrecio"
                     ></ion-input>
                   </ion-item>
@@ -273,7 +316,7 @@
                     (click)="guardarEdicion(producto.id)"
                   >
                     <ion-icon name="checkmark"></ion-icon>
-                    Guardar
+                    {{ 'COMMON.SAVE' | translate }}
                   </ion-button>
                   <ion-button
                     fill="clear"
@@ -282,7 +325,7 @@
                     (click)="cancelarEdicion()"
                   >
                     <ion-icon name="close"></ion-icon>
-                    Cancelar
+                    {{ 'COMMON.CANCEL' | translate }}
                   </ion-button>
                 </ion-item>
               </ng-container>

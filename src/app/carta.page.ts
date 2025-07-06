@@ -22,6 +22,10 @@ import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { doc, getDoc } from '@angular/fire/firestore';
+import { TranslateModule } from '@ngx-translate/core';
+import { LanguageSelectorComponent } from './language-selector.component';
+import { PopoverController } from '@ionic/angular';
+import { LanguageService } from './language.service';
 
 @Component({
   selector: 'app-carta',
@@ -40,12 +44,15 @@ import { doc, getDoc } from '@angular/fire/firestore';
     FormsModule,
     IonSegment,
     IonSegmentButton,
-    IonModal, // Added
-    IonButtons, // Added
-    IonItem, // Añadido para solucionar error NG8001
-    IonLabel, // Añadido para solucionar error NG8001
+    IonModal,
+    IonButtons,
+    IonItem,
+    IonLabel,
     CommonModule,
+    TranslateModule,
+    LanguageSelectorComponent,
   ],
+  providers: [PopoverController],
 })
 export class CartaPage implements OnInit {
   mesa: string = '';
@@ -55,8 +62,10 @@ export class CartaPage implements OnInit {
   productos: Producto[] = [];
   categorias: Categoria[] = [];
   historialComandasMesa: any[] = [];
-  seleccionados: { [id: string]: { cantidad: number; opciones: string[] } } =
-    {};
+  // Cambia la clave de seleccionados a id+opcion para distinguir productos con opción
+  seleccionados: {
+    [key: string]: { cantidad: number; id: string; opcion: string };
+  } = {};
   opcionSeleccionTemp: { [id: string]: string } = {};
   comandaMesa: any = null;
   categoriaSeleccionada: string = '';
@@ -76,7 +85,9 @@ export class CartaPage implements OnInit {
 
   constructor(
     private dataService: DataService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private popoverController: PopoverController,
+    private languageService: LanguageService
   ) {}
 
   async ngOnInit() {
@@ -198,15 +209,54 @@ export class CartaPage implements OnInit {
     this.mostrarResumenPago = false;
   }
 
+  agregarProducto(producto: Producto) {
+    if (this.pagoSolicitado) return;
+    let opcionSeleccionada = '';
+    let key = producto.id;
+    if (producto.opciones && producto.opciones.length > 0) {
+      opcionSeleccionada = this.opcionSeleccionTemp[producto.id];
+      if (!opcionSeleccionada) {
+        alert('Debes seleccionar una opción para este producto.');
+        return;
+      }
+      key = producto.id + '|' + opcionSeleccionada;
+    }
+    if (!this.seleccionados[key]) {
+      this.seleccionados[key] = {
+        cantidad: 1,
+        id: producto.id,
+        opcion: opcionSeleccionada,
+      };
+    } else {
+      this.seleccionados[key].cantidad++;
+    }
+  }
+
+  quitarProducto(producto: Producto) {
+    if (this.pagoSolicitado) return;
+    // Buscar todas las claves que correspondan a este producto (con o sin opción)
+    const keys = Object.keys(this.seleccionados).filter((k) =>
+      k.startsWith(producto.id)
+    );
+    for (const key of keys) {
+      if (this.seleccionados[key].cantidad > 0) {
+        this.seleccionados[key].cantidad--;
+        if (this.seleccionados[key].cantidad <= 0) {
+          delete this.seleccionados[key];
+        }
+        break;
+      }
+    }
+  }
+
   enviarPedido() {
-    // Validar que todos los productos con opciones tengan al menos una seleccionada
-    for (const id of this.seleccionadosKeys()) {
-      const prod = this.productos.find((p) => p.id === id);
+    // Validar que todos los productos con opciones tengan opción seleccionada
+    for (const key of this.seleccionadosKeys()) {
+      const prod = this.productos.find(
+        (p) => p.id === this.seleccionados[key].id
+      );
       if (prod && prod.opciones && prod.opciones.length > 0) {
-        if (
-          !this.seleccionados[id].opciones ||
-          this.seleccionados[id].opciones.length === 0
-        ) {
+        if (!this.seleccionados[key].opcion) {
           alert(
             'Debes seleccionar una opción para el producto: ' + prod.nombre
           );
@@ -217,16 +267,20 @@ export class CartaPage implements OnInit {
     const pedido = {
       mesa: this.mesa,
       fecha: new Date().toISOString(),
-      items: this.seleccionadosKeys().map((id) => {
-        const prod = this.productos.find((p) => p.id === id);
+      items: this.seleccionadosKeys().map((key) => {
+        const prod = this.productos.find(
+          (p) => p.id === this.seleccionados[key].id
+        );
         return {
           id: prod?.id,
           nombre: prod?.nombre,
-          cantidad: this.seleccionados[id].cantidad,
-          opciones: this.seleccionados[id].opciones,
+          cantidad: this.seleccionados[key].cantidad,
+          opciones: this.seleccionados[key].opcion
+            ? [this.seleccionados[key].opcion]
+            : [],
         };
       }),
-      estado: 'pendiente', // Estado inicial para la comanda
+      estado: 'pendiente',
     };
     this.dataService.addComanda(this.barId, pedido);
     this.seleccionados = {};
@@ -317,12 +371,16 @@ export class CartaPage implements OnInit {
 
   // Devuelve true si el producto requiere opción y no se ha seleccionado ninguna
   productoRequiereOpcionNoSeleccionada(producto: Producto): boolean {
+    // Buscar si existe alguna selección para este producto con opción
+    const keys = Object.keys(this.seleccionados).filter((k) =>
+      k.startsWith(producto.id + '|')
+    );
     return !!(
       producto.opciones &&
       producto.opciones.length > 0 &&
-      (!this.seleccionados[producto.id] ||
-        !this.seleccionados[producto.id].opciones ||
-        this.seleccionados[producto.id].opciones.length === 0)
+      keys.every(
+        (key) => !this.seleccionados[key] || !this.seleccionados[key].opcion
+      )
     );
   }
 
@@ -339,46 +397,22 @@ export class CartaPage implements OnInit {
     this.opcionSeleccionTemp[producto.id] = opcion;
   }
 
-  agregarProducto(producto: Producto) {
-    if (this.pagoSolicitado) return;
-    let opcionSeleccionada = '';
-    if (producto.opciones && producto.opciones.length > 0) {
-      opcionSeleccionada = this.opcionSeleccionTemp[producto.id];
-      if (!opcionSeleccionada) {
-        alert('Debes seleccionar una opción para este producto.');
-        return;
-      }
+  getNombreProducto(key: string) {
+    const prod = this.productos.find(
+      (p) => p.id === this.seleccionados[key].id
+    );
+    let nombre = prod ? prod.nombre : '';
+    if (this.seleccionados[key].opcion) {
+      nombre += ' (' + this.seleccionados[key].opcion + ')';
     }
-    if (!this.seleccionados[producto.id]) {
-      this.seleccionados[producto.id] = { cantidad: 1, opciones: [] };
-    } else {
-      this.seleccionados[producto.id].cantidad++;
-    }
-    if (producto.opciones && producto.opciones.length > 0) {
-      this.seleccionados[producto.id].opciones = [opcionSeleccionada];
-    }
+    return nombre;
   }
 
-  quitarProducto(producto: Producto) {
-    if (this.pagoSolicitado) return;
-    if (this.seleccionados[producto.id]) {
-      this.seleccionados[producto.id].cantidad--;
-      if (this.seleccionados[producto.id].cantidad <= 0) {
-        delete this.seleccionados[producto.id];
-      }
-    }
-  }
-
-  toggleOpcion(producto: Producto, opcion: string) {
-    if (this.pagoSolicitado) return;
-    const sel = this.seleccionados[producto.id];
-    if (!sel) return;
-    const idx = sel.opciones.indexOf(opcion);
-    if (idx > -1) {
-      sel.opciones.splice(idx, 1);
-    } else {
-      sel.opciones.push(opcion);
-    }
+  getPrecioProducto(key: string): number {
+    const prod = this.productos.find(
+      (p) => p.id === this.seleccionados[key].id
+    );
+    return prod ? prod.precio : 0;
   }
 
   seleccionadosKeys(): string[] {
@@ -398,16 +432,6 @@ export class CartaPage implements OnInit {
     return this.productos.filter(
       (p) => p.categoria === this.categoriaSeleccionada
     );
-  }
-
-  getNombreProducto(id: string) {
-    const prod = this.productos.find((p) => p.id === id);
-    return prod ? prod.nombre : '';
-  }
-
-  getPrecioProducto(id: string): number {
-    const prod = this.productos.find((p) => p.id === id);
-    return prod ? prod.precio : 0;
   }
 
   getTotalPedido(): number {
@@ -430,10 +454,6 @@ export class CartaPage implements OnInit {
     }, 0);
   }
 
-  getOpcionSeleccionada(producto: Producto): string {
-    return this.opcionSeleccionTemp[producto.id] || '';
-  }
-
   abrirResumenPedido() {
     this.modalResumenAbierto = true;
   }
@@ -444,5 +464,27 @@ export class CartaPage implements OnInit {
 
   cerrarImagenAmpliada() {
     this.imagenAmpliada = null;
+  }
+
+  // Devuelve la opción seleccionada para un producto (para ion-segment)
+  getOpcionSeleccionada(producto: Producto): string {
+    return this.opcionSeleccionTemp[producto.id] || '';
+  }
+
+  getCurrentLanguageFlag(): string {
+    return this.languageService.getLanguageFlag(
+      this.languageService.getCurrentLanguage()
+    );
+  }
+
+  async presentLanguagePopover(event: any) {
+    const popover = await this.popoverController.create({
+      component: LanguageSelectorComponent,
+      event: event,
+      translucent: true,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    return await popover.present();
   }
 }

@@ -8,7 +8,7 @@
           style="margin-right: 8px"
           aria-hidden="true"
         ></ion-icon>
-        Panel Admin
+        {{ 'ADMIN.TITLE' | translate }}
       </ion-title>
     </ion-toolbar>
   </ion-header>
@@ -16,19 +16,23 @@
     <ion-list>
       <ion-item (click)="goToCategorias()">
         <ion-icon name="albums" slot="start" aria-hidden="true"></ion-icon>
-        Categorías
+        {{ 'ADMIN.MANAGE_CATEGORIES' | translate }}
       </ion-item>
       <ion-item (click)="goToProductos()">
         <ion-icon name="fast-food" slot="start" aria-hidden="true"></ion-icon>
-        Platos y Bebidas
+        {{ 'ADMIN.MANAGE_PRODUCTS' | translate }}
       </ion-item>
       <ion-item (click)="goToGenerarQR()">
         <ion-icon name="qr-code" slot="start" aria-hidden="true"></ion-icon>
-        Generar QR
+        {{ 'NAVIGATION.QR_GENERATOR' | translate }}
       </ion-item>
       <ion-item (click)="goToHistorial()">
         <ion-icon name="archive" slot="start" aria-hidden="true"></ion-icon>
-        Historial de pedidos
+        {{ 'NAVIGATION.HISTORY' | translate }}
+      </ion-item>
+      <ion-item (click)="goToEstadisticas()">
+        <ion-icon name="bar-chart" slot="start" aria-hidden="true"></ion-icon>
+        {{ 'ADMIN.VIEW_STATISTICS' | translate }}
       </ion-item>
       <ion-item *ngIf="!isSubscribed" routerLink="/suscripcion" color="primary">
         <ion-icon name="card" slot="start" aria-hidden="true"></ion-icon>
@@ -40,7 +44,7 @@
       </ion-item>
       <ion-item (click)="logout()">
         <ion-icon name="log-out" slot="start" aria-hidden="true"></ion-icon>
-        Cerrar sesión
+        {{ 'HEADER.LOGOUT' | translate }}
       </ion-item>
     </ion-list>
   </ion-content>
@@ -58,7 +62,7 @@
         style="margin-right: 8px"
         aria-hidden="true"
       ></ion-icon>
-      Panel de Administración
+      {{ 'ADMIN.TITLE' | translate }}
       <span
         *ngIf="barId"
         style="font-size: 0.8em; color: #fff; margin-left: 1em"
@@ -67,6 +71,12 @@
         <strong>ID:</strong> {{ barId }}
       </span>
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentLanguagePopover($event)" fill="clear">
+        <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
+        <ion-icon name="chevron-down" size="small"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

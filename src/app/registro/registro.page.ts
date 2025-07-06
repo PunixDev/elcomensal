@@ -12,11 +12,17 @@ import {
   IonInput,
   IonButton,
   IonText,
+  IonButtons,
+  IonIcon,
+  PopoverController,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataService } from '../data.service';
+import { LanguageService } from '../language.service';
+import { LanguageSelectorComponent } from '../language-selector.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-registro',
@@ -36,8 +42,11 @@ import { DataService } from '../data.service';
     IonInput,
     IonButton,
     IonText,
+    IonButtons,
+    IonIcon,
     CommonModule,
     FormsModule,
+    TranslateModule,
   ],
 })
 export class RegistroPage {
@@ -48,7 +57,13 @@ export class RegistroPage {
   error = '';
   exito = '';
 
-  constructor(private dataService: DataService, private router: Router) {}
+  constructor(
+    private dataService: DataService,
+    private router: Router,
+    private languageService: LanguageService,
+    private popoverController: PopoverController,
+    private translate: TranslateService
+  ) {}
 
   async registrarBar() {
     this.error = '';
@@ -59,7 +74,7 @@ export class RegistroPage {
       !this.password ||
       !this.correo
     ) {
-      this.error = 'Completa todos los campos.';
+      this.error = this.translate.instant('REGISTER.ERROR_FIELDS');
       return;
     }
     try {
@@ -69,11 +84,27 @@ export class RegistroPage {
         password: this.password,
         correo: this.correo,
       });
-      this.exito = '¡Bar registrado correctamente! Ya puedes iniciar sesión.';
+      this.exito = this.translate.instant('REGISTER.SUCCESS');
       setTimeout(() => this.router.navigate(['/login']), 2000);
     } catch (e) {
-      this.error =
-        'Error al registrar el bar. Intenta con otro usuario o correo.';
+      this.error = this.translate.instant('REGISTER.ERROR');
     }
+  }
+
+  getCurrentLanguageFlag(): string {
+    return this.languageService.getLanguageFlag(
+      this.languageService.getCurrentLanguage()
+    );
+  }
+
+  async presentLanguagePopover(event: any) {
+    const popover = await this.popoverController.create({
+      component: LanguageSelectorComponent,
+      event: event,
+      translucent: true,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    return await popover.present();
   }
 }

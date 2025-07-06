@@ -23,6 +23,7 @@ import {
 import { DataService } from './data.service';
 import { Observable, firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-historial',
@@ -50,6 +51,7 @@ import { FormsModule } from '@angular/forms';
     IonBackButton,
     IonDatetime,
     IonButton,
+    TranslateModule,
   ],
 })
 export class HistorialPage implements OnInit {

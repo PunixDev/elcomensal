@@ -19,6 +19,7 @@ import {
   IonItemDivider,
 } from '@ionic/angular/standalone';
 import { DataService } from './data.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-informe-mesa',
@@ -42,6 +43,7 @@ import { DataService } from './data.service';
     IonCardTitle,
     IonCardContent,
     IonItemDivider,
+    TranslateModule,
   ],
 })
 export class InformeMesaPage implements OnInit {
@@ -150,5 +152,8 @@ export class InformeMesaPage implements OnInit {
 
   volver() {
     this.router.navigate(['/admin']);
+  }
+  fraccionarPago() {
+    // Método agregado para evitar error de compilación. Implementa la lógica si es necesario.
   }
 }

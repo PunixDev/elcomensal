@@ -9,28 +9,33 @@
         slot="start"
         style="margin-right: 8px"
       ></ion-icon>
-      Historial de Pedidos
+      {{ 'HISTORY.TITLE' | translate }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Filtrar historial</ion-card-title>
+      <ion-card-title
+        >{{ 'HISTORY.FILTER_BY_DATE' | translate }}</ion-card-title
+      >
     </ion-card-header>
     <ion-card-content>
       <ion-item>
-        <ion-label position="floating">Fecha</ion-label>
+        <ion-label position="floating"
+          >{{ 'HISTORY.DATE' | translate }}</ion-label
+        >
         <ion-datetime
           presentation="date"
           [value]="filtroFecha || ''"
           (ionChange)="setFecha($event)"
-          placeholder="Selecciona una fecha"
           display-format="YYYY-MM-DD"
         ></ion-datetime>
       </ion-item>
       <ion-item>
-        <ion-label position="floating">Mesa</ion-label>
+        <ion-label position="floating"
+          >{{ 'HISTORY.TABLE' | translate }}</ion-label
+        >
         <ion-input>
           <input
             slot="input"
@@ -49,13 +54,15 @@
           color="primary"
           (click)="aplicarFiltrosAsync()"
         >
-          Aplicar filtros
+          {{ 'HISTORY.FILTER_BY_DATE' | translate }}
         </ion-button>
       </ng-container>
     </ion-card-content>
   </ion-card>
   <ion-list *ngIf="historialFiltrado.length > 0">
-    <ion-item-divider color="light">Pedidos</ion-item-divider>
+    <ion-item-divider color="light"
+      >{{ 'HISTORY.ORDERS' | translate }}</ion-item-divider
+    >
     <ion-item *ngFor="let pedido of historialFiltrado">
       <ion-label>
         <strong>Mesa:</strong> {{pedido.mesa}}<br />

@@ -452,3 +452,60 @@ ion-buttons,
   font-weight: bold;
   margin-top: 1.2em;
 }
+
+/* Language Selector Styles */
+.language-flag {
+  font-size: 20px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.language-option .flag {
+  font-size: 20px;
+}
+
+.language-option .name {
+  font-weight: 500;
+}
+
+.selected {
+  --background: var(--ion-color-primary-tint);
+  --color: var(--ion-color-primary-contrast);
+}
+
+ion-popover.language-popover {
+  --width: 200px;
+  --max-width: 250px;
+}
+
+/* Responsive language selector for smaller screens */
+@media (max-width: 768px) {
+  .language-flag {
+    font-size: 18px;
+  }
+
+  ion-popover.language-popover {
+    --width: 180px;
+  }
+}
+
+/* Translation transition effects */
+.translate-fade-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.translate-fade-enter-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.translate-fade-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -15,9 +15,15 @@ import {
   IonInput,
   IonButton,
   IonText,
+  IonButtons,
+  IonIcon,
+  PopoverController,
 } from '@ionic/angular/standalone';
 import { Router, RouterModule } from '@angular/router';
 import { DataService } from '../data.service';
+import { LanguageService } from '../language.service';
+import { LanguageSelectorComponent } from '../language-selector.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -39,9 +45,12 @@ import { Observable } from 'rxjs';
     IonInput,
     IonButton,
     IonText,
+    IonButtons,
+    IonIcon,
     CommonModule,
     FormsModule,
     RouterModule,
+    TranslateModule,
   ],
 })
 export class LoginPage implements OnInit {
@@ -50,7 +59,13 @@ export class LoginPage implements OnInit {
   error = '';
   loading = false;
 
-  constructor(private router: Router, private dataService: DataService) {}
+  constructor(
+    private router: Router,
+    private dataService: DataService,
+    private languageService: LanguageService,
+    private popoverController: PopoverController,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit() {}
 
@@ -67,11 +82,28 @@ export class LoginPage implements OnInit {
         localStorage.setItem('usuario', result.barId); // Guardar barId real
         this.router.navigate(['/admin']);
       } else {
-        this.error = 'Usuario o contraseña incorrectos';
+        this.error = this.translate.instant('LOGIN.ERROR_INVALID');
       }
     } catch (e) {
-      this.error = 'Error de conexión o de base de datos';
+      this.error = this.translate.instant('LOGIN.ERROR_CONNECTION');
     }
     this.loading = false;
+  }
+
+  getCurrentLanguageFlag(): string {
+    return this.languageService.getLanguageFlag(
+      this.languageService.getCurrentLanguage()
+    );
+  }
+
+  async presentLanguagePopover(event: any) {
+    const popover = await this.popoverController.create({
+      component: LanguageSelectorComponent,
+      event: event,
+      translucent: true,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    return await popover.present();
   }
 }

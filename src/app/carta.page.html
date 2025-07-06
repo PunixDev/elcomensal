@@ -7,8 +7,14 @@
         style="margin-right: 8px"
         aria-hidden="true"
       ></ion-icon>
-      Carta
+      {{ 'MENU.TITLE' | translate }}
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentLanguagePopover($event)" fill="clear">
+        <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
+        <ion-icon name="chevron-down" size="small"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -36,7 +42,9 @@
         *ngIf="!mostrarCarta"
       ></ion-icon>
       <ion-icon name="chevron-up" slot="start" *ngIf="mostrarCarta"></ion-icon>
-      <ion-label class="categoria-titulo">Carta</ion-label>
+      <ion-label class="categoria-titulo"
+        >{{ 'MENU.TITLE' | translate }}</ion-label
+      >
     </ion-item>
     <div *ngIf="mostrarCarta">
       <ng-container
@@ -52,7 +60,7 @@
               *ngIf="prod.imagen"
               (click)="abrirImagenAmpliada(prod.imagen)"
             >
-              <img [src]="prod.imagen" alt="{{prod.nombre}}" />
+              <img [src]="prod.imagen" [alt]="prod.nombre" />
             </div>
             <div class="producto-info">
               <div class="producto-header">
@@ -67,13 +75,15 @@
                   name="alert-circle-outline"
                   color="warning"
                 ></ion-icon>
-                <span>Alergenos: {{prod.alergenos}}</span>
+                <span
+                  >{{ 'MENU.ALLERGENS' | translate }}: {{prod.alergenos}}</span
+                >
               </div>
               <div
                 *ngIf="prod.opciones && prod.opciones.length"
                 class="producto-opciones"
               >
-                <strong>Opciones:</strong>
+                <strong>{{ 'MENU.OPTIONS' | translate }}:</strong>
                 <ion-segment
                   [ngModel]="getOpcionSeleccionada(prod)"
                   (ngModelChange)="onSeleccionOpcion(prod, $event)"
@@ -96,7 +106,7 @@
                   size="small"
                 >
                   <ion-icon name="add-circle" slot="start"></ion-icon>
-                  Añadir
+                  {{ 'MENU.ADD' | translate }}
                 </ion-button>
                 <ion-button
                   fill="solid"
@@ -107,7 +117,7 @@
                   size="small"
                 >
                   <ion-icon name="remove-circle" slot="start"></ion-icon>
-                  Quitar
+                  {{ 'MENU.REMOVE' | translate }}
                 </ion-button>
                 <span
                   *ngIf="seleccionados[prod.id] && seleccionados[prod.id].cantidad"
@@ -121,9 +131,7 @@
         </ion-card>
       </ng-container>
       <ng-template #sinProductos>
-        <div class="sin-productos-msg">
-          No hay productos disponibles en esta categoría.
-        </div>
+        <ion-label color="medium">{{ 'MENU.NO_ITEMS' | translate }}</ion-label>
       </ng-template>
     </div>
   </div>
@@ -139,11 +147,14 @@
       style="cursor: pointer"
     >
       <span class="pedido-bar-cantidad"
-        >{{ seleccionadosKeys().length }} producto{{ seleccionadosKeys().length
-        > 1 ? 's' : '' }}</span
+        >{{ seleccionadosKeys().length }} {{ 'MENU.PRODUCT' | translate
+        }}<ng-container *ngIf="seleccionadosKeys().length > 1"
+          >{{ 'MENU.PRODUCT_PLURAL' | translate }}</ng-container
+        ></span
       >
       <span class="pedido-bar-total"
-        >Total: {{ getTotalPedido() | currency:'EUR':'symbol':'1.2-2' }}</span
+        >{{ 'MENU.TOTAL' | translate }}: {{ getTotalPedido() |
+        currency:'EUR':'symbol':'1.2-2' }}</span
       >
     </div>
     <ion-button
@@ -153,7 +164,7 @@
       class="pedido-bar-btn"
     >
       <ion-icon name="send" slot="start"></ion-icon>
-      Enviar pedido
+      {{ 'MENU.SEND_ORDER' | translate }}
     </ion-button>
     <!--
     <ion-button
@@ -165,7 +176,7 @@
       class="pedido-bar-btn"
     >
       <ion-icon name="cash-outline" slot="start"></ion-icon>
-      Solicitar pago
+      {{ 'MENU.REQUEST_PAYMENT' | translate }}
     </ion-button>
     -->
   </div>
@@ -178,7 +189,7 @@
     <ng-template>
       <ion-header>
         <ion-toolbar color="primary">
-          <ion-title>Resumen del pedido</ion-title>
+          <ion-title>{{ 'MENU.ORDER_SUMMARY' | translate }}</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="modalResumenAbierto = false">
               <ion-icon name="close"></ion-icon>
@@ -188,25 +199,20 @@
       </ion-header>
       <ion-content>
         <div class="resumen-lista">
-          <div *ngFor="let id of seleccionadosKeys()" class="resumen-item">
-            <span class="resumen-nombre">{{getNombreProducto(id)}}</span>
+          <div *ngFor="let key of seleccionadosKeys()" class="resumen-item">
+            <span class="resumen-nombre">{{getNombreProducto(key)}}</span>
             <span class="resumen-cantidad"
-              >x{{seleccionados[id].cantidad}}</span
+              >x{{seleccionados[key].cantidad}}</span
             >
             <span class="resumen-precio"
-              >{{getPrecioProducto(id) * seleccionados[id].cantidad |
+              >{{getPrecioProducto(key) * seleccionados[key].cantidad |
               currency:'EUR':'symbol':'1.2-2'}}</span
             >
-            <div
-              *ngIf="seleccionados[id].opciones.length"
-              class="resumen-opciones"
-            >
-              Opciones: {{seleccionados[id].opciones.join(', ')}}
-            </div>
           </div>
         </div>
         <div class="resumen-total">
-          Total: {{ getTotalPedido() | currency:'EUR':'symbol':'1.2-2' }}
+          {{ 'MENU.TOTAL' | translate }}: {{ getTotalPedido() |
+          currency:'EUR':'symbol':'1.2-2' }}
         </div>
       </ion-content>
     </ng-template>
@@ -219,9 +225,7 @@
       color="warning"
       style="margin-right: 0.5em"
     ></ion-icon>
-    <span
-      >Pago solicitado. Espera a que el administrador confirme el pago.</span
-    >
+    <span> {{ 'MENU.PAYMENT_REQUESTED' | translate }} </span>
   </div>
 
   <!-- Historial de pedidos -->
@@ -242,7 +246,9 @@
         slot="start"
         *ngIf="mostrarHistorial"
       ></ion-icon>
-      <ion-label class="historial-titulo">Historial de pedidos</ion-label>
+      <ion-label class="historial-titulo"
+        >{{ 'MENU.ORDER_HISTORY' | translate }}</ion-label
+      >
       <span
         *ngIf="!mostrarHistorial"
         style="
@@ -279,15 +285,18 @@
               color="medium"
             ></ion-icon>
             <span>
-              {{ comanda.estado === 'preparado' ? 'Preparado' : (comanda.estado
-              === 'preparando' ? 'En preparación' : 'Recibido') }}
+              {{ comanda.estado === 'preparado' ? ('MENU.STATUS_PREPARED' |
+              translate) : (comanda.estado === 'preparando' ?
+              ('MENU.STATUS_PREPARING' | translate) : ('MENU.STATUS_RECEIVED' |
+              translate)) }}
             </span>
           </div>
           <ul class="historial-pedido">
             <li *ngFor="let item of comanda.items">
               {{item.nombre}} x{{item.cantidad}}
               <span *ngIf="item.opciones.length"
-                >- Opciones: {{item.opciones.join(', ')}}</span
+                >- {{ 'MENU.OPTIONS' | translate }}: {{item.opciones.join(',
+                ')}}</span
               >
             </li>
           </ul>
@@ -295,7 +304,7 @@
       </div>
       <div class="historial-total">
         <span>
-          Total pagado: {{getTotalHistorialMesa() |
+          {{ 'MENU.TOTAL_PAID' | translate }}: {{getTotalHistorialMesa() |
           currency:'EUR':'symbol':'1.2-2'}}
         </span>
       </div>
@@ -309,7 +318,7 @@
   >
     <ion-button expand="block" color="warning" (click)="solicitarPago()">
       <ion-icon name="cash-outline" slot="start"></ion-icon>
-      Solicitar pago
+      {{ 'MENU.REQUEST_PAYMENT' | translate }}
     </ion-button>
   </div>
 
@@ -323,7 +332,7 @@
       <button class="cerrar-modal" (click)="cerrarImagenAmpliada()">
         &times;
       </button>
-      <img [src]="imagenAmpliada" alt="Imagen ampliada" />
+      <img [src]="imagenAmpliada" [alt]="'MENU.IMAGE_EXPANDED' | translate" />
     </div>
   </div>
 </ion-content>

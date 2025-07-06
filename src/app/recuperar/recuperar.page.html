@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Recuperar Contraseña</ion-title>
+    <ion-title>{{ 'RECOVER.TITLE' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
@@ -9,7 +9,9 @@
       <ion-col size="12">
         <form (ngSubmit)="buscarUsuario()" *ngIf="!mostrarCambio">
           <ion-item>
-            <ion-label position="floating">Correo de recuperación</ion-label>
+            <ion-label position="floating"
+              >{{ 'RECOVER.EMAIL' | translate }}</ion-label
+            >
             <ion-input
               [(ngModel)]="correo"
               name="correo"
@@ -17,17 +19,21 @@
               required
             ></ion-input>
           </ion-item>
-          <ion-button expand="block" color="primary" type="submit"
-            >Buscar usuario</ion-button
-          >
+          <ion-button expand="block" color="primary" type="submit">
+            {{ 'RECOVER.SEND_BUTTON' | translate }}
+          </ion-button>
         </form>
         <form (ngSubmit)="cambiarPassword()" *ngIf="mostrarCambio">
           <ion-item>
-            <ion-label position="floating">Usuario</ion-label>
+            <ion-label position="floating"
+              >{{ 'LOGIN.USERNAME' | translate }}</ion-label
+            >
             <ion-input [value]="usuario" readonly></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label position="floating">Nueva contraseña</ion-label>
+            <ion-label position="floating"
+              >{{ 'REGISTER.PASSWORD' | translate }}</ion-label
+            >
             <ion-input
               [(ngModel)]="nuevaPassword"
               name="nuevaPassword"
@@ -35,9 +41,9 @@
               required
             ></ion-input>
           </ion-item>
-          <ion-button expand="block" color="success" type="submit"
-            >Cambiar contraseña</ion-button
-          >
+          <ion-button expand="block" color="success" type="submit">
+            {{ 'REGISTER.PASSWORD' | translate }}
+          </ion-button>
         </form>
         <ion-text color="danger" *ngIf="error">{{error}}</ion-text>
         <ion-text color="success" *ngIf="exito">{{exito}}</ion-text>
