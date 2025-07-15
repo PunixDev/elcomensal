@@ -309,61 +309,46 @@ export class CartaPage implements OnInit {
   }
 
   async descargarInformeMesa() {
-    // Agrupar productos por id+nombre+opciones
-    const agrupados: {
-      [key: string]: {
-        nombre: string;
-        opciones: string[];
-        cantidad: number;
-        precio: number;
-      };
-    } = {};
-    for (const comanda of this.historialComandasMesa) {
-      for (const item of comanda.items) {
-        const prod = this.productos.find((p) => p.id === item.id);
-        if (!prod) continue;
-        const key =
-          item.id +
-          '|' +
-          (item.nombre || '') +
-          '|' +
-          (item.opciones ? item.opciones.join(',') : '');
-        if (!agrupados[key]) {
-          agrupados[key] = {
-            nombre: item.nombre,
-            opciones: item.opciones || [],
-            cantidad: 0,
-            precio: prod.precio,
-          };
-        }
-        agrupados[key].cantidad += item.cantidad;
-      }
-    }
-    // Generar PDF agrupado
+    // Genera un PDF tipo ticket de bar con el historial de pedidos
     const jsPDF = (await import('jspdf')).jsPDF;
-    const doc = new jsPDF();
+    const doc = new jsPDF({ unit: 'mm', format: [80, 297] }); // Ticket 8cm ancho
     let y = 10;
-    doc.setFontSize(16);
-    doc.text(`Informe de mesa ${this.mesa}`, 10, y);
-    y += 10;
-    if (Object.keys(agrupados).length > 0) {
-      doc.setFontSize(13);
-      Object.values(agrupados).forEach((item) => {
-        let linea = `- ${item.nombre}`;
-        if (item.opciones.length) {
+    doc.setFontSize(12);
+    doc.text(this.restauranteNombre || 'TICKET', 40, y, { align: 'center' });
+    y += 8;
+    doc.setFontSize(10);
+    doc.text('Mesa: ' + (this.mesa || '-'), 10, y);
+    y += 6;
+    doc.text('Fecha: ' + new Date().toLocaleString(), 10, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.text('--- PEDIDOS ---', 10, y);
+    y += 6;
+    for (const comanda of this.historialComandasMesa) {
+      doc.setFontSize(9);
+      doc.text(
+        (comanda.fecha ? new Date(comanda.fecha).toLocaleString() : '-') + '',
+        10,
+        y
+      );
+      y += 5;
+      for (const item of comanda.items) {
+        let linea = `${item.nombre} x${item.cantidad}`;
+        if (item.opciones && item.opciones.length) {
           linea += ` (${item.opciones.join(', ')})`;
         }
-        linea += ` x${item.cantidad} (${item.precio.toFixed(2)}€ c/u)`;
+        const prod = this.productos.find((p) => p.id === item.id);
+        const precio = prod ? prod.precio : 0;
+        linea += `  ${(precio * item.cantidad).toFixed(2)}€`;
         doc.text(linea, 12, y);
-        y += 7;
-      });
-      y += 4;
-      doc.setFontSize(14);
-      doc.text(`Total: ${this.getTotalHistorialMesa().toFixed(2)} €`, 10, y);
-    } else {
-      doc.text('No hay datos para esta mesa.', 10, y);
+        y += 5;
+      }
+      y += 2;
     }
-    doc.save(`informe_mesa_${this.mesa}.pdf`);
+    y += 4;
+    doc.setFontSize(11);
+    doc.text('TOTAL: ' + this.getTotalHistorialMesa().toFixed(2) + ' €', 10, y);
+    doc.save(`ticket_mesa_${this.mesa || 'sin_mesa'}.pdf`);
   }
 
   // Devuelve true si el producto requiere opción y no se ha seleccionado ninguna

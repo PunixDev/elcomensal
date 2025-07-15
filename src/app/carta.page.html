@@ -226,6 +226,15 @@
       style="margin-right: 0.5em"
     ></ion-icon>
     <span> {{ 'MENU.PAYMENT_REQUESTED' | translate }} </span>
+    <ion-button
+      expand="block"
+      color="primary"
+      style="margin-left: 1em"
+      (click)="descargarInformeMesa()"
+    >
+      <ion-icon name="download" slot="start"></ion-icon>
+      Descargar informe
+    </ion-button>
   </div>
 
   <!-- Historial de pedidos -->

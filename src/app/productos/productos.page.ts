@@ -99,7 +99,7 @@ export class ProductosPage implements OnInit {
 
   ngOnInit() {}
 
-  agregarProducto() {
+  async agregarProducto() {
     this.intentadoAgregar = true;
     if (
       this.nuevoNombre &&
@@ -107,6 +107,60 @@ export class ProductosPage implements OnInit {
       this.nuevaCategoria &&
       this.nuevoPrecio != null
     ) {
+      // Traducción automática a los idiomas soportados
+      const idiomas = [
+        { key: 'en', name: 'Inglés' },
+        { key: 'fr', name: 'Francés' },
+        { key: 'de', name: 'Alemán' },
+        { key: 'it', name: 'Italiano' },
+      ];
+      const apiKey = 'AQUI_TU_API_KEY'; // Poner tu clave de Google Translate API
+      const translateText = async (text: string, target: string) => {
+        if (!text) return '';
+        try {
+          const res = await fetch(
+            `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ q: text, target, format: 'text' }),
+            }
+          );
+          const data = await res.json();
+          return data.data.translations[0].translatedText || '';
+        } catch (e) {
+          return '';
+        }
+      };
+      // Traducir todos los campos relevantes
+      const traducciones: any = {};
+      for (const idioma of idiomas) {
+        traducciones[
+          `nombre${idioma.key.charAt(0).toUpperCase() + idioma.key.slice(1)}`
+        ] = await translateText(this.nuevoNombre, idioma.key);
+        traducciones[
+          `descripcion${
+            idioma.key.charAt(0).toUpperCase() + idioma.key.slice(1)
+          }`
+        ] = await translateText(this.nuevaDescripcion, idioma.key);
+        traducciones[
+          `alergenos${idioma.key.charAt(0).toUpperCase() + idioma.key.slice(1)}`
+        ] = await translateText(this.nuevosAlergenos, idioma.key);
+        if (this.nuevasOpciones && this.nuevasOpciones.length) {
+          traducciones[
+            `opciones${
+              idioma.key.charAt(0).toUpperCase() + idioma.key.slice(1)
+            }`
+          ] = [];
+          for (const op of this.nuevasOpciones) {
+            traducciones[
+              `opciones${
+                idioma.key.charAt(0).toUpperCase() + idioma.key.slice(1)
+              }`
+            ].push(await translateText(op, idioma.key));
+          }
+        }
+      }
       const nuevo = {
         nombre: this.nuevoNombre.trim(),
         categoria: this.nuevaCategoria,
@@ -115,6 +169,7 @@ export class ProductosPage implements OnInit {
         descripcion: this.nuevaDescripcion,
         alergenos: this.nuevosAlergenos,
         opciones: [...this.nuevasOpciones],
+        ...traducciones,
       };
       this.dataService.addProducto(this.barId, nuevo);
       this.nuevoNombre = '';
@@ -125,6 +180,8 @@ export class ProductosPage implements OnInit {
       this.nuevosAlergenos = '';
       this.nuevasOpciones = [];
       this.intentadoAgregar = false;
+      // Mensaje de éxito
+      alert('Producto añadido con éxito');
     }
   }
 

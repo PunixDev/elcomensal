@@ -21,17 +21,31 @@
         <ion-item *ngFor="let prod of productosAgrupados">
           <ion-label>
             <strong>{{ prod.nombre }}</strong>
-            <span *ngIf="prod.opciones.length"> ({{ prod.opciones.join(', ') }})</span>
+            <span *ngIf="prod.opciones.length">
+              ({{ prod.opciones.join(', ') }})</span
+            >
             <br />
-            <span>Precio: {{ prod.precio | currency:'EUR':'symbol':'1.2-2' }}</span>
+            <span
+              >Precio: {{ prod.precio | currency:'EUR':'symbol':'1.2-2' }}</span
+            >
             <br />
             <span>Disponibles: {{ prod.cantidad }}</span>
           </ion-label>
-          <ion-button color="danger" (click)="restarSeleccion(prod)" [disabled]="seleccionados[prod.id] <= 0">
+          <ion-button
+            color="danger"
+            (click)="restarSeleccion(prod)"
+            [disabled]="seleccionados[prod.id] <= 0"
+          >
             <ion-icon name="remove"></ion-icon>
           </ion-button>
-          <span style="margin: 0 8px; font-weight: bold;">{{ seleccionados[prod.id] || 0 }}</span>
-          <ion-button color="success" (click)="sumarSeleccion(prod)" [disabled]="seleccionados[prod.id] >= prod.cantidad">
+          <span style="margin: 0 8px; font-weight: bold"
+            >{{ seleccionados[prod.id] || 0 }}</span
+          >
+          <ion-button
+            color="success"
+            (click)="sumarSeleccion(prod)"
+            [disabled]="seleccionados[prod.id] >= prod.cantidad"
+          >
             <ion-icon name="add"></ion-icon>
           </ion-button>
         </ion-item>
@@ -48,7 +62,12 @@
     </ion-card-header>
     <ion-card-content>
       <h2>{{ getTotalSeleccionado() | currency:'EUR':'symbol':'1.2-2' }}</h2>
-      <ion-button expand="block" color="primary" (click)="pedirPorSeparado()" [disabled]="getTotalSeleccionado() === 0">
+      <ion-button
+        expand="block"
+        color="primary"
+        (click)="pedirPorSeparado()"
+        [disabled]="getTotalSeleccionado() === 0"
+      >
         Pedir por separado
       </ion-button>
     </ion-card-content>

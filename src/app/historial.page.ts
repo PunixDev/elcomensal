@@ -19,6 +19,8 @@ import {
   IonBackButton,
   IonDatetime,
   IonButton,
+  IonSegment,
+  IonSegmentButton,
 } from '@ionic/angular/standalone';
 import { DataService } from './data.service';
 import { Observable, firstValueFrom } from 'rxjs';
@@ -51,6 +53,8 @@ import { TranslateModule } from '@ngx-translate/core';
     IonBackButton,
     IonDatetime,
     IonButton,
+    IonSegment,
+    IonSegmentButton,
     TranslateModule,
   ],
 })
@@ -60,6 +64,9 @@ export class HistorialPage implements OnInit {
   filtroMesa: string = '';
   barId: string = '';
   historialFiltrado: any[] = [];
+  agrupadoPorMesa: any = {};
+  mesas: string[] = [];
+  resumenDia: { total: number; mesas: number } = { total: 0, mesas: 0 };
 
   constructor(private dataService: DataService) {
     this.barId = this.dataService.getBarId();
@@ -78,21 +85,45 @@ export class HistorialPage implements OnInit {
   }
 
   async aplicarFiltrosAsync() {
+    // Siempre que se pulse aplicar filtros, limpiar el filtro de mesa
+    this.filtroMesa = '';
     if (!this.filtroFecha) {
       this.historialFiltrado = [];
+      this.agrupadoPorMesa = {};
+      this.mesas = [];
+      this.resumenDia = { total: 0, mesas: 0 };
       return;
     }
     const fecha = this.filtroFecha;
-    // Traer todos los pedidos del día y filtrar por mesa en el frontend
+    // No filtrar por mesa en la consulta, solo por fecha
     const obs = this.dataService.getHistorialFiltrado(this.barId, fecha);
     const pedidos = await firstValueFrom(obs);
-    let mesa = this.filtroMesa?.trim().toLowerCase();
-    if (mesa) {
-      this.historialFiltrado = pedidos.filter(
-        (p) => (p['mesa'] || '').trim().toLowerCase() === mesa
-      );
-    } else {
-      this.historialFiltrado = pedidos;
-    }
+    let filtrados = pedidos;
+    this.historialFiltrado = filtrados;
+    this.agrupadoPorMesa = {};
+    filtrados.forEach((p) => {
+      const mesaKey = p['mesa'] || 'Sin mesa';
+      if (!this.agrupadoPorMesa[mesaKey]) this.agrupadoPorMesa[mesaKey] = [];
+      this.agrupadoPorMesa[mesaKey].push(p);
+    });
+    this.mesas = Object.keys(this.agrupadoPorMesa);
+    this.resumenDia = {
+      total: this.mesas.reduce((acc, mesa) => acc + this.getTotalMesa(mesa), 0),
+      mesas: this.mesas.length,
+    };
+    // No modificar filtroMesa aquí, así el filtro visual permanece
+  }
+
+  filtrarSoloVistaMesa() {
+    // No hace nada, solo fuerza el refresco de la vista por ngModel
+  }
+
+  getTotalMesa(mesa: string): number {
+    if (!this.agrupadoPorMesa[mesa]) return 0;
+    // Sumar todos los totales de todos los registros de la mesa (resumen_mesa y comandas individuales)
+    return this.agrupadoPorMesa[mesa].reduce(
+      (sum: number, p: any) => sum + (p.total || 0),
+      0
+    );
   }
 }

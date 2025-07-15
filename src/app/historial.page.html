@@ -9,22 +9,18 @@
         slot="start"
         style="margin-right: 8px"
       ></ion-icon>
-      {{ 'HISTORY.TITLE' | translate }}
+      Historial de Consumo
     </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <ion-card>
     <ion-card-header>
-      <ion-card-title
-        >{{ 'HISTORY.FILTER_BY_DATE' | translate }}</ion-card-title
-      >
+      <ion-card-title>Filtrar por fecha</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-item>
-        <ion-label position="floating"
-          >{{ 'HISTORY.DATE' | translate }}</ion-label
-        >
+        <ion-label position="floating">Fecha</ion-label>
         <ion-datetime
           presentation="date"
           [value]="filtroFecha || ''"
@@ -32,62 +28,109 @@
           display-format="YYYY-MM-DD"
         ></ion-datetime>
       </ion-item>
-      <ion-item>
-        <ion-label position="floating"
-          >{{ 'HISTORY.TABLE' | translate }}</ion-label
-        >
-        <ion-input>
-          <input
-            slot="input"
-            name="filtroMesa"
-            [ngModel]="filtroMesa"
-            (ngModelChange)="filtroMesa = $event"
-            inputmode="text"
-          />
-        </ion-input>
-      </ion-item>
-    </ion-card-content>
-    <ion-card-content>
-      <ng-container *ngIf="historial$ | async as historial">
-        <ion-button
-          expand="block"
-          color="primary"
-          (click)="aplicarFiltrosAsync()"
-        >
-          {{ 'HISTORY.FILTER_BY_DATE' | translate }}
-        </ion-button>
-      </ng-container>
+      <ion-button
+        expand="block"
+        color="primary"
+        (click)="aplicarFiltrosAsync()"
+      >
+        Aplicar filtros
+      </ion-button>
     </ion-card-content>
   </ion-card>
-  <ion-list *ngIf="historialFiltrado.length > 0">
-    <ion-item-divider color="light"
-      >{{ 'HISTORY.ORDERS' | translate }}</ion-item-divider
-    >
-    <ion-item *ngFor="let pedido of historialFiltrado">
-      <ion-label>
-        <strong>Mesa:</strong> {{pedido.mesa}}<br />
-        <strong>Fecha:</strong> {{pedido.fecha | date:'short'}}<br />
-        <strong>Productos:</strong>
-        <ul>
-          <li *ngFor="let item of pedido.items">
-            {{item.nombre}} x{{item.cantidad}}
-            <span *ngIf="item.opciones?.length"
-              >- Opciones: {{item.opciones.join(', ')}}</span
-            >
-          </li>
-        </ul>
-        <strong>Total:</strong> {{pedido.total |
-        currency:'EUR':'symbol':'1.2-2'}}
-      </ion-label>
-    </ion-item>
-    <ion-item *ngIf="historialFiltrado.length === 0">
-      <ion-label>No hay pedidos para los filtros seleccionados.</ion-label>
-    </ion-item>
-  </ion-list>
-  <ion-list *ngIf="historialFiltrado.length === 0">
-    <ion-item-divider color="light">Pedidos</ion-item-divider>
-    <ion-item>
-      <ion-label>No hay pedidos para los filtros seleccionados.</ion-label>
-    </ion-item>
-  </ion-list>
+
+  <ion-card *ngIf="mesas.length > 1">
+    <ion-card-content>
+      <ion-label>Filtrar por mesa:</ion-label>
+      <ion-segment
+        [(ngModel)]="filtroMesa"
+        (ionChange)="filtrarSoloVistaMesa()"
+      >
+        <ion-segment-button value="">
+          <ion-label>Todos</ion-label>
+        </ion-segment-button>
+        <ion-segment-button *ngFor="let mesa of mesas" [value]="mesa">
+          <ion-label>{{ mesa }}</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="mesas.length > 0">
+    <ion-card-header>
+      <ion-card-title>Resumen del día</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div>
+        <strong>Total facturado:</strong> {{ resumenDia.total |
+        currency:'EUR':'symbol':'1.2-2' }}
+      </div>
+      <div><strong>Mesas atendidas:</strong> {{ resumenDia.mesas }}</div>
+    </ion-card-content>
+  </ion-card>
+
+  <ng-container *ngFor="let mesa of mesas">
+    <ion-card *ngIf="(!filtroMesa && mesas.length > 0) || filtroMesa === mesa">
+      <ion-card-header color="secondary">
+        <ion-card-title>Mesa: <b>{{ mesa }}</b></ion-card-title>
+        <div style="font-size: 0.9em; color: #666">
+          Total: {{ getTotalMesa(mesa) | currency:'EUR':'symbol':'1.2-2' }}
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <ng-container *ngFor="let registro of agrupadoPorMesa[mesa]">
+          <div
+            *ngIf="registro.tipo === 'resumen_mesa'"
+            style="
+              margin-bottom: 10px;
+              border-bottom: 1px solid #eee;
+              padding-bottom: 8px;
+            "
+          >
+            <strong style="color: #0070f3">RESUMEN DE MESA</strong><br />
+            <strong>Pagado en:</strong> {{registro.pagadoEn | date:'short'}}<br />
+            <strong>Total:</strong> {{registro.total |
+            currency:'EUR':'symbol':'1.2-2'}}<br />
+            <strong>Comandas:</strong>
+            <ul>
+              <li *ngFor="let c of registro.pedidos">
+                <span>{{c.fecha | date:'short'}}:</span>
+                <ul>
+                  <li *ngFor="let item of c.items">
+                    {{item.nombre}} x{{item.cantidad}}
+                    <span *ngIf="item.opciones?.length"
+                      >- Opciones: {{item.opciones.join(', ')}}</span
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div
+            *ngIf="!registro.tipo || registro.tipo !== 'resumen_mesa'"
+            style="margin-bottom: 10px"
+          >
+            <strong>Comanda individual</strong><br />
+            <strong>Fecha:</strong> {{registro.fecha | date:'short'}}<br />
+            <strong>Productos:</strong>
+            <ul>
+              <li *ngFor="let item of registro.items">
+                {{item.nombre}} x{{item.cantidad}}
+                <span *ngIf="item.opciones?.length"
+                  >- Opciones: {{item.opciones.join(', ')}}</span
+                >
+              </li>
+            </ul>
+            <strong>Total:</strong> {{registro.total |
+            currency:'EUR':'symbol':'1.2-2'}}
+          </div>
+        </ng-container>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+  <ion-card *ngIf="mesas.length === 0">
+    <ion-card-content>
+      <ion-label>No hay registros para los filtros seleccionados.</ion-label>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

@@ -164,10 +164,22 @@ export class AdminPage implements OnInit {
         ? c.fecha.slice(0, 10)
         : new Date().toISOString().slice(0, 10),
     }));
-    // Guardar en historial antes de borrar
+    // Guardar en historial cada comanda
     pedidosMesa.forEach((pedido) => {
       this.dataService.addHistorial(this.barId, pedido);
     });
+    // Guardar informe resumen de la mesa
+    if (pedidosMesa.length) {
+      const informeMesa = {
+        mesa: mesaNormalizada,
+        pedidos: pedidosMesa,
+        total: pedidosMesa.reduce((sum, p) => sum + (p.total || 0), 0),
+        pagadoEn: new Date().toISOString(),
+        fechaDia: pedidosMesa[0].fechaDia,
+        tipo: 'resumen_mesa',
+      };
+      this.dataService.addHistorial(this.barId, informeMesa);
+    }
     (this.comandasPorMesa[mesa] || []).forEach((c) => {
       this.dataService.deleteComanda(this.barId, c.id);
     });

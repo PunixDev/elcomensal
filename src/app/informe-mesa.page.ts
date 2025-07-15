@@ -66,7 +66,8 @@ export class InformeMesaPage implements OnInit {
     this.mesa = this.route.snapshot.paramMap.get('mesa') || '';
     this.dataService.getComandas(this.barId).subscribe((comandas) => {
       this.comandas = comandas.filter(
-        (c: any) => (c.mesa || '').trim().toLowerCase() === this.mesa.trim().toLowerCase()
+        (c: any) =>
+          (c.mesa || '').trim().toLowerCase() === this.mesa.trim().toLowerCase()
       );
       this.agruparProductos();
     });
@@ -81,7 +82,8 @@ export class InformeMesaPage implements OnInit {
     const agrupados: { [key: string]: any } = {};
     for (const comanda of this.comandas) {
       for (const item of comanda.items) {
-        const key = item.id + '|' + (item.opciones ? item.opciones.join(',') : '');
+        const key =
+          item.id + '|' + (item.opciones ? item.opciones.join(',') : '');
         if (!agrupados[key]) {
           const prod = this.productos.find((p: any) => p.id === item.id);
           agrupados[key] = {
@@ -125,15 +127,15 @@ export class InformeMesaPage implements OnInit {
 
   pedirPorSeparado() {
     // Filtrar productos seleccionados
-    const productosPedido = this.productosAgrupados.filter(
-      (prod) => this.seleccionados[prod.id] > 0
-    ).map((prod) => ({
-      id: prod.id,
-      nombre: prod.nombre,
-      cantidad: this.seleccionados[prod.id],
-      opciones: prod.opciones,
-      precio: prod.precio,
-    }));
+    const productosPedido = this.productosAgrupados
+      .filter((prod) => this.seleccionados[prod.id] > 0)
+      .map((prod) => ({
+        id: prod.id,
+        nombre: prod.nombre,
+        cantidad: this.seleccionados[prod.id],
+        opciones: prod.opciones,
+        precio: prod.precio,
+      }));
     // Eliminar de la lista los productos seleccionados
     this.productosAgrupados = this.productosAgrupados.filter(
       (prod) => !this.seleccionados[prod.id] || this.seleccionados[prod.id] < 1
