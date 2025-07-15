@@ -20,6 +20,7 @@ import {
 } from '@ionic/angular/standalone';
 import { DataService, Categoria } from '../data.service';
 import { Observable } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-categorias',
@@ -44,6 +45,7 @@ import { Observable } from 'rxjs';
     IonIcon,
     CommonModule,
     FormsModule,
+    TranslateModule,
   ],
 })
 export class CategoriasPage implements OnInit {
@@ -52,6 +54,7 @@ export class CategoriasPage implements OnInit {
   editando: string | null = null;
   editNombre = '';
   barId: string;
+  mensajeExito = '';
 
   constructor(private dataService: DataService) {
     this.barId = this.dataService.getBarId();
@@ -67,6 +70,10 @@ export class CategoriasPage implements OnInit {
       };
       this.dataService.addCategoria(this.barId, nueva);
       this.nuevaCategoria = '';
+      this.mensajeExito = 'Categoría añadida correctamente';
+      setTimeout(() => {
+        this.mensajeExito = '';
+      }, 2500);
     }
   }
 

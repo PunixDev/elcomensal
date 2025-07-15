@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>
       <ion-icon name="albums" slot="start" style="margin-right: 8px"></ion-icon>
-      Categorías
+      {{ 'CATEGORIES.TITLE' | translate }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -19,13 +19,13 @@
             name="add-circle"
             style="vertical-align: middle; margin-right: 8px"
           ></ion-icon>
-          Añadir categoría
+          {{ 'CATEGORIES.ADD_CATEGORY' | translate }}
         </h2>
         <div class="form-fields">
           <ion-item class="form-item">
             <ion-icon name="pricetag" slot="start"></ion-icon>
             <ion-input
-              placeholder="Nombre de la categoría"
+              [placeholder]="'CATEGORIES.NAME' | translate"
               [(ngModel)]="nuevaCategoria"
               name="nombreCategoria"
               required
@@ -39,10 +39,18 @@
           class="btn-agregar"
         >
           <ion-icon name="add" slot="start"></ion-icon>
-          Añadir categoría
+          {{ 'CATEGORIES.ADD_CATEGORY' | translate }}
         </ion-button>
       </div>
     </form>
+  </div>
+  <div *ngIf="mensajeExito" class="mensaje-exito">
+    <ion-icon
+      name="checkmark-circle"
+      color="success"
+      style="vertical-align: middle; margin-right: 6px"
+    ></ion-icon>
+    {{ 'CATEGORIES.CATEGORY_SAVED' | translate }}
   </div>
   <ion-grid>
     <ion-row>
@@ -59,7 +67,7 @@
                 (click)="iniciarEdicion(categoria)"
               >
                 <ion-icon name="create"></ion-icon>
-                Editar
+                {{ 'COMMON.EDIT' | translate }}
               </ion-button>
               <ion-button
                 fill="clear"
@@ -72,7 +80,7 @@
                   slot="start"
                   aria-hidden="true"
                 ></ion-icon>
-                Eliminar
+                {{ 'COMMON.DELETE' | translate }}
               </ion-button>
             </ng-container>
             <ng-template #editBlock>
@@ -84,7 +92,7 @@
                 (click)="guardarEdicion(categoria.id)"
               >
                 <ion-icon name="checkmark"></ion-icon>
-                Guardar
+                {{ 'COMMON.SAVE' | translate }}
               </ion-button>
               <ion-button
                 fill="clear"
@@ -93,7 +101,7 @@
                 (click)="cancelarEdicion()"
               >
                 <ion-icon name="close"></ion-icon>
-                Cancelar
+                {{ 'COMMON.CANCEL' | translate }}
               </ion-button>
             </ng-template>
           </ion-item>

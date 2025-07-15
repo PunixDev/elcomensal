@@ -9,7 +9,7 @@
         slot="start"
         style="margin-right: 8px"
       ></ion-icon>
-      Productos
+      {{ 'PRODUCTS.TITLE' | translate }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -23,7 +23,7 @@
             name="add-circle"
             style="vertical-align: middle; margin-right: 8px"
           ></ion-icon>
-          Añadir producto
+          {{ 'PRODUCTS.ADD_PRODUCT' | translate }}
         </h2>
         <div class="form-fields">
           <ion-item
@@ -32,7 +32,7 @@
           >
             <ion-icon name="pizza" slot="start"></ion-icon>
             <ion-input
-              placeholder="Nombre del producto"
+              [placeholder]="'PRODUCTS.NAME' | translate"
               [(ngModel)]="nuevoNombre"
               name="nombre"
               required
@@ -41,7 +41,7 @@
           <ion-item class="form-item">
             <ion-icon name="document-text" slot="start"></ion-icon>
             <ion-textarea
-              placeholder="Descripción"
+              [placeholder]="'PRODUCTS.DESCRIPTION' | translate"
               [(ngModel)]="nuevaDescripcion"
               name="descripcion"
             ></ion-textarea>
@@ -49,7 +49,7 @@
           <ion-item class="form-item">
             <ion-icon name="leaf" slot="start"></ion-icon>
             <ion-textarea
-              placeholder="Alergenos"
+              [placeholder]="'PRODUCTS.ALLERGENS' | translate"
               [(ngModel)]="nuevosAlergenos"
               name="alergenos"
             ></ion-textarea>
@@ -57,7 +57,7 @@
           <ion-item class="form-item">
             <ion-icon name="options" slot="start"></ion-icon>
             <ion-input
-              placeholder="Nueva opción"
+              [placeholder]="'PRODUCTS.NEW_OPTION' | translate"
               [(ngModel)]="opcionTemp"
               name="opcionTemp"
             ></ion-input>
@@ -89,7 +89,7 @@
                 name="cloud-upload"
                 style="margin-right: 6px"
               ></ion-icon>
-              <span>Seleccionar imagen</span>
+              <span>{{ 'PRODUCTS.SELECT_IMAGE' | translate }}</span>
               <input
                 type="file"
                 accept="image/*"
@@ -110,7 +110,7 @@
               type="number"
               min="0"
               step="0.01"
-              placeholder="Precio"
+              [placeholder]="'PRODUCTS.PRICE' | translate"
               [(ngModel)]="nuevoPrecio"
               name="precio"
               required
@@ -123,7 +123,7 @@
             <ion-icon name="albums" slot="start"></ion-icon>
             <ion-select
               required
-              placeholder="Categoría"
+              [placeholder]="'PRODUCTS.CATEGORY' | translate"
               [(ngModel)]="nuevaCategoria"
               name="categoria"
             >
@@ -142,7 +142,7 @@
           class="btn-agregar"
         >
           <ion-icon name="add" slot="start"></ion-icon>
-          Añadir producto
+          {{ 'PRODUCTS.ADD_PRODUCT' | translate }}
         </ion-button>
       </div>
     </form>
@@ -207,17 +207,17 @@
                         name="document-text"
                         style="vertical-align: middle"
                       ></ion-icon>
-                      <strong>Descripción:</strong> {{producto.descripcion}}
+                      <strong>{{ 'PRODUCTS.DESCRIPTION' | translate }}:</strong> {{producto.descripcion}}
                     </p>
                     <p *ngIf="producto.alergenos">
-                      <strong>Alergenos:</strong> {{producto.alergenos}}
+                      <strong>{{ 'PRODUCTS.ALLERGENS' | translate }}:</strong> {{producto.alergenos}}
                     </p>
                     <div *ngIf="producto.opciones && producto.opciones.length">
                       <ion-icon
                         name="options"
                         style="vertical-align: middle"
                       ></ion-icon>
-                      <strong>Opciones:</strong>
+                      <strong>{{ 'PRODUCTS.OPTIONS' | translate }}:</strong>
                       <ul>
                         <li *ngFor="let op of producto.opciones">
                           <ion-icon
@@ -251,11 +251,11 @@
                 <ion-item *ngIf="editando === producto.id">
                   <ion-input
                     [(ngModel)]="editNombre"
-                    placeholder="Nombre del producto"
+                    placeholder="'PRODUCTS.NAME' | translate"
                   ></ion-input>
                   <ion-select
                     [(ngModel)]="editCategoria"
-                    placeholder="Categoría"
+                    placeholder="'PRODUCTS.CATEGORY' | translate"
                   >
                     <ion-select-option
                       *ngFor="let cat of categorias$ | async"
@@ -264,15 +264,15 @@
                     >
                   </ion-select>
                   <ion-textarea
-                    placeholder="Descripción"
+                    placeholder="'PRODUCTS.DESCRIPTION' | translate"
                     [(ngModel)]="editDescripcion"
                   ></ion-textarea>
                   <ion-textarea
-                    placeholder="Alergenos"
+                    placeholder="'PRODUCTS.ALLERGENS' | translate"
                     [(ngModel)]="editAlergenos"
                   ></ion-textarea>
                   <ion-input
-                    placeholder="Nueva opción"
+                    placeholder="'PRODUCTS.NEW_OPTION' | translate"
                     [(ngModel)]="editOpcionTemp"
                   ></ion-input>
                   <ion-button
@@ -307,7 +307,7 @@
                       type="number"
                       min="0"
                       step="0.01"
-                      placeholder="Precio"
+                      [placeholder]="'PRODUCTS.PRICE' | translate"
                       [(ngModel)]="editPrecio"
                     ></ion-input>
                   </ion-item>

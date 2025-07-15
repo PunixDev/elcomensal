@@ -198,5 +198,33 @@
     "TOTAL_PAID": "Gesamt bezahlt",
     "REQUEST_PAYMENT": "Zahlung anfordern",
     "IMAGE_EXPANDED": "Vergrößertes Bild"
+  },
+  "CATEGORIES": {
+    "TITLE": "Kategorienverwaltung",
+    "ADD_CATEGORY": "Kategorie hinzufügen",
+    "EDIT_CATEGORY": "Kategorie bearbeiten",
+    "DELETE_CATEGORY": "Kategorie löschen",
+    "SAVE_CATEGORY": "Kategorie speichern",
+    "CANCEL": "Abbrechen",
+    "NAME": "Name",
+    "DESCRIPTION": "Beschreibung",
+    "IMAGE": "Bild",
+    "ALLERGENS": "Allergene",
+    "OPTIONS": "Optionen",
+    "ADD": "Hinzufügen",
+    "REMOVE": "Entfernen",
+    "CATEGORY": "Kategorie",
+    "CATEGORY_PLURAL": "n",
+    "TOTAL": "Gesamt",
+    "SEND_ORDER": "Bestellung senden",
+    "ORDER_SUMMARY": "Bestellübersicht",
+    "PAYMENT_REQUESTED": "Zahlung angefordert. Bitte warten Sie auf die Bestätigung durch den Administrator.",
+    "ORDER_HISTORY": "Bestellverlauf",
+    "STATUS_PREPARED": "Zubereitet",
+    "STATUS_PREPARING": "In Zubereitung",
+    "STATUS_RECEIVED": "Empfangen",
+    "TOTAL_PAID": "Gesamt bezahlt",
+    "REQUEST_PAYMENT": "Zahlung anfordern",
+    "IMAGE_EXPANDED": "Vergrößertes Bild"
   }
 }

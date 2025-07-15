@@ -197,5 +197,9 @@
     "TOTAL_PAID": "Total payé",
     "REQUEST_PAYMENT": "Demander le paiement",
     "IMAGE_EXPANDED": "Image agrandie"
+  },
+  "CATEGORIES": {
+    "ADD_CATEGORY": "Ajouter une catégorie",
+    "TITLE": "Gestion des Catégories"
   }
 }
