@@ -50,14 +50,9 @@ export class InformeMesaPage implements OnInit {
   mesa: string = '';
   comandas: any[] = [];
   productos: any[] = [];
-  seleccionados: any[] = [];
   barId: string = '';
-  unidades: any[] = [];
-  tachados: any[] = [];
-
-  unidadesAgrupadas: any[] = [];
-  seleccionadasAgrupadas: { [key: string]: number } = {};
-  tachadasAgrupadas: { [key: string]: number } = {};
+  productosAgrupados: any[] = [];
+  seleccionados: { [key: string]: number } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -71,89 +66,87 @@ export class InformeMesaPage implements OnInit {
     this.mesa = this.route.snapshot.paramMap.get('mesa') || '';
     this.dataService.getComandas(this.barId).subscribe((comandas) => {
       this.comandas = comandas.filter(
-        (c: any) =>
-          (c.mesa || '').trim().toLowerCase() === this.mesa.trim().toLowerCase()
+        (c: any) => (c.mesa || '').trim().toLowerCase() === this.mesa.trim().toLowerCase()
       );
-      // Agrupar productos por id+nombre+opciones
-      const agrupadas: { [key: string]: any } = {};
-      for (const comanda of this.comandas) {
-        for (const item of comanda.items) {
-          const key =
-            item.id +
-            '|' +
-            item.nombre +
-            '|' +
-            (item.opciones ? item.opciones.join(',') : '');
-          if (!agrupadas[key]) {
-            agrupadas[key] = {
-              ...item,
-              cantidad: 0,
-              _key: key,
-              _opciones: item.opciones ? [...item.opciones] : [],
-              _comandas: [],
-            };
-          }
-          agrupadas[key].cantidad += item.cantidad;
-          agrupadas[key]._comandas.push({
-            comandaId: comanda.id,
-            fecha: comanda.fecha,
-          });
-        }
-      }
-      this.unidadesAgrupadas = Object.values(agrupadas);
+      this.agruparProductos();
     });
     this.dataService.getProductos(this.barId).subscribe((productos) => {
       this.productos = productos;
+      this.agruparProductos();
     });
+  }
+
+  agruparProductos() {
+    if (!this.comandas.length || !this.productos.length) return;
+    const agrupados: { [key: string]: any } = {};
+    for (const comanda of this.comandas) {
+      for (const item of comanda.items) {
+        const key = item.id + '|' + (item.opciones ? item.opciones.join(',') : '');
+        if (!agrupados[key]) {
+          const prod = this.productos.find((p: any) => p.id === item.id);
+          agrupados[key] = {
+            id: item.id,
+            nombre: prod ? prod.nombre : item.nombre,
+            opciones: item.opciones || [],
+            cantidad: 0,
+            precio: prod ? prod.precio : 0,
+          };
+        }
+        agrupados[key].cantidad += item.cantidad;
+      }
+    }
+    this.productosAgrupados = Object.values(agrupados);
+    // Inicializar seleccionados si no existe
+    for (const prod of this.productosAgrupados) {
+      if (this.seleccionados[prod.id] === undefined) {
+        this.seleccionados[prod.id] = 0;
+      }
+    }
+  }
+
+  sumarSeleccion(prod: any) {
+    if (this.seleccionados[prod.id] < prod.cantidad) {
+      this.seleccionados[prod.id]++;
+    }
+  }
+  restarSeleccion(prod: any) {
+    if (this.seleccionados[prod.id] > 0) {
+      this.seleccionados[prod.id]--;
+    }
   }
 
   getTotalSeleccionado() {
     let total = 0;
-    for (const unidad of this.unidadesAgrupadas) {
-      const prod = this.productos.find((p: any) => p.id === unidad.id);
-      const sel = this.seleccionadasAgrupadas[unidad._key] || 0;
-      total += prod ? prod.precio * sel : 0;
+    for (const prod of this.productosAgrupados) {
+      total += prod.precio * (this.seleccionados[prod.id] || 0);
     }
     return total;
   }
 
-  sumarSeleccion(unidad: any) {
-    const key = unidad._key;
-    const max = unidad.cantidad - (this.tachadasAgrupadas[key] || 0);
-    if ((this.seleccionadasAgrupadas[key] || 0) < max) {
-      this.seleccionadasAgrupadas[key] =
-        (this.seleccionadasAgrupadas[key] || 0) + 1;
+  pedirPorSeparado() {
+    // Filtrar productos seleccionados
+    const productosPedido = this.productosAgrupados.filter(
+      (prod) => this.seleccionados[prod.id] > 0
+    ).map((prod) => ({
+      id: prod.id,
+      nombre: prod.nombre,
+      cantidad: this.seleccionados[prod.id],
+      opciones: prod.opciones,
+      precio: prod.precio,
+    }));
+    // Eliminar de la lista los productos seleccionados
+    this.productosAgrupados = this.productosAgrupados.filter(
+      (prod) => !this.seleccionados[prod.id] || this.seleccionados[prod.id] < 1
+    );
+    // Limpiar seleccionados de los eliminados
+    for (const prod of productosPedido) {
+      this.seleccionados[prod.id] = 0;
     }
-  }
-  restarSeleccion(unidad: any) {
-    const key = unidad._key;
-    if ((this.seleccionadasAgrupadas[key] || 0) > 0) {
-      this.seleccionadasAgrupadas[key] =
-        (this.seleccionadasAgrupadas[key] || 0) - 1;
-    }
-  }
-  marcarPagados() {
-    for (const key in this.seleccionadasAgrupadas) {
-      if (this.seleccionadasAgrupadas[key]) {
-        this.tachadasAgrupadas[key] =
-          (this.tachadasAgrupadas[key] || 0) + this.seleccionadasAgrupadas[key];
-        this.seleccionadasAgrupadas[key] = 0;
-      }
-    }
-  }
-  unidadesPendientes(unidad: any) {
-    const key = unidad._key;
-    return unidad.cantidad - (this.tachadasAgrupadas[key] || 0);
-  }
-  unidadesTachadas(unidad: any) {
-    const key = unidad._key;
-    return this.tachadasAgrupadas[key] || 0;
+    // Puedes mostrar un resumen o enviar a la base de datos aquí si lo necesitas
+    // alert('Pedido por separado:\n' + JSON.stringify(productosPedido, null, 2));
   }
 
   volver() {
     this.router.navigate(['/admin']);
-  }
-  fraccionarPago() {
-    // Método agregado para evitar error de compilación. Implementa la lógica si es necesario.
   }
 }
