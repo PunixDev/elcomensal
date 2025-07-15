@@ -207,10 +207,12 @@
                         name="document-text"
                         style="vertical-align: middle"
                       ></ion-icon>
-                      <strong>{{ 'PRODUCTS.DESCRIPTION' | translate }}:</strong> {{producto.descripcion}}
+                      <strong>{{ 'PRODUCTS.DESCRIPTION' | translate }}:</strong>
+                      {{producto.descripcion}}
                     </p>
                     <p *ngIf="producto.alergenos">
-                      <strong>{{ 'PRODUCTS.ALLERGENS' | translate }}:</strong> {{producto.alergenos}}
+                      <strong>{{ 'PRODUCTS.ALLERGENS' | translate }}:</strong>
+                      {{producto.alergenos}}
                     </p>
                     <div *ngIf="producto.opciones && producto.opciones.length">
                       <ion-icon
