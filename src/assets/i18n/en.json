@@ -227,7 +227,9 @@
       "SUBTITLE": "Detailed sales analysis by product",
       "VIEW_STATISTICS": "View statistics",
       "LOADING": "Loading statistics...",
-      "NO_DATA": "No sales in the selected range"
+      "NO_DATA": "No sales in the selected range",
+      "TOTAL_UNITS": "Total Units",
+      "TOP_PRODUCT": "Top Product"
     },
     "RANKING_MODULE": {
       "TITLE": "Best Selling Products",

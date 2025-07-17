@@ -30,10 +30,12 @@
         <ion-icon name="archive" slot="start" aria-hidden="true"></ion-icon>
         {{ 'NAVIGATION.HISTORY' | translate }}
       </ion-item>
+      <!--
       <ion-item (click)="goToEstadisticas()">
         <ion-icon name="bar-chart" slot="start" aria-hidden="true"></ion-icon>
         {{ 'ADMIN.VIEW_STATISTICS' | translate }}
       </ion-item>
+      -->
       <ion-item *ngIf="!isSubscribed" routerLink="/suscripcion" color="primary">
         <ion-icon name="card" slot="start" aria-hidden="true"></ion-icon>
         {{ 'ADMIN.SUBSCRIBE' | translate }}

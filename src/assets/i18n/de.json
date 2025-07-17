@@ -103,7 +103,9 @@
       "SUBTITLE": "Detaillierte Verkaufsanalyse nach Produkten",
       "VIEW_STATISTICS": "Statistiken anzeigen",
       "LOADING": "Statistiken laden...",
-      "NO_DATA": "Keine Verkäufe im ausgewählten Bereich"
+      "NO_DATA": "Keine Verkäufe im ausgewählten Bereich",
+      "TOTAL_UNITS": "Gesamt Einheiten",
+      "TOP_PRODUCT": "Top Produkt"
     },
     "RANKING_MODULE": {
       "TITLE": "Meistverkaufte Produkte",

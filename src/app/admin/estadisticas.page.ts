@@ -125,70 +125,83 @@ export class EstadisticasPage implements OnInit {
     this.dataService.getProductos(this.barId).subscribe((prods) => {
       this.productos = prods;
     });
-
-    // Mock de categorías
-    this.categorias = [
-      { id: '1', nombre: 'Bebidas' },
-      { id: '2', nombre: 'Comida' },
-      { id: '3', nombre: 'Postres' },
-      { id: '4', nombre: 'Aperitivos' },
-    ];
-
-    this.cargarEstadisticas();
-    this.cargarRanking();
-    this.cargarIngresos();
-    this.cargarFranjas();
+    this.dataService.getCategorias(this.barId).subscribe((cats) => {
+      this.categorias = cats;
+    });
+    // Quitar las llamadas automáticas a cargarEstadisticas, cargarRanking, cargarIngresos y cargarFranjas
   }
 
   cambiarSeccion() {
-    // Cargar datos de la sección activa al cambiar
+    // Limpiar datos al cambiar de sección
     switch (this.seccionActiva) {
       case 'ventas':
-        this.cargarEstadisticas();
+        this.ventasPorProducto = [];
         break;
       case 'ranking':
-        this.cargarRanking();
+        this.ranking = [];
         break;
       case 'ingresos':
-        this.cargarIngresos();
+        this.ingresosPorPeriodo = [];
+        this.ingresosTotales = 0;
+        this.ticketMedio = 0;
+        this.totalPedidos = 0;
         break;
       case 'franjas':
-        this.cargarFranjas();
+        this.ventasPorFranja = [];
+        this.horasPico = [];
+        this.diasPico = [];
         break;
     }
   }
 
   async cargarEstadisticas() {
     this.cargando = true;
-    // Aquí deberías obtener las ventas del dataService filtrando por fecha y productos seleccionados
-    // Simulación:
-    setTimeout(() => {
-      let datos = [
-        { id: '1', nombre: 'Café', cantidad: 42 },
-        { id: '2', nombre: 'Tostada', cantidad: 31 },
-        { id: '3', nombre: 'Zumo', cantidad: 18 },
-      ];
-      if (this.productosSeleccionados.length) {
-        datos = datos.filter((d) => this.productosSeleccionados.includes(d.id));
+    const fechaIni = this.fechaInicioDate;
+    const fechaFin = this.fechaFinDate;
+    const productosSeleccionados = this.productosSeleccionados;
+    const categoriasSeleccionadas = this.categorias1Seleccionadas;
+    const historial =
+      (await this.dataService.getHistorial(this.barId).toPromise()) || [];
+    // Filtrar por fecha
+    const filtrados = historial.filter((h) => {
+      const f = new Date(h['fecha']);
+      return f >= fechaIni && f <= fechaFin;
+    });
+    // Agrupar ventas por producto
+    let ventas: { [id: string]: { nombre: string; cantidad: number } } = {};
+    for (const reg of filtrados) {
+      for (const item of reg['items'] || []) {
+        if (
+          (productosSeleccionados.length === 0 ||
+            productosSeleccionados.includes(item.id)) &&
+          (categoriasSeleccionadas.length === 0 ||
+            categoriasSeleccionadas.includes(item.categoria))
+        ) {
+          if (!ventas[item.id]) {
+            ventas[item.id] = { nombre: item.nombre, cantidad: 0 };
+          }
+          ventas[item.id].cantidad += item.cantidad;
+        }
       }
-      this.ventasPorProducto = datos.map(({ nombre, cantidad }) => ({
-        nombre,
-        cantidad,
-      }));
-      this.cargando = false;
-      this.renderChart();
-    }, 1000);
+    }
+    this.ventasPorProducto = Object.values(ventas);
+    this.cargando = false;
+    this.renderChart();
   }
 
   renderChart() {
-    // Usa Chart.js o similar para renderizar la gráfica
-    // Este método se debe completar con la lógica real
+    // Destruir gráfico anterior si existe
+    if ((window as any).ventasChartInstance) {
+      (window as any).ventasChartInstance.destroy();
+    }
+
     if ((window as any).Chart && this.ventasPorProducto.length) {
       const ctx = (
         document.getElementById('ventasChart') as HTMLCanvasElement
       )?.getContext('2d');
       if (!ctx) return;
-      new (window as any).Chart(ctx, {
+
+      (window as any).ventasChartInstance = new (window as any).Chart(ctx, {
         type: 'bar',
         data: {
           labels: this.ventasPorProducto.map((v) => v.nombre),
@@ -196,14 +209,35 @@ export class EstadisticasPage implements OnInit {
             {
               label: 'Unidades vendidas',
               data: this.ventasPorProducto.map((v) => v.cantidad),
-              backgroundColor: '#E2725B',
+              backgroundColor: 'rgba(226, 114, 91, 0.8)',
+              borderColor: '#E2725B',
+              borderWidth: 1,
             },
           ],
         },
         options: {
           responsive: true,
           plugins: {
-            legend: { display: false },
+            legend: { display: true },
+            title: {
+              display: true,
+              text: 'Ventas por producto',
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Cantidad vendida',
+              },
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Productos',
+              },
+            },
           },
         },
       });
@@ -215,24 +249,24 @@ export class EstadisticasPage implements OnInit {
     this.fechaInicioDate = date;
     this.fechaInicio = date.toISOString();
     this.showCalendarInicio = false;
-    this.cargarEstadisticas();
+    // Quitar carga automática
   }
   setFechaFin(event: any) {
     const date = Array.isArray(event) ? event[0] : event;
     this.fechaFinDate = date;
     this.fechaFin = date.toISOString();
     this.showCalendarFin = false;
-    this.cargarEstadisticas();
+    // Quitar carga automática
   }
   setFechaInicioMaterial(event: any) {
     this.fechaInicioDate = event.value;
     this.fechaInicio = event.value ? event.value.toISOString() : '';
-    this.cargarEstadisticas();
+    // Quitar carga automática
   }
   setFechaFinMaterial(event: any) {
     this.fechaFinDate = event.value;
     this.fechaFin = event.value ? event.value.toISOString() : '';
-    this.cargarEstadisticas();
+    // Quitar carga automática
   }
   // Formateador para mostrar la fecha en dd/MM/AAAA
   get fechaInicioFormateada(): string {
@@ -271,99 +305,117 @@ export class EstadisticasPage implements OnInit {
 
   setFechaInicio2Material(event: any) {
     this.fechaInicio2Date = event.value;
-    this.cargarRanking();
+    // Quitar carga automática
   }
   setFechaFin2Material(event: any) {
     this.fechaFin2Date = event.value;
-    this.cargarRanking();
+    // Quitar carga automática
   }
 
   setFechaInicio3Material(event: any) {
     this.fechaInicio3Date = event.value;
-    this.cargarIngresos();
+    // Quitar carga automática
   }
   setFechaFin3Material(event: any) {
     this.fechaFin3Date = event.value;
-    this.cargarIngresos();
+    // Quitar carga automática
   }
 
   setFechaInicio4Material(event: any) {
     this.fechaInicio4Date = event.value;
-    this.cargarFranjas();
+    // Quitar carga automática
   }
   setFechaFin4Material(event: any) {
     this.fechaFin4Date = event.value;
-    this.cargarFranjas();
+    // Quitar carga automática
   }
 
   async cargarRanking() {
     this.cargandoRanking = true;
-    // Mock de ranking de productos más vendidos
-    setTimeout(() => {
-      let rankingData = [
-        { nombre: 'Café Americano', categoria: 'Bebidas', cantidad: 145 },
-        { nombre: 'Hamburguesa Clásica', categoria: 'Comida', cantidad: 89 },
-        { nombre: 'Coca Cola', categoria: 'Bebidas', cantidad: 76 },
-        { nombre: 'Tarta de Chocolate', categoria: 'Postres', cantidad: 54 },
-        { nombre: 'Patatas Fritas', categoria: 'Aperitivos', cantidad: 43 },
-      ];
-
-      // Filtrar por categorías si están seleccionadas
-      if (this.categorias2Seleccionadas.length) {
-        rankingData = rankingData.filter((item) =>
-          this.categorias2Seleccionadas.includes(
-            this.categorias.find((c) => c.nombre === item.categoria)?.id || ''
-          )
-        );
+    const fechaIni = this.fechaInicio2Date;
+    const fechaFin = this.fechaFin2Date;
+    const categoriasSeleccionadas = this.categorias2Seleccionadas;
+    const historial: any[] =
+      (await this.dataService.getHistorial(this.barId).toPromise()) ?? [];
+    // Filtrar por fecha
+    const filtrados = historial.filter((h) => {
+      const f = new Date(h.fecha);
+      return f >= fechaIni && f <= fechaFin;
+    });
+    // Agrupar ventas por producto y categoría
+    let ranking: {
+      [id: string]: { nombre: string; categoria: string; cantidad: number };
+    } = {};
+    for (const reg of filtrados) {
+      for (const item of reg.items || []) {
+        if (
+          categoriasSeleccionadas.length === 0 ||
+          categoriasSeleccionadas.includes(item.categoria)
+        ) {
+          if (!ranking[item.id]) {
+            ranking[item.id] = {
+              nombre: item.nombre,
+              categoria: item.categoria,
+              cantidad: 0,
+            };
+          }
+          ranking[item.id].cantidad += item.cantidad;
+        }
       }
-
-      this.ranking = rankingData;
-      this.cargandoRanking = false;
-    }, 1000);
+    }
+    this.ranking = Object.values(ranking).sort(
+      (a, b) => b.cantidad - a.cantidad
+    );
+    this.cargandoRanking = false;
   }
 
   async cargarIngresos() {
     this.cargandoIngresos = true;
-    // Mock de datos de ingresos
-    setTimeout(() => {
-      let ingresosData = [
-        { fecha: '2025-06-19', ingresos: 1250.5, pedidos: 45 },
-        { fecha: '2025-06-20', ingresos: 980.75, pedidos: 38 },
-        { fecha: '2025-06-21', ingresos: 1450.25, pedidos: 52 },
-        { fecha: '2025-06-22', ingresos: 1100.0, pedidos: 41 },
-        { fecha: '2025-06-23', ingresos: 1680.9, pedidos: 61 },
-        { fecha: '2025-06-24', ingresos: 1320.4, pedidos: 48 },
-        { fecha: '2025-06-25', ingresos: 1550.8, pedidos: 55 },
-      ];
-
-      // Filtrar por categorías si están seleccionadas (simulación)
-      if (this.categorias3Seleccionadas.length) {
-        // En un caso real, aquí filtrarías los ingresos por categorías
-        ingresosData = ingresosData.map((item) => ({
-          ...item,
-          ingresos: item.ingresos * 0.7, // Simular reducción por filtro
-          pedidos: Math.floor(item.pedidos * 0.7),
-        }));
+    const fechaIni = this.fechaInicio3Date;
+    const fechaFin = this.fechaFin3Date;
+    const categoriasSeleccionadas = this.categorias3Seleccionadas;
+    const historial: any[] =
+      (await this.dataService.getHistorial(this.barId).toPromise()) ?? [];
+    // Filtrar por fecha
+    const filtrados = historial.filter((h) => {
+      const f = new Date(h.fecha);
+      return f >= fechaIni && f <= fechaFin;
+    });
+    // Agrupar ingresos por día
+    let ingresosPorDia: {
+      [fecha: string]: { ingresos: number; pedidos: number };
+    } = {};
+    for (const reg of filtrados) {
+      const fecha = reg.fecha.split('T')[0];
+      let total = 0;
+      for (const item of reg.items || []) {
+        if (
+          categoriasSeleccionadas.length === 0 ||
+          categoriasSeleccionadas.includes(item.categoria)
+        ) {
+          total += (item.precio || 0) * (item.cantidad || 1);
+        }
       }
-
-      this.ingresosPorPeriodo = ingresosData.map(({ fecha, ingresos }) => ({
-        fecha,
-        ingresos,
-      }));
-      this.ingresosTotales = ingresosData.reduce(
-        (total, item) => total + item.ingresos,
-        0
-      );
-      this.totalPedidos = ingresosData.reduce(
-        (total, item) => total + item.pedidos,
-        0
-      );
-      this.ticketMedio =
-        this.totalPedidos > 0 ? this.ingresosTotales / this.totalPedidos : 0;
-
-      this.cargandoIngresos = false;
-      this.renderIngresosChart();
-    }, 1000);
+      if (!ingresosPorDia[fecha])
+        ingresosPorDia[fecha] = { ingresos: 0, pedidos: 0 };
+      ingresosPorDia[fecha].ingresos += total;
+      ingresosPorDia[fecha].pedidos += 1;
+    }
+    this.ingresosPorPeriodo = Object.entries(ingresosPorDia).map(
+      ([fecha, v]) => ({ fecha, ingresos: v.ingresos })
+    );
+    this.ingresosTotales = Object.values(ingresosPorDia).reduce(
+      (acc, v) => acc + v.ingresos,
+      0
+    );
+    this.totalPedidos = Object.values(ingresosPorDia).reduce(
+      (acc, v) => acc + v.pedidos,
+      0
+    );
+    this.ticketMedio =
+      this.totalPedidos > 0 ? this.ingresosTotales / this.totalPedidos : 0;
+    this.cargandoIngresos = false;
+    this.renderIngresosChart();
   }
 
   renderIngresosChart() {
@@ -423,88 +475,63 @@ export class EstadisticasPage implements OnInit {
 
   async cargarFranjas() {
     this.cargandoFranjas = true;
-    // Mock de datos de franjas horarias
-    setTimeout(() => {
-      // Datos simulados: ventas por hora y día de la semana
-      const dias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-      const horas = Array.from(
-        { length: 24 },
-        (_, i) => `${i.toString().padStart(2, '0')}:00`
-      );
-
-      let franjasData: { hora: string; dia: string; ventas: number }[] = [];
-
-      // Generar datos simulados
-      dias.forEach((dia) => {
-        horas.forEach((hora) => {
-          let ventas = 0;
-          const horaNum = parseInt(hora.split(':')[0]);
-
-          // Simular patrones realistas de ventas
-          if (dia === 'Sáb' || dia === 'Dom') {
-            // Fines de semana: más actividad durante el día
-            if (horaNum >= 10 && horaNum <= 23) {
-              ventas = Math.floor(Math.random() * 30) + 10;
-            } else {
-              ventas = Math.floor(Math.random() * 5);
-            }
-          } else {
-            // Días laborables: picos en desayuno, almuerzo y cena
-            if (
-              (horaNum >= 7 && horaNum <= 9) ||
-              (horaNum >= 12 && horaNum <= 14) ||
-              (horaNum >= 19 && horaNum <= 22)
-            ) {
-              ventas = Math.floor(Math.random() * 25) + 15;
-            } else if (horaNum >= 15 && horaNum <= 18) {
-              ventas = Math.floor(Math.random() * 15) + 5;
-            } else {
-              ventas = Math.floor(Math.random() * 8);
-            }
-          }
-
-          franjasData.push({ hora, dia, ventas });
-        });
-      });
-
-      // Filtrar por categorías si están seleccionadas (simulación)
-      if (this.categorias4Seleccionadas.length) {
-        franjasData = franjasData.map((item) => ({
-          ...item,
-          ventas: Math.floor(item.ventas * 0.8), // Simular reducción por filtro
-        }));
+    const fechaIni = this.fechaInicio4Date;
+    const fechaFin = this.fechaFin4Date;
+    const categoriasSeleccionadas = this.categorias4Seleccionadas;
+    const historial: any[] =
+      (await this.dataService.getHistorial(this.barId).toPromise()) ?? [];
+    // Filtrar por fecha
+    const filtrados = historial.filter((h) => {
+      const f = new Date(h.fecha);
+      return f >= fechaIni && f <= fechaFin;
+    });
+    // Agrupar ventas por hora y día
+    let franjas: {
+      [key: string]: { hora: string; dia: string; ventas: number };
+    } = {};
+    for (const reg of filtrados) {
+      const fecha = new Date(reg.fecha);
+      const dia = fecha.toLocaleDateString('es-ES', { weekday: 'short' });
+      const hora = fecha.getHours().toString().padStart(2, '0') + ':00';
+      let total = 0;
+      for (const item of reg.items || []) {
+        if (
+          categoriasSeleccionadas.length === 0 ||
+          categoriasSeleccionadas.includes(item.categoria)
+        ) {
+          total += item.cantidad;
+        }
       }
-
-      this.ventasPorFranja = franjasData;
-
-      // Calcular horas y días pico
-      const ventasPorHora = horas.map((hora) => ({
-        hora,
-        total: franjasData
-          .filter((f) => f.hora === hora)
-          .reduce((sum, f) => sum + f.ventas, 0),
-      }));
-
-      const ventasPorDia = dias.map((dia) => ({
-        dia,
-        total: franjasData
-          .filter((f) => f.dia === dia)
-          .reduce((sum, f) => sum + f.ventas, 0),
-      }));
-
-      this.horasPico = ventasPorHora
-        .sort((a, b) => b.total - a.total)
-        .slice(0, 3)
-        .map((h) => h.hora);
-
-      this.diasPico = ventasPorDia
-        .sort((a, b) => b.total - a.total)
-        .slice(0, 3)
-        .map((d) => d.dia);
-
-      this.cargandoFranjas = false;
-      this.renderFranjasChart();
-    }, 1000);
+      const key = `${hora}-${dia}`;
+      if (!franjas[key]) franjas[key] = { hora, dia, ventas: 0 };
+      franjas[key].ventas += total;
+    }
+    this.ventasPorFranja = Object.values(franjas);
+    // Calcular horas y días pico
+    const horas = Array.from(new Set(this.ventasPorFranja.map((f) => f.hora)));
+    const dias = Array.from(new Set(this.ventasPorFranja.map((f) => f.dia)));
+    const ventasPorHora = horas.map((hora) => ({
+      hora,
+      total: this.ventasPorFranja
+        .filter((f) => f.hora === hora)
+        .reduce((sum, f) => sum + f.ventas, 0),
+    }));
+    const ventasPorDia = dias.map((dia) => ({
+      dia,
+      total: this.ventasPorFranja
+        .filter((f) => f.dia === dia)
+        .reduce((sum, f) => sum + f.ventas, 0),
+    }));
+    this.horasPico = ventasPorHora
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 3)
+      .map((h) => h.hora);
+    this.diasPico = ventasPorDia
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 3)
+      .map((d) => d.dia);
+    this.cargandoFranjas = false;
+    this.renderFranjasChart();
   }
 
   renderFranjasChart() {
@@ -598,5 +625,70 @@ export class EstadisticasPage implements OnInit {
       cssClass: 'language-popover',
     });
     return await popover.present();
+  }
+
+  // Métodos de ayuda para estadísticas
+  getTotalVentasProductos(): number {
+    return this.ventasPorProducto.reduce((total, v) => total + v.cantidad, 0);
+  }
+
+  getProductoMasVendido(): string {
+    if (this.ventasPorProducto.length === 0) return 'N/A';
+    const masVendido = this.ventasPorProducto.reduce((prev, current) =>
+      prev.cantidad > current.cantidad ? prev : current
+    );
+    return masVendido.nombre;
+  }
+
+  getPromedioVentasDiarias(): number {
+    if (this.ingresosPorPeriodo.length === 0) return 0;
+    return this.ingresosTotales / this.ingresosPorPeriodo.length;
+  }
+
+  getDiaMasVentas(): string {
+    if (this.diasPico.length === 0) return 'N/A';
+    return this.diasPico[0];
+  }
+
+  getHoraMasVentas(): string {
+    if (this.horasPico.length === 0) return 'N/A';
+    return this.horasPico[0];
+  }
+
+  // Método para exportar datos (opcional para futuras mejoras)
+  exportarDatos() {
+    let datos = '';
+    switch (this.seccionActiva) {
+      case 'ventas':
+        datos = JSON.stringify(this.ventasPorProducto, null, 2);
+        break;
+      case 'ranking':
+        datos = JSON.stringify(this.ranking, null, 2);
+        break;
+      case 'ingresos':
+        datos = JSON.stringify(
+          {
+            ingresosPorPeriodo: this.ingresosPorPeriodo,
+            ingresosTotales: this.ingresosTotales,
+            ticketMedio: this.ticketMedio,
+            totalPedidos: this.totalPedidos,
+          },
+          null,
+          2
+        );
+        break;
+      case 'franjas':
+        datos = JSON.stringify(
+          {
+            ventasPorFranja: this.ventasPorFranja,
+            horasPico: this.horasPico,
+            diasPico: this.diasPico,
+          },
+          null,
+          2
+        );
+        break;
+    }
+    console.log('Datos de estadísticas:', datos);
   }
 }

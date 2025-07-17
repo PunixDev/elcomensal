@@ -8,7 +8,9 @@
     "ADD": "Aggiungi",
     "CLOSE": "Chiudi",
     "CONFIRM": "Conferma",
-    "SEARCH": "Cerca",
+      "TOTAL_UNITS": "Unità Totali",
+      "TOP_PRODUCT": "Prodotto Top"
+    },"SEARCH": "Cerca",
     "FILTER": "Filtra",
     "CLEAR": "Pulisci",
     "APPLY": "Applica",
@@ -227,7 +229,9 @@
       "SUBTITLE": "Analisi dettagliata delle vendite per prodotto",
       "VIEW_STATISTICS": "Visualizza statistiche",
       "LOADING": "Caricamento statistiche...",
-      "NO_DATA": "Nessuna vendita nell'intervallo selezionato"
+      "NO_DATA": "Nessuna vendita nell'intervallo selezionato",
+      "TOTAL_UNITS": "Unità Totali",
+      "TOP_PRODUCT": "Prodotto Top"
     },
     "RANKING_MODULE": {
       "TITLE": "Prodotti Più Venduti",

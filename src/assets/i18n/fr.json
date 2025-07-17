@@ -3,7 +3,9 @@
     "LOADING": "Chargement...",
     "SAVE": "Enregistrer",
     "CANCEL": "Annuler",
-    "DELETE": "Supprimer",
+      "TOTAL_UNITS": "Total Unités",
+      "TOP_PRODUCT": "Produit Top"
+    },  "DELETE": "Supprimer",
     "EDIT": "Modifier",
     "ADD": "Ajouter",
     "CLOSE": "Fermer",
@@ -103,7 +105,9 @@
       "SUBTITLE": "Analyse détaillée des ventes par produit",
       "VIEW_STATISTICS": "Voir statistiques",
       "LOADING": "Chargement statistiques...",
-      "NO_DATA": "Aucune vente dans la plage sélectionnée"
+      "NO_DATA": "Aucune vente dans la plage sélectionnée",
+      "TOTAL_UNITS": "Total Unités",
+      "TOP_PRODUCT": "Produit Top"
     },
     "RANKING_MODULE": {
       "TITLE": "Produits les Plus Vendus",

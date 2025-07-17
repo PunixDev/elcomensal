@@ -227,7 +227,9 @@
       "SUBTITLE": "Análisis detallado de ventas por producto",
       "VIEW_STATISTICS": "Ver estadísticas",
       "LOADING": "Cargando estadísticas...",
-      "NO_DATA": "No hay ventas en el rango seleccionado"
+      "NO_DATA": "No hay ventas en el rango seleccionado",
+      "TOTAL_UNITS": "Total Unidades",
+      "TOP_PRODUCT": "Producto Top"
     },
     "RANKING_MODULE": {
       "TITLE": "Productos Más Vendidos",
