@@ -1,38 +1,31 @@
-import { Component } from '@angular/core';
-import { StripeService } from '../stripe.service';
-import { IonContent, IonButton } from '@ionic/angular/standalone';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-suscripcion',
   standalone: true,
-  imports: [IonContent, IonButton, TranslateModule],
-  template: `
-    <ion-content>
-      <h2>{{ 'SUBSCRIPTION.TITLE' | translate }}</h2>
-      <p>{{ 'SUBSCRIPTION.DESCRIPTION' | translate }}</p>
-      <ion-button (click)="pagar()">{{
-        'SUBSCRIPTION.BUTTON' | translate
-      }}</ion-button>
-    </ion-content>
-  `,
+  imports: [CommonModule, IonicModule],
+  templateUrl: './suscripcion.page.html',
+  styleUrls: ['./suscripcion.page.scss'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SuscripcionPage {
-  constructor(
-    private stripeService: StripeService,
-    private translate: TranslateService
-  ) {}
+  loading = false;
 
-  async pagar() {
-    // Debes obtener el sessionId desde tu backend
-    const sessionId = await this.getSessionIdFromBackend();
-    this.stripeService.redirectToCheckout(sessionId);
-  }
+  constructor(private http: HttpClient) {}
 
-  async getSessionIdFromBackend(): Promise<string> {
-    // Llama a tu backend para crear la sesión de Stripe
-    // return await this.http.post<{id: string}>('/api/create-checkout-session', {}).toPromise().then(r => r.id);
-    alert(this.translate.instant('SUBSCRIPTION.STRIPE_ALERT'));
-    return '';
+  ngOnInit() {
+    if (
+      !document.querySelector(
+        'script[src="https://js.stripe.com/v3/pricing-table.js"]'
+      )
+    ) {
+      const script = document.createElement('script');
+      script.src = 'https://js.stripe.com/v3/pricing-table.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
   }
 }

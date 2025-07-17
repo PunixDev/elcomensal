@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon
+        name="card"
+        slot="start"
+        style="margin-right: 8px"
+        aria-hidden="true"
+      ></ion-icon>
+      Suscripción
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div style="margin-top: 2em">
+    <stripe-pricing-table
+      pricing-table-id="prctbl_1RlwTVFMNFQMKf5DJfHErJVm"
+      publishable-key="pk_test_51RlvNPFMNFQMKf5DqUNkYpMmkL2pC477qaCdpCt58fhHau90KJSxtcEwWdomnZCO1VP5SdltxEnxEOsntjPI6TCm00mg5c3k9d"
+      redirect-url="http://localhost:8100/admin"
+    >
+    </stripe-pricing-table>
+  </div>
+</ion-content>

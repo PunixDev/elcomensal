@@ -289,6 +289,10 @@ export class AdminPage implements OnInit {
     }
   }
 
+  goToSuscripcion() {
+    this.router.navigate(['/suscripcion']);
+  }
+
   async descargarInformeMesa() {
     // Descarga el informe como PDF usando jsPDF
     const jsPDF = (await import('jspdf')).jsPDF;

@@ -36,11 +36,19 @@
         {{ 'ADMIN.VIEW_STATISTICS' | translate }}
       </ion-item>
       -->
-      <ion-item *ngIf="!isSubscribed" routerLink="/suscripcion" color="primary">
+      <ion-item
+        *ngIf="!isSubscribed"
+        (click)="goToSuscripcion()"
+        color="primary"
+      >
         <ion-icon name="card" slot="start" aria-hidden="true"></ion-icon>
         {{ 'ADMIN.SUBSCRIBE' | translate }}
       </ion-item>
-      <ion-item *ngIf="isSubscribed" routerLink="/suscripcion" color="success">
+      <ion-item
+        *ngIf="isSubscribed"
+        (click)="goToSuscripcion()"
+        color="success"
+      >
         <ion-icon name="card" slot="start" aria-hidden="true"></ion-icon>
         {{ 'ADMIN.MANAGE_SUBSCRIPTION' | translate }}
       </ion-item>
