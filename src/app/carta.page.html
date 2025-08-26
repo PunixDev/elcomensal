@@ -30,6 +30,100 @@
     </button>
   </div>
 
+  <!-- Historial de pedidos: MOVIDO ARRIBA -->
+  <div *ngIf="mesa && historialComandasMesa.length" class="historial-bar">
+    <ion-item
+      button
+      detail
+      lines="none"
+      (click)="mostrarHistorial = !mostrarHistorial"
+    >
+      <ion-icon
+        name="chevron-down"
+        slot="start"
+        *ngIf="!mostrarHistorial"
+      ></ion-icon>
+      <ion-icon
+        name="chevron-up"
+        slot="start"
+        *ngIf="mostrarHistorial"
+      ></ion-icon>
+      <ion-label class="historial-titulo"
+        >{{ 'MENU.ORDER_HISTORY' | translate }}</ion-label
+      >
+      <span
+        *ngIf="!mostrarHistorial"
+        style="
+          margin-left: auto;
+          font-weight: 700;
+          color: #0070f3;
+          font-size: 1.08em;
+        "
+      >
+        {{getTotalHistorialMesa() | currency:'EUR':'symbol':'1.2-2'}}
+      </span>
+    </ion-item>
+    <div *ngIf="mostrarHistorial">
+      <div class="historial-lista">
+        <div
+          *ngFor="let comanda of historialComandasMesa"
+          class="historial-item"
+        >
+          <div class="historial-fecha">{{comanda.fecha | date:'short'}}</div>
+          <div class="historial-estado">
+            <ion-icon
+              name="checkmark-circle"
+              *ngIf="comanda.estado === 'preparado'"
+              color="success"
+            ></ion-icon>
+            <ion-icon
+              name="time"
+              *ngIf="comanda.estado === 'preparando'"
+              color="warning"
+            ></ion-icon>
+            <ion-icon
+              name="ellipse"
+              *ngIf="comanda.estado !== 'preparado' && comanda.estado !== 'preparando'"
+              color="medium"
+            ></ion-icon>
+            <span>
+              {{ comanda.estado === 'preparado' ? ('MENU.STATUS_PREPARED' |
+              translate) : (comanda.estado === 'preparando' ?
+              ('MENU.STATUS_PREPARING' | translate) : ('MENU.STATUS_RECEIVED' |
+              translate)) }}
+            </span>
+          </div>
+          <ul class="historial-pedido">
+            <li *ngFor="let item of comanda.items">
+              {{item.nombre}} x{{item.cantidad}}
+              <span *ngIf="item.opciones.length"
+                >- {{ 'MENU.OPTIONS' | translate }}: {{item.opciones.join(',
+                ')}}</span
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="historial-total">
+        <span>
+          {{ 'MENU.TOTAL_PAID' | translate }}: {{getTotalHistorialMesa() |
+          currency:'EUR':'symbol':'1.2-2'}}
+        </span>
+      </div>
+    </div>
+    <!-- Botón Solicitar Pago debajo de historial -->
+    <div
+      *ngIf="mesa && historialComandasMesa.length && !pagoSolicitado"
+      class="solicitar-pago-bar"
+      style="margin-top: 1em;"
+    >
+      <ion-button expand="block" color="warning" (click)="solicitarPago()">
+        <ion-icon name="cash-outline" slot="start"></ion-icon>
+        {{ 'MENU.REQUEST_PAYMENT' | translate }}
+      </ion-button>
+    </div>
+  </div>
+
   <div class="categoria-titulo" *ngIf="categoriaSeleccionada">
     <h2>{{ getNombreCategoria(getCategoriaSeleccionada()) }}</h2>
   </div>
@@ -237,99 +331,7 @@
     </ion-button>
   </div>
 
-  <!-- Historial de pedidos -->
-  <div *ngIf="mesa && historialComandasMesa.length" class="historial-bar">
-    <ion-item
-      button
-      detail
-      lines="none"
-      (click)="mostrarHistorial = !mostrarHistorial"
-    >
-      <ion-icon
-        name="chevron-down"
-        slot="start"
-        *ngIf="!mostrarHistorial"
-      ></ion-icon>
-      <ion-icon
-        name="chevron-up"
-        slot="start"
-        *ngIf="mostrarHistorial"
-      ></ion-icon>
-      <ion-label class="historial-titulo"
-        >{{ 'MENU.ORDER_HISTORY' | translate }}</ion-label
-      >
-      <span
-        *ngIf="!mostrarHistorial"
-        style="
-          margin-left: auto;
-          font-weight: 700;
-          color: #0070f3;
-          font-size: 1.08em;
-        "
-      >
-        {{getTotalHistorialMesa() | currency:'EUR':'symbol':'1.2-2'}}
-      </span>
-    </ion-item>
-    <div *ngIf="mostrarHistorial">
-      <div class="historial-lista">
-        <div
-          *ngFor="let comanda of historialComandasMesa"
-          class="historial-item"
-        >
-          <div class="historial-fecha">{{comanda.fecha | date:'short'}}</div>
-          <div class="historial-estado">
-            <ion-icon
-              name="checkmark-circle"
-              *ngIf="comanda.estado === 'preparado'"
-              color="success"
-            ></ion-icon>
-            <ion-icon
-              name="time"
-              *ngIf="comanda.estado === 'preparando'"
-              color="warning"
-            ></ion-icon>
-            <ion-icon
-              name="ellipse"
-              *ngIf="comanda.estado !== 'preparado' && comanda.estado !== 'preparando'"
-              color="medium"
-            ></ion-icon>
-            <span>
-              {{ comanda.estado === 'preparado' ? ('MENU.STATUS_PREPARED' |
-              translate) : (comanda.estado === 'preparando' ?
-              ('MENU.STATUS_PREPARING' | translate) : ('MENU.STATUS_RECEIVED' |
-              translate)) }}
-            </span>
-          </div>
-          <ul class="historial-pedido">
-            <li *ngFor="let item of comanda.items">
-              {{item.nombre}} x{{item.cantidad}}
-              <span *ngIf="item.opciones.length"
-                >- {{ 'MENU.OPTIONS' | translate }}: {{item.opciones.join(',
-                ')}}</span
-              >
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="historial-total">
-        <span>
-          {{ 'MENU.TOTAL_PAID' | translate }}: {{getTotalHistorialMesa() |
-          currency:'EUR':'symbol':'1.2-2'}}
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Botón Solicitar Pago -->
-  <div
-    *ngIf="mesa && historialComandasMesa.length && !pagoSolicitado"
-    class="solicitar-pago-bar"
-  >
-    <ion-button expand="block" color="warning" (click)="solicitarPago()">
-      <ion-icon name="cash-outline" slot="start"></ion-icon>
-      {{ 'MENU.REQUEST_PAYMENT' | translate }}
-    </ion-button>
-  </div>
+  <!-- Eliminado: Botón Solicitar Pago duplicado -->
 
   <!-- MODAL IMAGEN AMPLIADA -->
   <div
