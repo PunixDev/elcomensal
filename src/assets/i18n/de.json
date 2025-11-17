@@ -262,7 +262,8 @@
     "STATUS_RECEIVED": "Empfangen",
     "TOTAL_PAID": "Gesamt bezahlt",
     "REQUEST_PAYMENT": "Zahlung anfordern",
-    "IMAGE_EXPANDED": "Vergrößertes Bild"
+    "IMAGE_EXPANDED": "Vergrößertes Bild",
+    "SELECT_IMAGE": "Bild auswählen"
   },
   "MENU": {
     "TITLE": "Produkte",
