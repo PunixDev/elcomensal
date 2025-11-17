@@ -176,7 +176,7 @@
               <ng-container
                 *ngFor="let producto of (productos$ | async) | categoryFilter:cat.id"
               >
-                <ion-item *ngIf="editando !== producto.id">
+                <ion-item>
                   <ion-avatar slot="start" *ngIf="producto.imagen">
                     <img [src]="producto.imagen" alt="Imagen producto" />
                   </ion-avatar>
@@ -248,88 +248,6 @@
                   >
                     <ion-icon name="trash-sharp"></ion-icon>
                     Eliminar
-                  </ion-button>
-                </ion-item>
-                <ion-item *ngIf="editando === producto.id">
-                  <ion-input
-                    [(ngModel)]="editNombre"
-                    placeholder="'PRODUCTS.NAME' | translate"
-                  ></ion-input>
-                  <ion-select
-                    [(ngModel)]="editCategoria"
-                    placeholder="'PRODUCTS.CATEGORY' | translate"
-                  >
-                    <ion-select-option
-                      *ngFor="let cat of categorias$ | async"
-                      [value]="cat.id"
-                      >{{ getNombreCategoria(cat) }}</ion-select-option
-                    >
-                  </ion-select>
-                  <ion-textarea
-                    placeholder="'PRODUCTS.DESCRIPTION' | translate"
-                    [(ngModel)]="editDescripcion"
-                  ></ion-textarea>
-                  <ion-textarea
-                    placeholder="'PRODUCTS.ALLERGENS' | translate"
-                    [(ngModel)]="editAlergenos"
-                  ></ion-textarea>
-                  <ion-input
-                    placeholder="'PRODUCTS.NEW_OPTION' | translate"
-                    [(ngModel)]="editOpcionTemp"
-                  ></ion-input>
-                  <ion-button
-                    fill="clear"
-                    color="primary"
-                    (click)="agregarEditOpcion()"
-                  >
-                    <ion-icon name="add-circle" slot="start"></ion-icon>
-                    Añadir opción
-                  </ion-button>
-                  <ion-list *ngIf="editOpciones.length">
-                    <ion-item *ngFor="let op of editOpciones; let i = index">
-                      <ion-label>{{op}}</ion-label>
-                      <ion-button
-                        fill="clear"
-                        color="danger"
-                        slot="end"
-                        (click)="eliminarEditOpcion(i)"
-                      >
-                        <ion-icon name="trash-outline"></ion-icon>
-                      </ion-button>
-                    </ion-item>
-                  </ion-list>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    (change)="onEditImageSelected($event)"
-                  />
-                  <ion-item>
-                    <ion-icon name="cash" slot="start"></ion-icon>
-                    <ion-input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      [placeholder]="'PRODUCTS.PRICE' | translate"
-                      [(ngModel)]="editPrecio"
-                    ></ion-input>
-                  </ion-item>
-                  <ion-button
-                    fill="clear"
-                    color="success"
-                    slot="end"
-                    (click)="guardarEdicion(producto.id)"
-                  >
-                    <ion-icon name="checkmark"></ion-icon>
-                    Guardar
-                  </ion-button>
-                  <ion-button
-                    fill="clear"
-                    color="medium"
-                    slot="end"
-                    (click)="cancelarEdicion()"
-                  >
-                    <ion-icon name="close"></ion-icon>
-                    Cancelar
                   </ion-button>
                 </ion-item>
               </ng-container>

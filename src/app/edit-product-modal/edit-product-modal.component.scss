@@ -1,0 +1,62 @@
+.preview-img-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1em;
+}
+
+.preview-img {
+  max-width: 120px;
+  max-height: 120px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(226, 114, 91, 0.13);
+  border: 1px solid #fce8d5;
+}
+
+.opciones-list {
+  margin-bottom: 0.5em;
+}
+
+.opcion-item {
+  border-radius: 8px;
+  background: #fff7f2;
+  margin-bottom: 0.2em;
+  --background: #fff7f2;
+  --color: #e2725b;
+}
+
+.btn-guardar {
+  margin: 1.5em 1em 1em 1em;
+  font-weight: 600;
+  font-size: 1.1em;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(226, 114, 91, 0.13);
+}
+
+.custom-file-label {
+  display: flex;
+  align-items: center;
+  background: #fff7f2;
+  color: #e2725b;
+  border-radius: 8px;
+  padding: 0.6em 1.2em;
+  font-weight: 500;
+  font-size: 1em;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(226, 114, 91, 0.07);
+  border: 1px solid #fce8d5;
+  transition: background 0.2s, color 0.2s;
+  margin-left: 0.5em;
+}
+
+.custom-file-label:hover {
+  background: #fce8d5;
+  color: #b95a48;
+}
+
+.custom-file-label ion-icon {
+  font-size: 1.3em;
+}
+
+.custom-file-input {
+  display: none;
+}

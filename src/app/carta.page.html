@@ -1,5 +1,9 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+  <ion-toolbar
+    [style.background]="cabeceraImagen ? 'none' : ''"
+    [style.padding]="0"
+    [style.position]="'relative'"
+  >
     <ion-title>
       <ion-icon
         name="restaurant"
@@ -115,7 +119,7 @@
     <div
       *ngIf="mesa && historialComandasMesa.length && !pagoSolicitado"
       class="solicitar-pago-bar"
-      style="margin-top: 1em;"
+      style="margin-top: 1em"
     >
       <ion-button expand="block" color="warning" (click)="solicitarPago()">
         <ion-icon name="cash-outline" slot="start"></ion-icon>
@@ -192,10 +196,10 @@
               </div>
               <div class="producto-acciones">
                 <ion-button
+                  *ngIf="puedeAgregarProducto(prod)"
                   fill="solid"
                   color="success"
                   (click)="agregarProducto(prod)"
-                  [disabled]="!puedeAgregarProducto(prod)"
                   shape="round"
                   size="small"
                 >

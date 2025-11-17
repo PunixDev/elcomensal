@@ -43,6 +43,16 @@ export interface BarRegistro {
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
+  // Obtiene la imagen de cabecera en bares/{barId}/cabecera/imagen
+  getCabeceraImagen(barId: string) {
+    const ref = doc(this.firestore, `bares/${barId}/cabecera/imagen`);
+    return docData(ref);
+  }
+  // Guarda la imagen de cabecera en bares/{barId}/cabecera
+  async guardarCabeceraImagen(barId: string, imagenBase64: string) {
+    const ref = doc(this.firestore, `bares/${barId}/cabecera/imagen`);
+    await setDoc(ref, { imagen: imagenBase64 });
+  }
   constructor(private firestore: Firestore) {}
 
   // --- CATEGORÍAS ---

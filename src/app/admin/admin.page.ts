@@ -65,6 +65,17 @@ import { Observable } from 'rxjs';
   ],
 })
 export class AdminPage implements OnInit {
+  modalNombreBarAbierto: boolean = false;
+
+  public abrirModalNombreBar() {
+    this.modalNombreBarAbierto = true;
+  }
+
+  public cerrarModalNombreBar() {
+    this.modalNombreBarAbierto = false;
+  }
+  barNombre: string = '';
+  cabeceraImagen: string | null = null;
   comandas$: Observable<any[]>;
   productos$: Observable<any[]>;
   usuarios$: Observable<any[]>;
@@ -79,8 +90,36 @@ export class AdminPage implements OnInit {
   barId: string;
   productos: any[] = [];
   mesaActual: string = ''; // Nueva variable para guardar la mesa actual
-  isSubscribed: boolean = false;
+  isSubscribed: boolean = true;
   trialActive: boolean = false;
+
+  modificarCabecera() {
+    // Crear input file dinámicamente
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = async (e: any) => {
+          const imagenBase64 = e.target.result;
+          try {
+            await this.dataService.guardarCabeceraImagen(
+              this.barId,
+              imagenBase64
+            );
+            alert('Imagen de cabecera actualizada correctamente');
+          } catch (err) {
+            console.error('Error al guardar la imagen de cabecera:', err);
+            alert('Error al guardar la imagen de cabecera');
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  }
 
   constructor(
     private router: Router,
@@ -98,8 +137,13 @@ export class AdminPage implements OnInit {
     const logged = localStorage.getItem('isLoggedIn');
     if (logged !== 'true') {
       this.router.navigate(['/login']);
+      return;
     }
     this.usuarioLogado = localStorage.getItem('usuario') || '';
+    // Cargar imagen de cabecera
+    this.dataService.getCabeceraImagen(this.barId).subscribe((data: any) => {
+      this.cabeceraImagen = data?.imagen || null;
+    });
     this.comandas$.subscribe((todas) => {
       this.comandas = todas;
       this.comandasPorMesa = {};
@@ -111,10 +155,10 @@ export class AdminPage implements OnInit {
     this.productos$.subscribe((productos) => {
       this.productos = productos;
     });
-    // Lógica de suscripción (simulada, requiere backend real para producción)
+
+    // Lógica de suscripción real
     const usuario = localStorage.getItem('usuario');
     const trialStart = localStorage.getItem('trialStart');
-    const isSubscribed = localStorage.getItem('isSubscribed');
     if (!trialStart) {
       // Primer login: inicia trial
       localStorage.setItem('trialStart', new Date().toISOString());
@@ -125,13 +169,38 @@ export class AdminPage implements OnInit {
       this.trialActive =
         now.getTime() - trialDate.getTime() < 30 * 24 * 60 * 60 * 1000;
     }
-    this.isSubscribed = isSubscribed === 'true';
-    if (!this.isSubscribed && !this.trialActive) {
-      alert(
-        'Tu periodo de prueba ha finalizado. Debes suscribirte para continuar.'
-      );
-      this.router.navigate(['/suscripcion']);
-    }
+
+    // Llamada al backend para verificar suscripción
+    fetch('https://backendelcomensal.onrender.com/check-subscription', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ customerId: 'cus_SytKdUzEAX1QmB' }),
+    })
+      .then(async (response) => {
+        if (response.status === 200) {
+          const data = await response.json();
+          this.isSubscribed = data.isSubscribed === true;
+        } else if (response.status === 500) {
+          const error = await response.json();
+          if (!this.trialActive) {
+            alert(
+              'Tu periodo de prueba ha finalizado. Debes suscribirte para continuar.'
+            );
+            this.router.navigate(['/suscripcion']);
+          }
+        }
+      })
+      .catch((err) => {
+        console.error('Error al verificar suscripción:', err);
+        if (!this.trialActive) {
+          alert(
+            'Tu periodo de prueba ha finalizado. Debes suscribirte para continuar.'
+          );
+          this.router.navigate(['/suscripcion']);
+        }
+      });
   }
 
   limpiarComandas() {
@@ -290,6 +359,7 @@ export class AdminPage implements OnInit {
   }
 
   goToSuscripcion() {
+    console.log('Navegando a Suscripción');
     this.router.navigate(['/suscripcion']);
   }
 
@@ -388,5 +458,27 @@ export class AdminPage implements OnInit {
       backdropDismiss: true,
     });
     return await popover.present();
+  }
+
+  gestionarSuscripcion() {
+    fetch(
+      'https://backendelcomensal.onrender.com/create-customer-portal-session',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId: 'cus_SytKdUzEAX1QmB' }),
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert('No se pudo obtener el enlace de gestión de suscripción.');
+        }
+      })
+      .catch(() => {
+        alert('Error al conectar con el portal de Stripe.');
+      });
   }
 }

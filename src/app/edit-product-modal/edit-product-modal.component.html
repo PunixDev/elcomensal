@@ -1,0 +1,120 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ "PRODUCTS.EDIT_PRODUCT" | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancelarEdicion()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="guardarEdicion()">
+    <ion-item>
+      <ion-icon name="pizza" slot="start"></ion-icon>
+      <ion-input
+        [placeholder]="'PRODUCTS.NAME' | translate"
+        [(ngModel)]="editNombre"
+        name="editNombre"
+        required
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="albums" slot="start"></ion-icon>
+      <ion-select
+        required
+        [placeholder]="'PRODUCTS.CATEGORY' | translate"
+        [(ngModel)]="editCategoria"
+        name="editCategoria"
+      >
+        <ion-select-option
+          *ngFor="let cat of categorias$ | async"
+          [value]="cat.id"
+          >{{ getNombreCategoria(cat) }}</ion-select-option
+        >
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="document-text" slot="start"></ion-icon>
+      <ion-textarea
+        [placeholder]="'PRODUCTS.DESCRIPTION' | translate"
+        [(ngModel)]="editDescripcion"
+        name="editDescripcion"
+      ></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="leaf" slot="start"></ion-icon>
+      <ion-textarea
+        [placeholder]="'PRODUCTS.ALLERGENS' | translate"
+        [(ngModel)]="editAlergenos"
+        name="editAlergenos"
+      ></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="cash" slot="start"></ion-icon>
+      <ion-input
+        type="number"
+        min="0"
+        step="0.01"
+        [placeholder]="'PRODUCTS.PRICE' | translate"
+        [(ngModel)]="editPrecio"
+        name="editPrecio"
+        required
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="image" slot="start"></ion-icon>
+      <label class="custom-file-label">
+        <ion-icon name="cloud-upload" style="margin-right: 6px"></ion-icon>
+        <span>{{ "PRODUCTS.SELECT_IMAGE" | translate }}</span>
+        <input
+          type="file"
+          accept="image/*"
+          (change)="onEditImageSelected($event)"
+          class="custom-file-input"
+        />
+      </label>
+    </ion-item>
+    <div *ngIf="editImagen" class="preview-img-wrapper">
+      <img [src]="editImagen" alt="Vista previa" class="preview-img" />
+    </div>
+    <ion-item>
+      <ion-icon name="options" slot="start"></ion-icon>
+      <ion-input
+        [placeholder]="'PRODUCTS.NEW_OPTION' | translate"
+        [(ngModel)]="editOpcionTemp"
+        name="editOpcionTemp"
+      ></ion-input>
+      <ion-button fill="clear" color="primary" (click)="agregarEditOpcion()">
+        <ion-icon name="add-circle" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
+    <ion-list *ngIf="editOpciones.length" class="opciones-list">
+      <ion-item
+        *ngFor="let op of editOpciones; let i = index"
+        class="opcion-item"
+      >
+        <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+        <ion-label>{{ op }}</ion-label>
+        <ion-button
+          fill="clear"
+          color="danger"
+          slot="end"
+          (click)="eliminarEditOpcion(i)"
+        >
+          <ion-icon name="trash-sharp"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+    <ion-button
+      expand="block"
+      color="success"
+      type="submit"
+      class="btn-guardar"
+    >
+      <ion-icon name="checkmark" slot="start"></ion-icon>
+      {{ "SAVE" | translate }}
+    </ion-button>
+  </form>
+</ion-content>

@@ -1,3 +1,8 @@
+// ...existing code...
+// ...existing code...
+// ...existing code...
+// ...existing code...
+// ...existing code...
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -55,6 +60,7 @@ import { LanguageService } from './language.service';
   providers: [PopoverController],
 })
 export class CartaPage implements OnInit {
+  cabeceraImagen: string | null = null;
   mesa: string = '';
   categorias$: Observable<Categoria[]> = undefined!;
   productos$: Observable<Producto[]> = undefined!;
@@ -121,6 +127,12 @@ export class CartaPage implements OnInit {
         }
         // Si el barId viene de la URL (usuario no logueado), fuerza la carga desde Firestore
         console.log('[DEBUG] Llamada a Firestore con barId:', this.barId);
+        // Recuperar imagen de cabecera
+        this.dataService
+          .getCabeceraImagen(this.barId)
+          .subscribe((data: any) => {
+            this.cabeceraImagen = data?.imagen || null;
+          });
         this.categorias$ = this.dataService.getCategorias(this.barId);
         this.productos$ = this.dataService.getProductos(this.barId);
         this.comandas$ = this.dataService.getComandas(this.barId);

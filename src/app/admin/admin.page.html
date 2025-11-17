@@ -61,7 +61,7 @@
 </ion-menu>
 
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+  <ion-toolbar style="padding: 0; position: relative">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -72,11 +72,7 @@
         style="margin-right: 8px"
         aria-hidden="true"
       ></ion-icon>
-      {{ 'ADMIN.TITLE' | translate }}
-      <span
-        *ngIf="barId"
-        style="font-size: 0.8em; color: #fff; margin-left: 1em"
-      >
+      <span *ngIf="barId" style="font-size: 0.8em; margin-left: 1em">
         <ion-icon name="key-outline" style="vertical-align: middle"></ion-icon>
         <strong>ID:</strong> {{ barId }}
       </span>
@@ -94,17 +90,40 @@
   <div style="margin: 1em; text-align: center">
     <ion-card color="light">
       <ion-card-content>
-        <div *ngIf="isSubscribed; else trialBlock">
-          <ion-label color="success"
-            ><strong>Suscripción activa</strong></ion-label
-          >
+        <div
+          *ngIf="isSubscribed; else trialBlock"
+          style="display: flex; flex-direction: column; align-items: center"
+        >
+          <ion-label color="success" style="margin-bottom: 0.5em">
+            <strong>Suscripción activa</strong>
+          </ion-label>
           <ion-button
             color="primary"
-            routerLink="/suscripcion"
-            style="margin-top: 0.5em"
+            (click)="gestionarSuscripcion()"
+            style="width: 100%"
           >
             Gestionar suscripción
           </ion-button>
+          <ion-button
+            color="medium"
+            expand="block"
+            (click)="goToHistorial()"
+            style="margin-top: 0.5em"
+          >
+            <ion-icon name="archive" slot="start"></ion-icon>
+            {{ 'NAVIGATION.HISTORY' | translate }}
+          </ion-button>
+          <!--
+          <ion-button
+            color="secondary"
+            expand="block"
+            (click)="abrirModalNombreBar()"
+            style="margin-top: 0.5em"
+          >
+            <ion-icon name="create" slot="start"></ion-icon>
+            Cambiar cabecera de la carta
+          </ion-button>
+          -->
         </div>
         <ng-template #trialBlock>
           <div *ngIf="trialActive; else expiredBlock">
@@ -115,27 +134,78 @@
             >
           </div>
           <ng-template #expiredBlock>
-            <ion-label color="danger"
-              ><strong
-                >{{ 'ADMIN.NO_SUBSCRIPTION' | translate }}</strong
-              ></ion-label
-            >
-            <ion-button
-              color="medium"
-              expand="block"
-              (click)="goToHistorial()"
-              style="margin-bottom: 0.5em"
-            >
-              <ion-icon name="archive" slot="start"></ion-icon>
-              {{ 'NAVIGATION.HISTORY' | translate }}
-            </ion-button>
-            <ion-button
-              color="primary"
-              routerLink="/suscripcion"
-              style="margin-top: 0.5em"
-            >
-              {{ 'ADMIN.SUBSCRIBE' | translate }}
-            </ion-button>
+            <ng-container *ngIf="!isSubscribed">
+              <ion-label color="danger"
+                ><strong
+                  >{{ 'ADMIN.NO_SUBSCRIPTION' | translate }}</strong
+                ></ion-label
+              >
+              <ion-button
+                color="medium"
+                expand="block"
+                (click)="goToHistorial()"
+                style="margin-bottom: 0.5em"
+              >
+                <ion-icon name="archive" slot="start"></ion-icon>
+                {{ 'NAVIGATION.HISTORY' | translate }}
+              </ion-button>
+              <!--
+              <ion-button
+                color="secondary"
+                expand="block"
+                (click)="abrirModalNombreBar()"
+                style="margin-bottom: 0.5em"
+              >
+                <ion-icon name="create" slot="start"></ion-icon>
+                Cambiar cabecera de la carta
+              </ion-button>
+              -->
+              <!-- Modal para editar el nombre del bar -->
+              <ion-modal
+                [isOpen]="modalNombreBarAbierto"
+                (didDismiss)="cerrarModalNombreBar()"
+              >
+                <ion-header>
+                  <ion-toolbar color="primary">
+                    <ion-title>Nombre del Bar</ion-title>
+                    <ion-buttons slot="end">
+                      <ion-button (click)="cerrarModalNombreBar()">
+                        <ion-icon name="close"></ion-icon>
+                      </ion-button>
+                    </ion-buttons>
+                  </ion-toolbar>
+                </ion-header>
+                <ion-content>
+                  <div style="padding: 2em; text-align: center">
+                    <ion-label position="stacked">Nombre del Bar</ion-label>
+                    <ion-input
+                      [(ngModel)]="barNombre"
+                      name="barNombre"
+                      style="
+                        font-family: Pacifico, cursive;
+                        font-size: 2em;
+                        color: #0070f3;
+                        text-align: center;
+                      "
+                    ></ion-input>
+                    <ion-button
+                      expand="block"
+                      color="success"
+                      style="margin-top: 2em"
+                      (click)="cerrarModalNombreBar()"
+                      >Guardar</ion-button
+                    >
+                  </div>
+                </ion-content>
+              </ion-modal>
+              <ion-button
+                color="primary"
+                (click)="goToSuscripcion()"
+                style="margin-top: 0.5em"
+              >
+                {{ 'ADMIN.SUBSCRIBE' | translate }}
+              </ion-button>
+            </ng-container>
           </ng-template>
         </ng-template>
       </ion-card-content>

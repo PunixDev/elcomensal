@@ -23,10 +23,12 @@ import {
   IonIcon,
   IonItemDivider,
 } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria } from '../data.service';
 import { Observable } from 'rxjs';
 import { CategoryFilterPipe } from './categoryFilter.pipe';
 import { TranslateModule } from '@ngx-translate/core';
+import { EditProductModalComponent } from '../edit-product-modal/edit-product-modal.component';
 
 @Component({
   selector: 'app-productos',
@@ -57,6 +59,7 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     CategoryFilterPipe,
     TranslateModule,
+    EditProductModalComponent,
   ],
 })
 export class ProductosPage implements OnInit {
@@ -70,21 +73,15 @@ export class ProductosPage implements OnInit {
   nuevasOpciones: string[] = [];
   opcionTemp = '';
   nuevoPrecio: number | null = null;
-  editando: string | null = null;
-  editNombre = '';
-  editCategoria = '';
-  editPrecio: number | null = null;
-  editImagen: string | null = null;
-  editDescripcion = '';
-  editAlergenos = '';
-  editOpciones: string[] = [];
-  editOpcionTemp = '';
   barId: string;
   intentadoAgregar = false;
   categorias: Categoria[] = [];
   categoriasConOpen: { nombre: string; id: string; _open: boolean }[] = [];
 
-  constructor(private dataService: DataService) {
+  constructor(
+    private dataService: DataService,
+    private modalController: ModalController
+  ) {
     this.barId = this.dataService.getBarId();
     this.productos$ = this.dataService.getProductos(this.barId);
     this.categorias$ = this.dataService.getCategorias(this.barId);
@@ -200,54 +197,15 @@ export class ProductosPage implements OnInit {
     this.dataService.deleteProducto(this.barId, id);
   }
 
-  iniciarEdicion(producto: Producto) {
-    this.editando = producto.id;
-    this.editNombre = producto.nombre;
-    this.editCategoria = producto.categoria;
-    this.editPrecio = producto.precio;
-    this.editImagen = producto.imagen || null;
-    this.editDescripcion = producto.descripcion || '';
-    this.editAlergenos = producto.alergenos || '';
-    this.editOpciones = producto.opciones ? [...producto.opciones] : [];
-  }
-
-  onEditImageSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.editImagen = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  guardarEdicion(id: string) {
-    if (
-      this.editando &&
-      this.editNombre.trim() &&
-      this.editCategoria &&
-      this.editPrecio != null
-    ) {
-      const producto: Producto = {
-        id: this.editando,
-        nombre: this.editNombre.trim(),
-        categoria: this.editCategoria,
-        precio: this.editPrecio,
-        imagen: this.editImagen || null,
-        descripcion: this.editDescripcion,
-        alergenos: this.editAlergenos,
-        opciones: [...this.editOpciones],
-      };
-      this.dataService.updateProducto(this.barId, producto);
-      this.cancelarEdicion();
-    }
-  }
-
-  cancelarEdicion() {
-    this.editando = null;
-    this.editNombre = '';
-    this.editCategoria = '';
+  async iniciarEdicion(producto: Producto) {
+    const modal = await this.modalController.create({
+      component: EditProductModalComponent,
+      componentProps: {
+        producto: producto,
+        categorias$: this.categorias$,
+      },
+    });
+    modal.present();
   }
 
   agregarOpcion() {
@@ -259,17 +217,6 @@ export class ProductosPage implements OnInit {
 
   eliminarOpcion(idx: number) {
     this.nuevasOpciones.splice(idx, 1);
-  }
-
-  agregarEditOpcion() {
-    if (this.editOpcionTemp.trim()) {
-      this.editOpciones.push(this.editOpcionTemp.trim());
-      this.editOpcionTemp = '';
-    }
-  }
-
-  eliminarEditOpcion(idx: number) {
-    this.editOpciones.splice(idx, 1);
   }
 
   getNombreCategoria(cat: Categoria | undefined): string {
