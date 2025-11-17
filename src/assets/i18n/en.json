@@ -48,6 +48,98 @@
     "HISTORY": "History",
     "TABLE_REPORT": "Table Report"
   },
+  "HOME_LANDING": {
+    "HERO_TITLE": "Turn your bar into a fast, modern and profitable service",
+    "HERO_SUBTITLE": "QR orders, bill request at the table and full control of your business from your phone",
+    "TRUST": {
+      "SECURE": "100% secure and hassle-free",
+      "SETUP_FAST": "Set up in 24h",
+      "HAPPIER_CLIENTS": "Happier customers"
+    },
+    "BENEFITS": {
+      "QR_ORDERS": "QR orders without waiting for the waiter",
+      "REQUEST_BILL": "Request the bill from the table without waiting",
+      "MENU_VISUAL": "Visual menu with photos, add-ons and suggestions",
+      "REALTIME_DASHBOARD": "Real-time dashboard: sales, tables and stock",
+      "AI_TRANSLATION": "Automatic AI translation when adding products"
+    },
+    "ALT": {
+      "MENU_VIEW": "Digital menu view",
+      "QR_ORDERS": "QR orders",
+      "REQUEST_BILL": "Request bill at table",
+      "DASHBOARD": "Dashboard"
+    },
+    "CTA_PRIMARY": "Start free: your first week with no commitment",
+    "FEATURES": {
+      "TITLE": "Everything you need to sell more",
+      "QR": {
+        "TITLE": "QR orders",
+        "DESC": "Less waiting, more table turns and zero order mistakes."
+      },
+      "REQUEST_BILL": {
+        "TITLE": "Bill request",
+        "DESC": "Get notified when a table wants to pay and speed up checkout."
+      },
+      "MENU": {
+        "TITLE": "Visual menu",
+        "DESC": "Photos, allergens, add-ons and combos to increase ticket size."
+      },
+      "FLOOR": {
+        "TITLE": "Floor & terrace",
+        "DESC": "Manage tables, statuses and times easily from your phone."
+      },
+      "REPORTS": {
+        "TITLE": "Reports & cash",
+        "DESC": "Sales by hour, product and waiter to decide better."
+      },
+      "AI": {
+        "TITLE": "Automatic translation (AI)",
+        "DESC": "Create a product and we translate it to several languages instantly."
+      }
+    },
+    "STEPS": {
+      "TITLE": "It works this easily",
+      "1": {
+        "TITLE": "Set up your menu",
+        "DESC": "Add products and prices. We help you get it ready and it's translated automatically."
+      },
+      "2": {
+        "TITLE": "Place the QRs",
+        "DESC": "Customers order and request the bill from the table with their phone."
+      },
+      "3": {
+        "TITLE": "Full control",
+        "DESC": "Receive orders in the kitchen and see real-time sales."
+      }
+    },
+    "RESULTS": {
+      "TITLE": "Results that delight",
+      "ROTATION": "+30% more table rotation",
+      "SATISFACTION": "+40% customer satisfaction",
+      "WAIT": "-50% waiting time",
+      "AVGTICKET": "+20% average ticket"
+    },
+    "TESTIMONIALS": {
+      "TITLE": "What other owners say",
+      "1": {
+        "TEXT": "Since we installed it, we do more turns and the team is calmer.",
+        "AUTHOR": "Maria, Central Bar"
+      },
+      "2": {
+        "TEXT": "Customers request the bill at the table and we avoid closing-time queues.",
+        "AUTHOR": "Javier, La Terraza"
+      },
+      "3": {
+        "TEXT": "Average ticket went up with add-ons and smart suggestions.",
+        "AUTHOR": "Lucia, 9th Pizzeria"
+      }
+    },
+    "FINAL_CTA": {
+      "TITLE": "Ready to transform your bar?",
+      "BUTTON": "Start now for free",
+      "NOTE": "No card. No commitment."
+    }
+  },
   "LOGIN": {
     "TITLE": "Login",
     "USERNAME": "Username",
@@ -113,6 +205,7 @@
     "ADD_OPTION": "Add option",
     "PRICE": "Price",
     "IMAGE": "Image",
+    "SELECT_IMAGE": "Select image",
     "AVAILABLE": "Available",
     "NOT_AVAILABLE": "Not Available",
     "STOCK": "Stock",

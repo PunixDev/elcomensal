@@ -1,21 +1,11 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
-    <ion-title>
-      <img
-        src="assets/5.png"
-        alt="ElRestauranteQR"
-        style="
-          width: 2em;
-          height: 2em;
-          border-radius: 8px;
-          margin-right: 8px;
-          vertical-align: middle;
-          display: inline-block;
-        "
-      />
-      ElRestauranteQR
-    </ion-title>
+    <ion-title> ElRestauranteQR </ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="presentLanguagePopover($event)" fill="clear">
+        <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
+        <ion-icon name="chevron-down" size="small"></ion-icon>
+      </ion-button>
       <ion-button color="light" (click)="goToLogin()">
         <ion-icon name="log-in" slot="start"></ion-icon>
         {{ 'NAVIGATION.LOGIN' | translate }}
@@ -27,97 +17,214 @@
 <ion-content [fullscreen]="true" class="home-hero-bg">
   <section class="home-hero-section">
     <div class="home-hero-text">
+      <!-- Banner solicitado: imagen 6 encima del título -->
       <img
-        src="assets/5.png"
-        alt="ElRestauranteQR"
-        class="home-logo"
-        *ngIf="logoExists"
+        src="assets/6.png"
+        [alt]="('HOME_LANDING.ALT.MENU_VIEW' | translate)"
+        class="home-hero-banner"
       />
-      <h1 class="home-title">
-        <ion-icon
-          name="rocket"
-          style="font-size: 2.2rem; vertical-align: middle; color: #ffb300"
-        ></ion-icon>
-        {{ 'HOME.TITLE' | translate }}
-      </h1>
-      <h2 class="home-subtitle">{{ 'HOME.WELCOME' | translate }}</h2>
+
+      <h1 class="home-title">{{ 'HOME_LANDING.HERO_TITLE' | translate }}</h1>
+      <h2 class="home-subtitle">
+        {{ 'HOME_LANDING.HERO_SUBTITLE' | translate }}
+      </h2>
+
+      <div class="home-trustbar">
+        <div class="trust-item">
+          <ion-icon name="shield-checkmark" color="primary"></ion-icon>
+          {{ 'HOME_LANDING.TRUST.SECURE' | translate }}
+        </div>
+        <div class="trust-item">
+          <ion-icon name="flash" color="warning"></ion-icon>
+          {{ 'HOME_LANDING.TRUST.SETUP_FAST' | translate }}
+        </div>
+        <div class="trust-item">
+          <ion-icon name="happy" color="success"></ion-icon>
+          {{ 'HOME_LANDING.TRUST.HAPPIER_CLIENTS' | translate }}
+        </div>
+      </div>
+
       <ul class="home-benefits">
         <li>
-          <ion-icon name="time" color="success"></ion-icon>
-          <span>{{ 'HOME.QUICK_ACTIONS' | translate }}</span>
+          <ion-icon name="qr-code" color="primary"></ion-icon>
+          <span>{{ 'HOME_LANDING.BENEFITS.QR_ORDERS' | translate }}</span>
         </li>
         <li>
-          <ion-icon name="happy" color="warning"></ion-icon>
-          <span>{{ 'HOME.POPULAR_PRODUCTS' | translate }}</span>
+          <ion-icon name="hand-left" color="tertiary"></ion-icon>
+          <span>{{ 'HOME_LANDING.BENEFITS.REQUEST_BILL' | translate }}</span>
         </li>
         <li>
-          <ion-icon name="cash" color="primary"></ion-icon>
-          <span>{{ 'HOME.TOTAL_SALES' | translate }}</span>
+          <ion-icon name="receipt" color="warning"></ion-icon>
+          <span>{{ 'HOME_LANDING.BENEFITS.MENU_VISUAL' | translate }}</span>
         </li>
         <li>
-          <ion-icon name="stats-chart" color="tertiary"></ion-icon>
-          <span>{{ 'HOME.TODAY_STATS' | translate }}</span>
+          <ion-icon name="stats-chart" color="success"></ion-icon>
+          <span
+            >{{ 'HOME_LANDING.BENEFITS.REALTIME_DASHBOARD' | translate }}</span
+          >
+        </li>
+        <li>
+          <ion-icon name="globe-outline" color="primary"></ion-icon>
+          <span>{{ 'HOME_LANDING.BENEFITS.AI_TRANSLATION' | translate }}</span>
         </li>
       </ul>
       <div class="home-cta">
         <ion-button color="success" size="large" (click)="goToLogin()">
           <ion-icon name="log-in" slot="start"></ion-icon>
-          ¡Quiero ahorrar tiempo y vender más!
+          {{ 'HOME_LANDING.CTA_PRIMARY' | translate }}
         </ion-button>
       </div>
     </div>
-    <div class="home-hero-images">
-      <img src="assets/1.jpg" alt="Pantalla 1" class="home-app-img img1" />
-      <img src="assets/2.jpg" alt="Pantalla 2" class="home-app-img img2" />
-      <img src="assets/3.jpg" alt="Pantalla 3" class="home-app-img img3" />
-      <img src="assets/4.jpg" alt="Pantalla 4" class="home-app-img img4" />
-    </div>
+    <div class="home-hero-images"></div>
   </section>
+
+  <!-- Features -->
   <section class="home-section home-section-dark">
     <div class="home-section-content">
-      <h2>¿Por qué elegir ElRestauranteQR?</h2>
-      <p>
-        <ion-icon name="star" color="warning"></ion-icon>
-        Porque tu tiempo y el de tus camareros vale oro. Automatiza pedidos,
-        elimina errores y ofrece una experiencia moderna que hará que tus
-        clientes repitan.
-      </p>
-      <p>
-        <ion-icon name="heart" color="danger"></ion-icon>
-        Tus clientes podrán pedir y pagar desde la mesa, ver la carta en su
-        móvil y tú tendrás el control total desde cualquier lugar.
-      </p>
+      <h2>{{ 'HOME_LANDING.FEATURES.TITLE' | translate }}</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <ion-icon name="qr-code-outline" class="feature-icon"></ion-icon>
+          <h3>{{ 'HOME_LANDING.FEATURES.QR.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.QR.DESC' | translate }}</p>
+        </div>
+        <div class="feature-card">
+          <ion-icon name="hand-left-outline" class="feature-icon"></ion-icon>
+          <h3>{{ 'HOME_LANDING.FEATURES.REQUEST_BILL.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.REQUEST_BILL.DESC' | translate }}</p>
+        </div>
+        <div class="feature-card">
+          <ion-icon name="restaurant-outline" class="feature-icon"></ion-icon>
+          <h3>{{ 'HOME_LANDING.FEATURES.MENU.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.MENU.DESC' | translate }}</p>
+        </div>
+        <div class="feature-card">
+          <ion-icon name="storefront-outline" class="feature-icon"></ion-icon>
+          <h3>{{ 'HOME_LANDING.FEATURES.FLOOR.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.FLOOR.DESC' | translate }}</p>
+        </div>
+        <div class="feature-card">
+          <ion-icon name="cash-outline" class="feature-icon"></ion-icon>
+          <h3>{{ 'HOME_LANDING.FEATURES.REPORTS.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.REPORTS.DESC' | translate }}</p>
+        </div>
+        <div class="feature-card">
+          <ion-icon name="globe-outline" class="feature-icon"></ion-icon>
+          <h3>{{ 'HOME_LANDING.FEATURES.AI.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.AI.DESC' | translate }}</p>
+        </div>
+      </div>
     </div>
   </section>
+
+  <!-- How it works -->
   <section class="home-section">
     <div class="home-section-content">
-      <h2>Resultados reales</h2>
+      <h2>{{ 'HOME_LANDING.STEPS.TITLE' | translate }}</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>{{ 'HOME_LANDING.STEPS.1.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.STEPS.1.DESC' | translate }}</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>{{ 'HOME_LANDING.STEPS.2.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.STEPS.2.DESC' | translate }}</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>{{ 'HOME_LANDING.STEPS.3.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.STEPS.3.DESC' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social proof / Results -->
+  <section class="home-section home-section-dark">
+    <div class="home-section-content">
+      <h2>{{ 'HOME_LANDING.RESULTS.TITLE' | translate }}</h2>
       <ul class="home-results">
         <li>
-          <ion-icon name="trending-up" color="success"></ion-icon> +30% más
-          rotación de mesas
+          <ion-icon name="trending-up" color="success"></ion-icon>
+          {{ 'HOME_LANDING.RESULTS.ROTATION' | translate }}
         </li>
         <li>
-          <ion-icon name="thumbs-up" color="primary"></ion-icon> +40%
-          satisfacción del cliente
+          <ion-icon name="thumbs-up" color="primary"></ion-icon>
+          {{ 'HOME_LANDING.RESULTS.SATISFACTION' | translate }}
         </li>
         <li>
-          <ion-icon name="alarm" color="tertiary"></ion-icon> -50% tiempo de
-          espera
+          <ion-icon name="alarm" color="tertiary"></ion-icon>
+          {{ 'HOME_LANDING.RESULTS.WAIT' | translate }}
         </li>
         <li>
-          <ion-icon name="cash" color="warning"></ion-icon> +20% ticket medio
+          <ion-icon name="cash" color="warning"></ion-icon>
+          {{ 'HOME_LANDING.RESULTS.AVGTICKET' | translate }}
         </li>
       </ul>
     </div>
   </section>
+
+  <!-- Testimonials -->
+  <section class="home-section">
+    <div class="home-section-content">
+      <h2>{{ 'HOME_LANDING.TESTIMONIALS.TITLE' | translate }}</h2>
+      <div class="testimonials">
+        <div class="testimonial-card">
+          <div class="stars">
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+          </div>
+          <p>{{ 'HOME_LANDING.TESTIMONIALS.1.TEXT' | translate }}</p>
+          <span class="author"
+            >{{ 'HOME_LANDING.TESTIMONIALS.1.AUTHOR' | translate }}</span
+          >
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+          </div>
+          <p>{{ 'HOME_LANDING.TESTIMONIALS.2.TEXT' | translate }}</p>
+          <span class="author"
+            >{{ 'HOME_LANDING.TESTIMONIALS.2.AUTHOR' | translate }}</span
+          >
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+            <ion-icon name="star" color="warning"></ion-icon>
+          </div>
+          <p>{{ 'HOME_LANDING.TESTIMONIALS.3.TEXT' | translate }}</p>
+          <span class="author"
+            >{{ 'HOME_LANDING.TESTIMONIALS.3.AUTHOR' | translate }}</span
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
   <section class="home-section home-section-cta">
     <div class="home-section-content">
-      <h2>¿Listo para transformar tu bar?</h2>
+      <h2>{{ 'HOME_LANDING.FINAL_CTA.TITLE' | translate }}</h2>
       <ion-button color="primary" size="large" (click)="goToLogin()">
         <ion-icon name="log-in" slot="start"></ion-icon>
-        Empieza ahora gratis
+        {{ 'HOME_LANDING.FINAL_CTA.BUTTON' | translate }}
       </ion-button>
+      <div class="cta-note">
+        {{ 'HOME_LANDING.FINAL_CTA.NOTE' | translate }}
+      </div>
     </div>
   </section>
 </ion-content>

@@ -8,9 +8,7 @@
     "ADD": "Aggiungi",
     "CLOSE": "Chiudi",
     "CONFIRM": "Conferma",
-      "TOTAL_UNITS": "Unità Totali",
-      "TOP_PRODUCT": "Prodotto Top"
-    },"SEARCH": "Cerca",
+    "SEARCH": "Cerca",
     "FILTER": "Filtra",
     "CLEAR": "Pulisci",
     "APPLY": "Applica",
@@ -49,6 +47,98 @@
     "QR_GENERATOR": "Generatore QR",
     "HISTORY": "Cronologia",
     "TABLE_REPORT": "Report Tavolo"
+  },
+  "HOME_LANDING": {
+    "HERO_TITLE": "Trasforma il tuo bar in un servizio veloce, moderno e redditizio",
+    "HERO_SUBTITLE": "Ordini via QR, richiesta conto al tavolo e controllo totale dal tuo smartphone",
+    "TRUST": {
+      "SECURE": "100% sicuro e senza complicazioni",
+      "SETUP_FAST": "Operativo in 24h",
+      "HAPPIER_CLIENTS": "Clienti più soddisfatti"
+    },
+    "BENEFITS": {
+      "QR_ORDERS": "Ordini via QR senza attendere il cameriere",
+      "REQUEST_BILL": "Richiesta del conto direttamente dal tavolo",
+      "MENU_VISUAL": "Menu digitale con foto, extra e suggerimenti",
+      "REALTIME_DASHBOARD": "Dashboard in tempo reale: vendite, tavoli e stock",
+      "AI_TRANSLATION": "Traduzione automatica con IA quando aggiungi prodotti"
+    },
+    "ALT": {
+      "MENU_VIEW": "Vista menu digitale",
+      "QR_ORDERS": "Ordini QR",
+      "REQUEST_BILL": "Richiesta conto al tavolo",
+      "DASHBOARD": "Pannello di controllo"
+    },
+    "CTA_PRIMARY": "Inizia gratis: prima settimana senza impegno",
+    "FEATURES": {
+      "TITLE": "Tutto ciò che ti serve per vendere di più",
+      "QR": {
+        "TITLE": "Ordini via QR",
+        "DESC": "Meno attese, più rotazione e zero errori in presa ordini."
+      },
+      "REQUEST_BILL": {
+        "TITLE": "Richiesta conto",
+        "DESC": "Ricevi avvisi quando un tavolo vuole pagare e velocizza la chiusura."
+      },
+      "MENU": {
+        "TITLE": "Menu visivo",
+        "DESC": "Foto, allergeni, extra e menù per aumentare lo scontrino medio."
+      },
+      "FLOOR": {
+        "TITLE": "Sala e terrazza",
+        "DESC": "Gestisci tavoli, stati e tempi facilmente dal telefono."
+      },
+      "REPORTS": {
+        "TITLE": "Report e cassa",
+        "DESC": "Vendite per ora, prodotto e cameriere per decidere meglio."
+      },
+      "AI": {
+        "TITLE": "Traduzione automatica (IA)",
+        "DESC": "Crea un prodotto e lo traduciamo subito in più lingue."
+      }
+    },
+    "STEPS": {
+      "TITLE": "Funziona così facilmente",
+      "1": {
+        "TITLE": "Configura il tuo menu",
+        "DESC": "Aggiungi prodotti e prezzi. Ti aiutiamo a prepararlo e si traduce automaticamente."
+      },
+      "2": {
+        "TITLE": "Posiziona i QR",
+        "DESC": "I clienti ordinano e richiedono il conto dal tavolo con lo smartphone."
+      },
+      "3": {
+        "TITLE": "Controllo totale",
+        "DESC": "Ricevi ordini in cucina e guarda le vendite in tempo reale."
+      }
+    },
+    "RESULTS": {
+      "TITLE": "Risultati che conquistano",
+      "ROTATION": "+30% più rotazione dei tavoli",
+      "SATISFACTION": "+40% soddisfazione clienti",
+      "WAIT": "-50% tempi di attesa",
+      "AVGTICKET": "+20% scontrino medio"
+    },
+    "TESTIMONIALS": {
+      "TITLE": "Cosa dicono altri titolari",
+      "1": {
+        "TEXT": "Da quando lo abbiamo messo facciamo più turni e il team è più sereno.",
+        "AUTHOR": "Maria, Bar Centrale"
+      },
+      "2": {
+        "TEXT": "I clienti chiedono il conto dal tavolo e evitiamo le code alla chiusura.",
+        "AUTHOR": "Javier, La Terrazza"
+      },
+      "3": {
+        "TEXT": "È aumentato lo scontrino medio con extra e suggerimenti.",
+        "AUTHOR": "Lucia, Pizzeria 9°"
+      }
+    },
+    "FINAL_CTA": {
+      "TITLE": "Pronto a trasformare il tuo bar?",
+      "BUTTON": "Inizia ora gratis",
+      "NOTE": "Nessuna carta. Nessun vincolo."
+    }
   },
   "LOGIN": {
     "TITLE": "Accedi",

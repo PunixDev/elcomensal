@@ -27,7 +27,7 @@
 }
 
 .home-hero-bg {
-  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  background: linear-gradient(135deg, #f7fafe 0%, #eef3ff 100%);
   min-height: 100vh;
 }
 
@@ -59,6 +59,14 @@
   display: block;
 }
 
+.home-hero-banner {
+  width: 100%;
+  max-width: 560px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 600px) {
   .home-logo {
     width: 70vw;
@@ -76,7 +84,7 @@
 .home-subtitle {
   font-size: 1.25em;
   font-weight: 600;
-  color: #3880ff;
+  color: var(--ion-color-primary);
   margin-bottom: 1.2em;
 }
 
@@ -101,6 +109,24 @@
   margin-bottom: 2em;
 }
 
+.home-trustbar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8em;
+  margin: 0 0 1em 0;
+}
+.home-trustbar .trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  background: #ffffffcc;
+  padding: 0.6em 0.8em;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  font-weight: 600;
+  color: #2a2a2a;
+}
+
 .home-hero-images {
   flex: 1 1 350px;
   min-width: 320px;
@@ -110,6 +136,9 @@
   gap: 1.2em;
   justify-content: center;
   align-items: center;
+}
+.home-hero-images:empty {
+  display: none;
 }
 .home-app-img {
   width: 46%;
@@ -134,6 +163,11 @@
   margin: 0 auto;
   text-align: center;
 }
+.home-section-content .cta-note {
+  color: #eaf2ff;
+  margin-top: 0.6em;
+  font-size: 0.95em;
+}
 .home-section-content h2 {
   font-size: 1.5em;
   font-weight: 700;
@@ -144,6 +178,92 @@
   font-size: 1.1em;
   color: #444;
   margin-bottom: 1.1em;
+}
+
+/* Features */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+}
+.feature-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.1em;
+  text-align: left;
+  box-shadow: 0 2px 14px rgba(56, 128, 255, 0.08);
+}
+.feature-card h3 {
+  margin: 0.4em 0 0.3em 0;
+  font-size: 1.05em;
+}
+.feature-card p {
+  margin: 0;
+  font-size: 0.98em;
+  color: #444;
+}
+.feature-icon {
+  font-size: 1.6em;
+  color: #3880ff;
+}
+
+/* Steps */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+}
+.step-card {
+  background: #ffffff;
+  border: 1px solid #e7ecff;
+  border-radius: 14px;
+  padding: 1.1em;
+  text-align: left;
+}
+.step-number {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #3880ff;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+.step-card h3 {
+  margin: 0 0 0.2em 0;
+  font-size: 1.05em;
+}
+.step-card p {
+  margin: 0;
+  font-size: 0.98em;
+}
+
+/* Testimonials */
+.testimonials {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+}
+.testimonial-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1em;
+  text-align: left;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06);
+}
+.testimonial-card .stars ion-icon {
+  margin-right: 2px;
+}
+.testimonial-card p {
+  margin: 0.6em 0;
+  color: #333;
+}
+.testimonial-card .author {
+  font-size: 0.95em;
+  color: #666;
 }
 .home-results {
   list-style: none;
@@ -160,16 +280,24 @@
   gap: 0.7em;
 }
 .home-section-cta {
-  background: linear-gradient(90deg, #3880ff 0%, #4dd599 100%);
+  background: linear-gradient(90deg, var(--ion-color-primary) 0%, #367df0 100%);
 }
 .home-section-cta h2 {
   color: #fff;
 }
 .home-section-cta ion-button {
   --background: #fff;
-  --color: #3880ff;
+  --color: var(--ion-color-primary);
   font-weight: bold;
   margin-top: 1.2em;
+}
+
+/* Stars/testimonials accent tweak */
+.testimonials .stars ion-icon[name="star"] {
+  color: var(--ion-color-secondary);
+}
+.home-trustbar .trust-item ion-icon[name="flash"] {
+  color: var(--ion-color-secondary);
 }
 
 @media (max-width: 900px) {
@@ -177,6 +305,11 @@
     flex-direction: column;
     gap: 1.5em;
     padding: 1.2em 0 1.2em 0;
+  }
+  .features-grid,
+  .steps-grid,
+  .testimonials {
+    grid-template-columns: 1fr 1fr;
   }
   .home-hero-images {
     flex-direction: row;
@@ -187,11 +320,19 @@
   .home-hero-section {
     padding: 0.5em 0 0.5em 0;
   }
+  .home-trustbar {
+    grid-template-columns: 1fr;
+  }
   .home-title {
     font-size: 1.3em;
   }
   .home-subtitle {
     font-size: 1em;
+  }
+  .features-grid,
+  .steps-grid,
+  .testimonials {
+    grid-template-columns: 1fr;
   }
   .home-app-img {
     width: 98%;

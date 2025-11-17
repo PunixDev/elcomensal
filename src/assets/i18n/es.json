@@ -84,6 +84,98 @@
     "ORDERS_COUNT": "Número de Pedidos",
     "POPULAR_PRODUCTS": "Productos Populares"
   },
+  "HOME_LANDING": {
+    "HERO_TITLE": "Convierte tu bar en un servicio ágil, moderno y rentable",
+    "HERO_SUBTITLE": "Pedidos por QR, solicitud de cuenta en mesa y control total del negocio desde tu móvil",
+    "TRUST": {
+      "SECURE": "100% seguro y sin líos",
+      "SETUP_FAST": "Puesto en marcha en 24h",
+      "HAPPIER_CLIENTS": "Clientes más felices"
+    },
+    "BENEFITS": {
+      "QR_ORDERS": "Pedidos por QR sin esperar al camarero",
+      "REQUEST_BILL": "Solicitud de cuenta desde la mesa sin esperar",
+      "MENU_VISUAL": "Carta digital con fotos, extras y sugerencias",
+      "REALTIME_DASHBOARD": "Panel con ventas, mesas y stock en tiempo real",
+      "AI_TRANSLATION": "Traducción automática con IA al añadir productos"
+    },
+    "ALT": {
+      "MENU_VIEW": "Vista carta digital",
+      "QR_ORDERS": "Pedidos por QR",
+      "REQUEST_BILL": "Solicitud de cuenta en mesa",
+      "DASHBOARD": "Panel de control"
+    },
+    "CTA_PRIMARY": "Empieza gratis: tu primera semana sin compromiso",
+    "FEATURES": {
+      "TITLE": "Todo lo que necesitas para vender más",
+      "QR": {
+        "TITLE": "Pedidos por QR",
+        "DESC": "Menos esperas, más rotación y cero errores al tomar nota."
+      },
+      "REQUEST_BILL": {
+        "TITLE": "Solicitud de cuenta",
+        "DESC": "Recibe avisos cuando una mesa quiere pagar y agiliza el cierre."
+      },
+      "MENU": {
+        "TITLE": "Carta visual",
+        "DESC": "Fotos, alérgenos, extras y combos para aumentar el ticket."
+      },
+      "FLOOR": {
+        "TITLE": "Salón y terraza",
+        "DESC": "Gestiona mesas, estados y tiempos fácilmente desde el móvil."
+      },
+      "REPORTS": {
+        "TITLE": "Informes y caja",
+        "DESC": "Ventas por hora, producto y camarero para decidir mejor."
+      },
+      "AI": {
+        "TITLE": "Traducción automática (IA)",
+        "DESC": "Crea un producto y lo traducimos a varios idiomas al instante."
+      }
+    },
+    "STEPS": {
+      "TITLE": "Así de fácil funciona",
+      "1": {
+        "TITLE": "Configura tu carta",
+        "DESC": "Sube productos y precios. Te ayudamos a dejarlo listo y se traducen automáticamente."
+      },
+      "2": {
+        "TITLE": "Coloca los QR",
+        "DESC": "Tus clientes piden y solicitan la cuenta desde la mesa con su móvil."
+      },
+      "3": {
+        "TITLE": "Control total",
+        "DESC": "Recibe pedidos en cocina y mira ventas en tiempo real."
+      }
+    },
+    "RESULTS": {
+      "TITLE": "Resultados que enamoran",
+      "ROTATION": "+30% más rotación de mesas",
+      "SATISFACTION": "+40% satisfacción del cliente",
+      "WAIT": "-50% tiempo de espera",
+      "AVGTICKET": "+20% ticket medio"
+    },
+    "TESTIMONIALS": {
+      "TITLE": "Lo que dicen otros dueños",
+      "1": {
+        "TEXT": "Desde que lo pusimos, damos más turnos y el equipo está más tranquilo.",
+        "AUTHOR": "María, Bar Central"
+      },
+      "2": {
+        "TEXT": "Los clientes piden la cuenta desde la mesa y evitamos colas al cerrar.",
+        "AUTHOR": "Javier, La Terraza"
+      },
+      "3": {
+        "TEXT": "Subió el ticket medio con extras y sugerencias automáticas.",
+        "AUTHOR": "Lucía, Pizzería 9º"
+      }
+    },
+    "FINAL_CTA": {
+      "TITLE": "¿Listo para transformar tu bar?",
+      "BUTTON": "Empieza ahora gratis",
+      "NOTE": "Sin tarjeta. Sin permanencia."
+    }
+  },
   "ADMIN": {
     "TITLE": "Panel de Administración",
     "MANAGE_PRODUCTS": "Gestionar Productos",
@@ -113,6 +205,7 @@
     "ADD_OPTION": "Añadir opción",
     "PRICE": "Precio",
     "IMAGE": "Imagen",
+    "SELECT_IMAGE": "Seleccionar imagen",
     "AVAILABLE": "Disponible",
     "NOT_AVAILABLE": "No Disponible",
     "STOCK": "Stock",

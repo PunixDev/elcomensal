@@ -48,6 +48,98 @@
     "HISTORY": "Verlauf",
     "TABLE_REPORT": "Tischbericht"
   },
+  "HOME_LANDING": {
+    "HERO_TITLE": "Machen Sie Ihre Bar schnell, modern und profitabel",
+    "HERO_SUBTITLE": "QR-Bestellungen, Rechnungsanfrage am Tisch und volle Kontrolle vom Handy",
+    "TRUST": {
+      "SECURE": "100% sicher und unkompliziert",
+      "SETUP_FAST": "In 24h einsatzbereit",
+      "HAPPIER_CLIENTS": "Zufriedenere Gäste"
+    },
+    "BENEFITS": {
+      "QR_ORDERS": "QR-Bestellungen ohne auf den Kellner zu warten",
+      "REQUEST_BILL": "Rechnung am Tisch anfordern ohne Warten",
+      "MENU_VISUAL": "Digitale Karte mit Fotos, Extras und Vorschlägen",
+      "REALTIME_DASHBOARD": "Echtzeit-Panel: Umsatz, Tische und Lager",
+      "AI_TRANSLATION": "Automatische KI-Übersetzung beim Hinzufügen von Produkten"
+    },
+    "ALT": {
+      "MENU_VIEW": "Digitale Speisekartenansicht",
+      "QR_ORDERS": "QR-Bestellungen",
+      "REQUEST_BILL": "Rechnung am Tisch anfordern",
+      "DASHBOARD": "Dashboard"
+    },
+    "CTA_PRIMARY": "Kostenlos starten: Erste Woche ohne Verpflichtung",
+    "FEATURES": {
+      "TITLE": "Alles, was Sie brauchen, um mehr zu verkaufen",
+      "QR": {
+        "TITLE": "QR-Bestellungen",
+        "DESC": "Weniger Warten, mehr Tischumschlag und keine Bestellfehler."
+      },
+      "REQUEST_BILL": {
+        "TITLE": "Rechnungsanfrage",
+        "DESC": "Benachrichtigung, wenn ein Tisch zahlen möchte – schneller kassieren."
+      },
+      "MENU": {
+        "TITLE": "Visuelle Karte",
+        "DESC": "Fotos, Allergene, Extras und Menüs zur Ticketsteigerung."
+      },
+      "FLOOR": {
+        "TITLE": "Gastraum & Terrasse",
+        "DESC": "Tische, Status und Zeiten einfach vom Handy verwalten."
+      },
+      "REPORTS": {
+        "TITLE": "Berichte & Kasse",
+        "DESC": "Umsatz nach Stunde, Produkt und Kellner – bessere Entscheidungen."
+      },
+      "AI": {
+        "TITLE": "Automatische Übersetzung (KI)",
+        "DESC": "Produkt anlegen und sofort in mehrere Sprachen übersetzen."
+      }
+    },
+    "STEPS": {
+      "TITLE": "So einfach funktioniert’s",
+      "1": {
+        "TITLE": "Karte einrichten",
+        "DESC": "Produkte und Preise hinzufügen. Wir helfen beim Setup – automatisch übersetzt."
+      },
+      "2": {
+        "TITLE": "QRs platzieren",
+        "DESC": "Gäste bestellen und fordern die Rechnung am Tisch mit dem Handy an."
+      },
+      "3": {
+        "TITLE": "Volle Kontrolle",
+        "DESC": "Bestellungen in der Küche empfangen und Umsatz in Echtzeit sehen."
+      }
+    },
+    "RESULTS": {
+      "TITLE": "Ergebnisse, die überzeugen",
+      "ROTATION": "+30% mehr Tischrotation",
+      "SATISFACTION": "+40% Kundenzufriedenheit",
+      "WAIT": "-50% Wartezeit",
+      "AVGTICKET": "+20% Durchschnittsbon"
+    },
+    "TESTIMONIALS": {
+      "TITLE": "Das sagen andere Besitzer",
+      "1": {
+        "TEXT": "Seitdem wir es nutzen, schaffen wir mehr Runden und das Team ist entspannter.",
+        "AUTHOR": "Maria, Bar Central"
+      },
+      "2": {
+        "TEXT": "Gäste fordern die Rechnung am Tisch an – keine Schlangen beim Kassieren.",
+        "AUTHOR": "Javier, La Terraza"
+      },
+      "3": {
+        "TEXT": "Durch Extras und Vorschläge stieg der Durchschnittsbon.",
+        "AUTHOR": "Lucia, Pizzeria 9."
+      }
+    },
+    "FINAL_CTA": {
+      "TITLE": "Bereit, Ihre Bar zu transformieren?",
+      "BUTTON": "Jetzt kostenlos starten",
+      "NOTE": "Keine Karte. Keine Bindung."
+    }
+  },
   "LOGIN": {
     "TITLE": "Anmelden",
     "USERNAME": "Benutzername",

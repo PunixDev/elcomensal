@@ -3,9 +3,7 @@
     "LOADING": "Chargement...",
     "SAVE": "Enregistrer",
     "CANCEL": "Annuler",
-      "TOTAL_UNITS": "Total Unités",
-      "TOP_PRODUCT": "Produit Top"
-    },  "DELETE": "Supprimer",
+    "DELETE": "Supprimer",
     "EDIT": "Modifier",
     "ADD": "Ajouter",
     "CLOSE": "Fermer",
@@ -49,6 +47,98 @@
     "QR_GENERATOR": "Générateur QR",
     "HISTORY": "Historique",
     "TABLE_REPORT": "Rapport Table"
+  },
+  "HOME_LANDING": {
+    "HERO_TITLE": "Transformez votre bar en un service rapide, moderne et rentable",
+    "HERO_SUBTITLE": "Commandes par QR, demande de l’addition à table et contrôle total depuis votre mobile",
+    "TRUST": {
+      "SECURE": "100% sécurisé et sans tracas",
+      "SETUP_FAST": "Mise en place en 24h",
+      "HAPPIER_CLIENTS": "Des clients plus heureux"
+    },
+    "BENEFITS": {
+      "QR_ORDERS": "Commandes par QR sans attendre le serveur",
+      "REQUEST_BILL": "Demande de l’addition directement à table",
+      "MENU_VISUAL": "Carte numérique avec photos, suppléments et suggestions",
+      "REALTIME_DASHBOARD": "Tableau de bord en temps réel: ventes, tables et stock",
+      "AI_TRANSLATION": "Traduction automatique par IA lors de l’ajout de produits"
+    },
+    "ALT": {
+      "MENU_VIEW": "Vue carte numérique",
+      "QR_ORDERS": "Commandes QR",
+      "REQUEST_BILL": "Demande de l’addition à table",
+      "DASHBOARD": "Tableau de bord"
+    },
+    "CTA_PRIMARY": "Commencez gratuitement: première semaine sans engagement",
+    "FEATURES": {
+      "TITLE": "Tout ce dont vous avez besoin pour vendre plus",
+      "QR": {
+        "TITLE": "Commandes par QR",
+        "DESC": "Moins d’attente, plus de rotation et zéro erreur de prise de commande."
+      },
+      "REQUEST_BILL": {
+        "TITLE": "Demande de l’addition",
+        "DESC": "Recevez une alerte quand une table veut payer et accélérez l’encaissement."
+      },
+      "MENU": {
+        "TITLE": "Carte visuelle",
+        "DESC": "Photos, allergènes, suppléments et menus pour augmenter le ticket moyen."
+      },
+      "FLOOR": {
+        "TITLE": "Salle et terrasse",
+        "DESC": "Gérez tables, statuts et temps facilement depuis votre mobile."
+      },
+      "REPORTS": {
+        "TITLE": "Rapports et caisse",
+        "DESC": "Ventes par heure, produit et serveur pour mieux décider."
+      },
+      "AI": {
+        "TITLE": "Traduction automatique (IA)",
+        "DESC": "Créez un produit et nous le traduisons instantanément en plusieurs langues."
+      }
+    },
+    "STEPS": {
+      "TITLE": "C’est aussi simple que ça",
+      "1": {
+        "TITLE": "Configurez votre carte",
+        "DESC": "Ajoutez produits et prix. Nous vous aidons à le préparer et c’est traduit automatiquement."
+      },
+      "2": {
+        "TITLE": "Placez les QR",
+        "DESC": "Vos clients commandent et demandent l’addition depuis la table avec leur mobile."
+      },
+      "3": {
+        "TITLE": "Contrôle total",
+        "DESC": "Recevez les commandes en cuisine et consultez les ventes en temps réel."
+      }
+    },
+    "RESULTS": {
+      "TITLE": "Des résultats qui convainquent",
+      "ROTATION": "+30% de rotation des tables",
+      "SATISFACTION": "+40% de satisfaction client",
+      "WAIT": "-50% de temps d’attente",
+      "AVGTICKET": "+20% de ticket moyen"
+    },
+    "TESTIMONIALS": {
+      "TITLE": "Ce que disent les propriétaires",
+      "1": {
+        "TEXT": "Depuis que nous l’utilisons, nous faisons plus de services et l’équipe est plus sereine.",
+        "AUTHOR": "Maria, Bar Central"
+      },
+      "2": {
+        "TEXT": "Les clients demandent l’addition à table et nous évitons les files à la fermeture.",
+        "AUTHOR": "Javier, La Terraza"
+      },
+      "3": {
+        "TEXT": "Le ticket moyen a augmenté avec les suppléments et suggestions.",
+        "AUTHOR": "Lucia, Pizzeria 9e"
+      }
+    },
+    "FINAL_CTA": {
+      "TITLE": "Prêt à transformer votre bar ?",
+      "BUTTON": "Commencez maintenant gratuitement",
+      "NOTE": "Sans carte. Sans engagement."
+    }
   },
   "LOGIN": {
     "TITLE": "Connexion",
@@ -171,7 +261,8 @@
     "STATUS_RECEIVED": "Reçu",
     "TOTAL_PAID": "Total payé",
     "REQUEST_PAYMENT": "Demander le paiement",
-    "IMAGE_EXPANDED": "Image agrandie"
+    "IMAGE_EXPANDED": "Image agrandie",
+    "SELECT_IMAGE": "Sélectionner une image"
   },
   "MENU": {
     "TITLE": "Menu",

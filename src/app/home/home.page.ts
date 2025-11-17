@@ -14,6 +14,9 @@ import {
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { PopoverController } from '@ionic/angular';
+import { LanguageSelectorComponent } from '../language-selector.component';
+import { LanguageService } from '../language.service';
 
 @Component({
   selector: 'app-home',
@@ -29,14 +32,37 @@ import { TranslateModule } from '@ngx-translate/core';
     IonButtons,
     CommonModule,
     TranslateModule,
+    LanguageSelectorComponent,
   ],
+  providers: [PopoverController],
 })
 export class HomePage {
   logoExists = true;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private popoverController: PopoverController,
+    private languageService: LanguageService
+  ) {}
 
   goToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  getCurrentLanguageFlag(): string {
+    return this.languageService.getLanguageFlag(
+      this.languageService.getCurrentLanguage()
+    );
+  }
+
+  async presentLanguagePopover(event: any) {
+    const popover = await this.popoverController.create({
+      component: LanguageSelectorComponent,
+      event: event,
+      translucent: true,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    return await popover.present();
   }
 }
