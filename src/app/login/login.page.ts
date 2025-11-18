@@ -82,6 +82,11 @@ export class LoginPage implements OnInit {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('usuario', result.barId); // Guardar barId real
         localStorage.setItem('correo', result.usuario.correo);
+        // Obtener y guardar trialStart
+        this.dataService.getTrialStart(result.barId).subscribe((data: any) => {
+          const trialStart = data?.trialStart || new Date().toISOString();
+          localStorage.setItem('trialStart', trialStart);
+        });
         this.router.navigate(['/admin']);
       } else {
         this.error = this.translate.instant('LOGIN.ERROR_INVALID');
