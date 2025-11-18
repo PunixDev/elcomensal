@@ -147,8 +147,16 @@ export class AdminPage implements OnInit {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === 404) {
+            console.log('usuario no encontrado en stripe');
+            this.isSubscribed = false;
+            return;
+          }
+          return res.json();
+        })
         .then((data) => {
+          if (!data) return; // Skip if 404
           this.customerId = data.customerId;
           console.log(
             'Llamando check-subscription con customerId:',
