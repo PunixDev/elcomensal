@@ -22,11 +22,11 @@
         <ion-icon name="fast-food" slot="start" aria-hidden="true"></ion-icon>
         {{ 'ADMIN.MANAGE_PRODUCTS' | translate }}
       </ion-item>
-      <ion-item (click)="goToGenerarQR()" [disabled]="!isSubscribed">
+      <ion-item (click)="goToGenerarQR()" [disabled]="!isSubscribed && !trialActive">
         <ion-icon name="qr-code" slot="start" aria-hidden="true"></ion-icon>
         {{ 'NAVIGATION.QR_GENERATOR' | translate }}
       </ion-item>
-      <ion-item (click)="goToHistorial()" [disabled]="!isSubscribed">
+      <ion-item (click)="goToHistorial()" [disabled]="!isSubscribed && !trialActive">
         <ion-icon name="archive" slot="start" aria-hidden="true"></ion-icon>
         {{ 'NAVIGATION.HISTORY' | translate }}
       </ion-item>
