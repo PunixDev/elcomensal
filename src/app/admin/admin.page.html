@@ -10,6 +10,12 @@
         ></ion-icon>
         {{ 'ADMIN.TITLE' | translate }}
       </ion-title>
+      <ion-label
+        *ngIf="trialActive"
+        style="font-size: small; display: block; text-align: center"
+        >Prueba gratuita activa - {{ remainingTrialDays }} días
+        restantes</ion-label
+      >
     </ion-toolbar>
   </ion-header>
   <ion-content>
@@ -22,11 +28,17 @@
         <ion-icon name="fast-food" slot="start" aria-hidden="true"></ion-icon>
         {{ 'ADMIN.MANAGE_PRODUCTS' | translate }}
       </ion-item>
-      <ion-item (click)="goToGenerarQR()" [disabled]="!isSubscribed && !trialActive">
+      <ion-item
+        (click)="goToGenerarQR()"
+        [disabled]="!isSubscribed && !trialActive"
+      >
         <ion-icon name="qr-code" slot="start" aria-hidden="true"></ion-icon>
         {{ 'NAVIGATION.QR_GENERATOR' | translate }}
       </ion-item>
-      <ion-item (click)="goToHistorial()" [disabled]="!isSubscribed && !trialActive">
+      <ion-item
+        (click)="goToHistorial()"
+        [disabled]="!isSubscribed && !trialActive"
+      >
         <ion-icon name="archive" slot="start" aria-hidden="true"></ion-icon>
         {{ 'NAVIGATION.HISTORY' | translate }}
       </ion-item>
@@ -129,7 +141,8 @@
           <div *ngIf="trialActive; else expiredBlock">
             <ion-label color="warning"
               ><strong
-                >{{ 'ADMIN.TRIAL_ACTIVE' | translate }}</strong
+                >{{ 'ADMIN.TRIAL_ACTIVE' | translate }} - {{ remainingTrialDays
+                }} días restantes</strong
               ></ion-label
             >
           </div>

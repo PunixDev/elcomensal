@@ -94,6 +94,7 @@ export class AdminPage implements OnInit {
   mesaActual: string = ''; // Nueva variable para guardar la mesa actual
   isSubscribed: boolean = true;
   trialActive: boolean = false;
+  remainingTrialDays: number = 0;
 
   modificarCabecera() {
     // Crear input file dinámicamente
@@ -220,6 +221,11 @@ export class AdminPage implements OnInit {
       const trialDate = new Date(trialStart);
       this.trialActive =
         now.getTime() - trialDate.getTime() < 30 * 24 * 60 * 60 * 1000;
+      if (this.trialActive) {
+        const diffMs =
+          30 * 24 * 60 * 60 * 1000 - (now.getTime() - trialDate.getTime());
+        this.remainingTrialDays = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
+      }
     });
     this.comandas$.subscribe((todas) => {
       this.comandas = todas;
