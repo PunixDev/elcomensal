@@ -150,6 +150,10 @@ export class AdminPage implements OnInit {
         .then((res) => res.json())
         .then((data) => {
           this.customerId = data.customerId;
+          console.log(
+            'Llamando check-subscription con customerId:',
+            this.customerId
+          );
           // Llamada al backend para verificar suscripción
           fetch(`${this.backendUrl}/check-subscription`, {
             method: 'POST',
@@ -196,6 +200,19 @@ export class AdminPage implements OnInit {
     this.dataService.getCabeceraImagen(this.barId).subscribe((data: any) => {
       this.cabeceraImagen = data?.imagen || null;
     });
+    // Cargar trialStart desde DB
+    this.dataService.getTrialStart(this.barId).subscribe((data: any) => {
+      let trialStart = data?.trialStart;
+      if (!trialStart) {
+        // Si no existe, establecerlo ahora
+        trialStart = new Date().toISOString();
+        // Opcional: guardar en DB, pero por ahora solo local
+      }
+      const now = new Date();
+      const trialDate = new Date(trialStart);
+      this.trialActive =
+        now.getTime() - trialDate.getTime() < 30 * 24 * 60 * 60 * 1000;
+    });
     this.comandas$.subscribe((todas) => {
       this.comandas = todas;
       this.comandasPorMesa = {};
@@ -207,20 +224,6 @@ export class AdminPage implements OnInit {
     this.productos$.subscribe((productos) => {
       this.productos = productos;
     });
-
-    // Lógica de suscripción real
-    const usuario = localStorage.getItem('usuario');
-    const trialStart = localStorage.getItem('trialStart');
-    if (!trialStart) {
-      // Primer login: inicia trial
-      localStorage.setItem('trialStart', new Date().toISOString());
-      this.trialActive = true;
-    } else {
-      const now = new Date();
-      const trialDate = new Date(trialStart);
-      this.trialActive =
-        now.getTime() - trialDate.getTime() < 30 * 24 * 60 * 60 * 1000;
-    }
   }
 
   limpiarComandas() {
@@ -342,7 +345,7 @@ export class AdminPage implements OnInit {
   }
 
   logout() {
-    localStorage.removeItem('isLoggedIn');
+    localStorage.clear();
     this.router.navigate(['/login']);
   }
 
@@ -489,7 +492,7 @@ export class AdminPage implements OnInit {
       .then((res) => res.json())
       .then((data) => {
         if (data.url) {
-          window.location.href = data.url;
+          window.open(data.url, '_blank');
         } else {
           alert('No se pudo obtener el enlace de gestión de suscripción.');
         }

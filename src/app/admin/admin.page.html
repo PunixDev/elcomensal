@@ -22,11 +22,11 @@
         <ion-icon name="fast-food" slot="start" aria-hidden="true"></ion-icon>
         {{ 'ADMIN.MANAGE_PRODUCTS' | translate }}
       </ion-item>
-      <ion-item (click)="goToGenerarQR()">
+      <ion-item (click)="goToGenerarQR()" [disabled]="!isSubscribed">
         <ion-icon name="qr-code" slot="start" aria-hidden="true"></ion-icon>
         {{ 'NAVIGATION.QR_GENERATOR' | translate }}
       </ion-item>
-      <ion-item (click)="goToHistorial()">
+      <ion-item (click)="goToHistorial()" [disabled]="!isSubscribed">
         <ion-icon name="archive" slot="start" aria-hidden="true"></ion-icon>
         {{ 'NAVIGATION.HISTORY' | translate }}
       </ion-item>
@@ -145,6 +145,7 @@
                 expand="block"
                 (click)="goToHistorial()"
                 style="margin-bottom: 0.5em"
+                [disabled]="!isSubscribed"
               >
                 <ion-icon name="archive" slot="start"></ion-icon>
                 {{ 'NAVIGATION.HISTORY' | translate }}

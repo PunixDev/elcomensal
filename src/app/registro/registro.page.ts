@@ -83,6 +83,7 @@ export class RegistroPage {
         usuario: this.usuarioAdmin,
         password: this.password,
         correo: this.correo,
+        trialStart: new Date().toISOString(),
       });
       this.exito = this.translate.instant('REGISTER.SUCCESS');
       setTimeout(() => this.router.navigate(['/login']), 2000);

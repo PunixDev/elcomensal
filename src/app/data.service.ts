@@ -39,6 +39,7 @@ export interface BarRegistro {
   usuario: string;
   password: string;
   correo: string;
+  trialStart: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -46,6 +47,11 @@ export class DataService {
   // Obtiene la imagen de cabecera en bares/{barId}/cabecera/imagen
   getCabeceraImagen(barId: string) {
     const ref = doc(this.firestore, `bares/${barId}/cabecera/imagen`);
+    return docData(ref);
+  }
+  // Obtiene el trialStart del bar
+  getTrialStart(barId: string) {
+    const ref = doc(this.firestore, `bares/${barId}`);
     return docData(ref);
   }
   // Guarda la imagen de cabecera en bares/{barId}/cabecera
@@ -155,6 +161,7 @@ export class DataService {
       nombre: data.nombre,
       correo: data.correo,
       usuario: data.usuario,
+      trialStart: data.trialStart,
     });
     // Crea el usuario admin en la subcolección usuarios
     const usuariosRef = collection(
