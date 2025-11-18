@@ -402,7 +402,10 @@ export class CartaPage implements OnInit {
       const opcionesTrad = this.getOpciones(prod);
       const opcionesOrig = prod.opciones || [];
       const index = opcionesOrig.indexOf(this.seleccionados[key].opcion);
-      const opcionTrad = index >= 0 && opcionesTrad[index] ? opcionesTrad[index] : this.seleccionados[key].opcion;
+      const opcionTrad =
+        index >= 0 && opcionesTrad[index]
+          ? opcionesTrad[index]
+          : this.seleccionados[key].opcion;
       nombre += ' (' + opcionTrad + ')';
     }
     return nombre;
@@ -488,10 +491,14 @@ export class CartaPage implements OnInit {
 
   getDescripcion(producto: Producto): string {
     const lang = this.languageService.getCurrentLanguage();
-    if (lang === 'en') return producto.descripcionEn || producto.descripcion || '';
-    if (lang === 'fr') return producto.descripcionFr || producto.descripcion || '';
-    if (lang === 'de') return producto.descripcionDe || producto.descripcion || '';
-    if (lang === 'it') return producto.descripcionIt || producto.descripcion || '';
+    if (lang === 'en')
+      return producto.descripcionEn || producto.descripcion || '';
+    if (lang === 'fr')
+      return producto.descripcionFr || producto.descripcion || '';
+    if (lang === 'de')
+      return producto.descripcionDe || producto.descripcion || '';
+    if (lang === 'it')
+      return producto.descripcionIt || producto.descripcion || '';
     return producto.descripcion || '';
   }
 
