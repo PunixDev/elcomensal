@@ -47,6 +47,7 @@ export class RecuperarPage {
   usuario = '';
   barId = '';
   nuevaPassword = '';
+  confirmarPassword = '';
   error = '';
   exito = '';
   mostrarCambio = false;
@@ -74,6 +75,10 @@ export class RecuperarPage {
   async cambiarPassword() {
     this.error = '';
     this.exito = '';
+    if (this.nuevaPassword !== this.confirmarPassword) {
+      this.error = this.translate.instant('RECOVER.ERROR_PASSWORDS_NOT_MATCH');
+      return;
+    }
     try {
       await this.dataService.cambiarPasswordUsuario(
         this.barId,

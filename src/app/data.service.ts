@@ -27,11 +27,24 @@ export interface Producto {
   precio: number;
   imagen?: string | null;
   descripcion?: string;
-  descripcionTrad?: string;
   alergenos?: string;
-  alergenosTrad?: string;
   opciones?: string[];
-  opcionesTrad?: string[];
+  nombreEn?: string;
+  descripcionEn?: string;
+  alergenosEn?: string;
+  opcionesEn?: string[];
+  nombreFr?: string;
+  descripcionFr?: string;
+  alergenosFr?: string;
+  opcionesFr?: string[];
+  nombreDe?: string;
+  descripcionDe?: string;
+  alergenosDe?: string;
+  opcionesDe?: string[];
+  nombreIt?: string;
+  descripcionIt?: string;
+  alergenosIt?: string;
+  opcionesIt?: string[];
 }
 
 export interface BarRegistro {

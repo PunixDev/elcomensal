@@ -162,23 +162,23 @@
             </div>
             <div class="producto-info">
               <div class="producto-header">
-                <span class="producto-nombre">{{ prod.nombre }}</span>
+                <span class="producto-nombre">{{ getNombre(prod) }}</span>
                 <span class="producto-precio"
                   >{{ prod.precio | currency:'EUR':'symbol':'1.2-2' }}</span
                 >
               </div>
-              <div class="producto-desc">{{ prod.descripcion }}</div>
-              <div *ngIf="prod.alergenos" class="producto-alergenos">
+              <div class="producto-desc">{{ getDescripcion(prod) }}</div>
+              <div *ngIf="getAlergenos(prod)" class="producto-alergenos">
                 <ion-icon
                   name="alert-circle-outline"
                   color="warning"
                 ></ion-icon>
                 <span
-                  >{{ 'MENU.ALLERGENS' | translate }}: {{prod.alergenos}}</span
+                  >{{ 'MENU.ALLERGENS' | translate }}: {{getAlergenos(prod)}}</span
                 >
               </div>
               <div
-                *ngIf="prod.opciones && prod.opciones.length"
+                *ngIf="getOpciones(prod) && getOpciones(prod).length"
                 class="producto-opciones"
               >
                 <strong>{{ 'MENU.OPTIONS' | translate }}:</strong>
@@ -187,7 +187,7 @@
                   (ngModelChange)="onSeleccionOpcion(prod, $event)"
                 >
                   <ion-segment-button
-                    *ngFor="let op of prod.opciones; let i = index"
+                    *ngFor="let op of getOpciones(prod); let i = index"
                     [value]="op"
                   >
                     {{op}}

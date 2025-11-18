@@ -23,6 +23,7 @@ import {
   IonButton,
   IonItemDivider,
   IonModal,
+  IonSpinner,
   PopoverController,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
@@ -59,6 +60,7 @@ import { Observable } from 'rxjs';
     IonButton,
     IonItemDivider,
     IonModal,
+    IonSpinner,
     CommonModule,
     FormsModule,
     TranslateModule,
@@ -95,6 +97,7 @@ export class AdminPage implements OnInit {
   isSubscribed: boolean = true;
   trialActive: boolean = false;
   remainingTrialDays: number = 0;
+  isLoading: boolean = true;
 
   modificarCabecera() {
     // Crear input file dinámicamente
@@ -152,6 +155,7 @@ export class AdminPage implements OnInit {
           if (res.status === 404) {
             console.log('usuario no encontrado en stripe');
             this.isSubscribed = false;
+            this.isLoading = false;
             return;
           }
           return res.json();
@@ -176,6 +180,7 @@ export class AdminPage implements OnInit {
                 const data = await response.json();
                 console.log('Resultado check-subscription:', data);
                 this.isSubscribed = data.isSubscribed === true;
+                this.isLoading = false;
               } else if (response.status === 500) {
                 const error = await response.json();
                 console.log('Error check-subscription:', error);
@@ -195,9 +200,13 @@ export class AdminPage implements OnInit {
                 );
                 this.router.navigate(['/suscripcion']);
               }
+              this.isLoading = false;
             });
         })
-        .catch((err) => console.error('Error obteniendo customerId:', err));
+        .catch((err) => {
+          console.error('Error obteniendo customerId:', err);
+          this.isLoading = false;
+        });
     }
     const logged = localStorage.getItem('isLoggedIn');
     if (logged !== 'true') {

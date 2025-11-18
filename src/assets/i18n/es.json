@@ -72,7 +72,12 @@
     "EMAIL": "Correo electrónico",
     "SEND_BUTTON": "Enviar enlace de recuperación",
     "SUCCESS_MESSAGE": "Enlace enviado a tu correo",
-    "ERROR_MESSAGE": "Error al enviar el enlace"
+    "ERROR_MESSAGE": "Error al enviar el enlace",
+    "SUCCESS": "Contraseña cambiada exitosamente",
+    "ERROR_NOT_FOUND": "Usuario no encontrado",
+    "ERROR_UPDATE": "Error al cambiar la contraseña",
+    "CONFIRM_PASSWORD": "Confirmar Contraseña",
+    "ERROR_PASSWORDS_NOT_MATCH": "Las contraseñas no coinciden"
   },
   "HOME": {
     "TITLE": "Panel Principal",

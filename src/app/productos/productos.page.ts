@@ -104,81 +104,63 @@ export class ProductosPage implements OnInit {
       this.nuevaCategoria &&
       this.nuevoPrecio != null
     ) {
-      // Traducción automática a los idiomas soportados
-      const idiomas = [
-        { key: 'en', name: 'Inglés' },
-        { key: 'fr', name: 'Francés' },
-        { key: 'de', name: 'Alemán' },
-        { key: 'it', name: 'Italiano' },
-      ];
-      const apiKey = 'AQUI_TU_API_KEY'; // Poner tu clave de Google Translate API
-      const translateText = async (text: string, target: string) => {
-        if (!text) return '';
-        try {
-          const res = await fetch(
-            `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ q: text, target, format: 'text' }),
-            }
-          );
-          const data = await res.json();
-          return data.data.translations[0].translatedText || '';
-        } catch (e) {
-          return '';
-        }
-      };
-      // Traducir todos los campos relevantes
-      const traducciones: any = {};
-      for (const idioma of idiomas) {
-        traducciones[
-          `nombre${idioma.key.charAt(0).toUpperCase() + idioma.key.slice(1)}`
-        ] = await translateText(this.nuevoNombre, idioma.key);
-        traducciones[
-          `descripcion${
-            idioma.key.charAt(0).toUpperCase() + idioma.key.slice(1)
-          }`
-        ] = await translateText(this.nuevaDescripcion, idioma.key);
-        traducciones[
-          `alergenos${idioma.key.charAt(0).toUpperCase() + idioma.key.slice(1)}`
-        ] = await translateText(this.nuevosAlergenos, idioma.key);
-        if (this.nuevasOpciones && this.nuevasOpciones.length) {
-          traducciones[
-            `opciones${
-              idioma.key.charAt(0).toUpperCase() + idioma.key.slice(1)
-            }`
-          ] = [];
-          for (const op of this.nuevasOpciones) {
-            traducciones[
-              `opciones${
-                idioma.key.charAt(0).toUpperCase() + idioma.key.slice(1)
-              }`
-            ].push(await translateText(op, idioma.key));
-          }
-        }
-      }
-      const nuevo = {
+      // Preparar el objeto para traducción
+      const request = {
         nombre: this.nuevoNombre.trim(),
-        categoria: this.nuevaCategoria,
         precio: this.nuevoPrecio,
-        imagen: this.nuevaImagen || null,
         descripcion: this.nuevaDescripcion,
         alergenos: this.nuevosAlergenos,
         opciones: [...this.nuevasOpciones],
-        ...traducciones,
+        nombreEn: '',
+        descripcionEn: '',
+        alergenosEn: '',
+        opcionesEn: this.nuevasOpciones.map(() => ''),
+        nombreFr: '',
+        descripcionFr: '',
+        alergenosFr: '',
+        opcionesFr: this.nuevasOpciones.map(() => ''),
+        nombreDe: '',
+        descripcionDe: '',
+        alergenosDe: '',
+        opcionesDe: this.nuevasOpciones.map(() => ''),
+        nombreIt: '',
+        descripcionIt: '',
+        alergenosIt: '',
+        opcionesIt: this.nuevasOpciones.map(() => ''),
       };
-      this.dataService.addProducto(this.barId, nuevo);
-      this.nuevoNombre = '';
-      this.nuevaCategoria = '';
-      this.nuevoPrecio = null;
-      this.nuevaImagen = null;
-      this.nuevaDescripcion = '';
-      this.nuevosAlergenos = '';
-      this.nuevasOpciones = [];
-      this.intentadoAgregar = false;
-      // Mensaje de éxito
-      alert('Producto añadido con éxito');
+
+      try {
+        const response = await fetch('http://localhost:3000/translate-dish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(request),
+        });
+        const result = await response.json();
+        if (result.success) {
+          const nuevo = {
+            ...result.data,
+            categoria: this.nuevaCategoria,
+            imagen: this.nuevaImagen || null,
+          };
+          console.log('Campos enviados a agregarProducto:', nuevo);
+          this.dataService.addProducto(this.barId, nuevo);
+          this.nuevoNombre = '';
+          this.nuevaCategoria = '';
+          this.nuevoPrecio = null;
+          this.nuevaImagen = null;
+          this.nuevaDescripcion = '';
+          this.nuevosAlergenos = '';
+          this.nuevasOpciones = [];
+          this.intentadoAgregar = false;
+          // Mensaje de éxito
+          alert('Producto añadido con éxito');
+        } else {
+          alert('Error en la traducción');
+        }
+      } catch (error) {
+        console.error('Error al traducir:', error);
+        alert('Error al traducir el producto');
+      }
     }
   }
 

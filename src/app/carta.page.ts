@@ -395,9 +395,15 @@ export class CartaPage implements OnInit {
     const prod = this.productos.find(
       (p) => p.id === this.seleccionados[key].id
     );
-    let nombre = prod ? prod.nombre : '';
+    if (!prod) return '';
+    let nombre = this.getNombre(prod);
     if (this.seleccionados[key].opcion) {
-      nombre += ' (' + this.seleccionados[key].opcion + ')';
+      // Traducir la opción seleccionada
+      const opcionesTrad = this.getOpciones(prod);
+      const opcionesOrig = prod.opciones || [];
+      const index = opcionesOrig.indexOf(this.seleccionados[key].opcion);
+      const opcionTrad = index >= 0 && opcionesTrad[index] ? opcionesTrad[index] : this.seleccionados[key].opcion;
+      nombre += ' (' + opcionTrad + ')';
     }
     return nombre;
   }
@@ -468,6 +474,43 @@ export class CartaPage implements OnInit {
   // Devuelve la opción seleccionada para un producto (para ion-segment)
   getOpcionSeleccionada(producto: Producto): string {
     return this.opcionSeleccionTemp[producto.id] || '';
+  }
+
+  // Métodos para obtener textos traducidos según el idioma actual
+  getNombre(producto: Producto): string {
+    const lang = this.languageService.getCurrentLanguage();
+    if (lang === 'en') return producto.nombreEn || producto.nombre;
+    if (lang === 'fr') return producto.nombreFr || producto.nombre;
+    if (lang === 'de') return producto.nombreDe || producto.nombre;
+    if (lang === 'it') return producto.nombreIt || producto.nombre;
+    return producto.nombre;
+  }
+
+  getDescripcion(producto: Producto): string {
+    const lang = this.languageService.getCurrentLanguage();
+    if (lang === 'en') return producto.descripcionEn || producto.descripcion || '';
+    if (lang === 'fr') return producto.descripcionFr || producto.descripcion || '';
+    if (lang === 'de') return producto.descripcionDe || producto.descripcion || '';
+    if (lang === 'it') return producto.descripcionIt || producto.descripcion || '';
+    return producto.descripcion || '';
+  }
+
+  getAlergenos(producto: Producto): string {
+    const lang = this.languageService.getCurrentLanguage();
+    if (lang === 'en') return producto.alergenosEn || producto.alergenos || '';
+    if (lang === 'fr') return producto.alergenosFr || producto.alergenos || '';
+    if (lang === 'de') return producto.alergenosDe || producto.alergenos || '';
+    if (lang === 'it') return producto.alergenosIt || producto.alergenos || '';
+    return producto.alergenos || '';
+  }
+
+  getOpciones(producto: Producto): string[] {
+    const lang = this.languageService.getCurrentLanguage();
+    if (lang === 'en') return producto.opcionesEn || producto.opciones || [];
+    if (lang === 'fr') return producto.opcionesFr || producto.opciones || [];
+    if (lang === 'de') return producto.opcionesDe || producto.opciones || [];
+    if (lang === 'it') return producto.opcionesIt || producto.opciones || [];
+    return producto.opciones || [];
   }
 
   getCurrentLanguageFlag(): string {

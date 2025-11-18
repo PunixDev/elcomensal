@@ -41,6 +41,17 @@
               required
             ></ion-input>
           </ion-item>
+          <ion-item>
+            <ion-label position="floating"
+              >{{ 'RECOVER.CONFIRM_PASSWORD' | translate }}</ion-label
+            >
+            <ion-input
+              [(ngModel)]="confirmarPassword"
+              name="confirmarPassword"
+              type="password"
+              required
+            ></ion-input>
+          </ion-item>
           <ion-button expand="block" color="success" type="submit">
             {{ 'REGISTER.PASSWORD' | translate }}
           </ion-button>

@@ -164,7 +164,12 @@
     "EMAIL": "Email address",
     "SEND_BUTTON": "Send recovery link",
     "SUCCESS_MESSAGE": "Link sent to your email",
-    "ERROR_MESSAGE": "Error sending link"
+    "ERROR_MESSAGE": "Error sending link",
+    "SUCCESS": "Password changed successfully",
+    "ERROR_NOT_FOUND": "User not found",
+    "ERROR_UPDATE": "Error changing password",
+    "CONFIRM_PASSWORD": "Confirm Password",
+    "ERROR_PASSWORDS_NOT_MATCH": "Passwords do not match"
   },
   "HOME": {
     "TITLE": "Main Dashboard",
