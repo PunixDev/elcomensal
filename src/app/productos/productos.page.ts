@@ -77,6 +77,7 @@ export class ProductosPage implements OnInit {
   intentadoAgregar = false;
   categorias: Categoria[] = [];
   categoriasConOpen: { nombre: string; id: string; _open: boolean }[] = [];
+  backendUrl: string;
 
   constructor(
     private dataService: DataService,
@@ -92,6 +93,10 @@ export class ProductosPage implements OnInit {
         _open: false,
       }));
     });
+    this.backendUrl =
+      window.location.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : 'https://backendelcomensal.onrender.com';
   }
 
   ngOnInit() {}
@@ -130,7 +135,7 @@ export class ProductosPage implements OnInit {
       };
 
       try {
-        const response = await fetch('http://localhost:3000/translate-dish', {
+        const response = await fetch(`${this.backendUrl}/translate-dish`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(request),

@@ -18,6 +18,10 @@ import { Observable, firstValueFrom } from 'rxjs';
 export interface Categoria {
   id: string;
   nombre: string;
+  nombreEn?: string;
+  nombreFr?: string;
+  nombreDe?: string;
+  nombreIt?: string;
 }
 
 export interface Producto {

@@ -428,8 +428,12 @@ export class CartaPage implements OnInit {
 
   getNombreCategoria(cat?: Categoria): string {
     if (!cat) return '';
-    // Restaurar el comportamiento clásico: solo devolver el string tal cual se guardó
-    return typeof cat.nombre === 'string' ? cat.nombre : '';
+    const lang = this.languageService.getCurrentLanguage();
+    if (lang === 'en') return cat.nombreEn || cat.nombre;
+    if (lang === 'fr') return cat.nombreFr || cat.nombre;
+    if (lang === 'de') return cat.nombreDe || cat.nombre;
+    if (lang === 'it') return cat.nombreIt || cat.nombre;
+    return cat.nombre;
   }
 
   getProductosPorCategoriaSeleccionada() {

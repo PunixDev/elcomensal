@@ -21,6 +21,7 @@ import {
 import { DataService, Categoria } from '../data.service';
 import { Observable } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
+import { LanguageService } from '../language.service';
 
 @Component({
   selector: 'app-categorias',
@@ -55,25 +56,54 @@ export class CategoriasPage implements OnInit {
   editNombre = '';
   barId: string;
   mensajeExito = '';
+  backendUrl: string;
 
-  constructor(private dataService: DataService) {
+  constructor(
+    private dataService: DataService,
+    private languageService: LanguageService
+  ) {
     this.barId = this.dataService.getBarId();
     this.categorias$ = this.dataService.getCategorias(this.barId);
+    this.backendUrl =
+      window.location.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : 'https://backendelcomensal.onrender.com';
   }
 
   ngOnInit() {}
 
-  agregarCategoria() {
+  async agregarCategoria() {
     if (this.nuevaCategoria.trim()) {
-      const nueva = {
+      // Preparar el objeto para traducción
+      const request = {
         nombre: this.nuevaCategoria.trim(),
+        nombreEn: '',
+        nombreFr: '',
+        nombreDe: '',
+        nombreIt: '',
       };
-      this.dataService.addCategoria(this.barId, nueva);
-      this.nuevaCategoria = '';
-      this.mensajeExito = 'Categoría añadida correctamente';
-      setTimeout(() => {
-        this.mensajeExito = '';
-      }, 2500);
+
+      try {
+        const response = await fetch(`${this.backendUrl}/translate-category`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(request),
+        });
+        const result = await response.json();
+        if (result.success) {
+          this.dataService.addCategoria(this.barId, result.data);
+          this.nuevaCategoria = '';
+          this.mensajeExito = 'Categoría añadida correctamente';
+          setTimeout(() => {
+            this.mensajeExito = '';
+          }, 2500);
+        } else {
+          alert('Error en la traducción de la categoría');
+        }
+      } catch (error) {
+        console.error('Error al traducir la categoría:', error);
+        alert('Error al traducir la categoría');
+      }
     }
   }
 
@@ -86,15 +116,39 @@ export class CategoriasPage implements OnInit {
     this.editNombre = categoria.nombre as string;
   }
 
-  guardarEdicion(id: string) {
+  async guardarEdicion(id: string) {
     if (this.editando && this.editNombre.trim()) {
-      const categoria: Categoria = {
-        id: this.editando!,
+      // Preparar el objeto para traducción
+      const request = {
         nombre: this.editNombre.trim(),
+        nombreEn: '',
+        nombreFr: '',
+        nombreDe: '',
+        nombreIt: '',
       };
-      this.dataService.updateCategoria(this.barId, categoria);
-      this.editando = null;
-      this.editNombre = '';
+
+      try {
+        const response = await fetch(`${this.backendUrl}/translate-category`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(request),
+        });
+        const result = await response.json();
+        if (result.success) {
+          const categoria: Categoria = {
+            id: this.editando!,
+            ...result.data,
+          };
+          this.dataService.updateCategoria(this.barId, categoria);
+          this.editando = null;
+          this.editNombre = '';
+        } else {
+          alert('Error en la traducción de la categoría');
+        }
+      } catch (error) {
+        console.error('Error al traducir la categoría:', error);
+        alert('Error al traducir la categoría');
+      }
     }
   }
 
@@ -105,6 +159,11 @@ export class CategoriasPage implements OnInit {
 
   getNombreCategoria(cat: Categoria): string {
     if (!cat) return '';
-    return typeof cat.nombre === 'string' ? cat.nombre : '';
+    const lang = this.languageService.getCurrentLanguage();
+    if (lang === 'en') return cat.nombreEn || cat.nombre;
+    if (lang === 'fr') return cat.nombreFr || cat.nombre;
+    if (lang === 'de') return cat.nombreDe || cat.nombre;
+    if (lang === 'it') return cat.nombreIt || cat.nombre;
+    return cat.nombre;
   }
 }
