@@ -78,8 +78,10 @@ export class LoginPage implements OnInit {
         this.password
       );
       if (result) {
+        console.log('Correo del usuario:', result.usuario.correo);
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('usuario', result.barId); // Guardar barId real
+        localStorage.setItem('correo', result.usuario.correo);
         this.router.navigate(['/admin']);
       } else {
         this.error = this.translate.instant('LOGIN.ERROR_INVALID');

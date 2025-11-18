@@ -66,6 +66,8 @@ import { Observable } from 'rxjs';
 })
 export class AdminPage implements OnInit {
   modalNombreBarAbierto: boolean = false;
+  backendUrl!: string;
+  customerId!: string;
 
   public abrirModalNombreBar() {
     this.modalNombreBarAbierto = true;
@@ -134,6 +136,56 @@ export class AdminPage implements OnInit {
   }
 
   ngOnInit() {
+    this.backendUrl =
+      window.location.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : 'https://backendelcomensal.onrender.com';
+    const email = localStorage.getItem('correo');
+    if (email) {
+      fetch(`${this.backendUrl}/get-customer-by-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          this.customerId = data.customerId;
+          // Llamada al backend para verificar suscripción
+          fetch(`${this.backendUrl}/check-subscription`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ customerId: this.customerId }),
+          })
+            .then(async (response) => {
+              if (response.status === 200) {
+                const data = await response.json();
+                console.log('Resultado check-subscription:', data);
+                this.isSubscribed = data.isSubscribed === true;
+              } else if (response.status === 500) {
+                const error = await response.json();
+                console.log('Error check-subscription:', error);
+                if (!this.trialActive) {
+                  alert(
+                    'Tu periodo de prueba ha finalizado. Debes suscribirte para continuar.'
+                  );
+                  this.router.navigate(['/suscripcion']);
+                }
+              }
+            })
+            .catch((err) => {
+              console.error('Error al verificar suscripción:', err);
+              if (!this.trialActive) {
+                alert(
+                  'Tu periodo de prueba ha finalizado. Debes suscribirte para continuar.'
+                );
+                this.router.navigate(['/suscripcion']);
+              }
+            });
+        })
+        .catch((err) => console.error('Error obteniendo customerId:', err));
+    }
     const logged = localStorage.getItem('isLoggedIn');
     if (logged !== 'true') {
       this.router.navigate(['/login']);
@@ -169,38 +221,6 @@ export class AdminPage implements OnInit {
       this.trialActive =
         now.getTime() - trialDate.getTime() < 30 * 24 * 60 * 60 * 1000;
     }
-
-    // Llamada al backend para verificar suscripción
-    fetch('https://backendelcomensal.onrender.com/check-subscription', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ customerId: 'cus_SytKdUzEAX1QmB' }),
-    })
-      .then(async (response) => {
-        if (response.status === 200) {
-          const data = await response.json();
-          this.isSubscribed = data.isSubscribed === true;
-        } else if (response.status === 500) {
-          const error = await response.json();
-          if (!this.trialActive) {
-            alert(
-              'Tu periodo de prueba ha finalizado. Debes suscribirte para continuar.'
-            );
-            this.router.navigate(['/suscripcion']);
-          }
-        }
-      })
-      .catch((err) => {
-        console.error('Error al verificar suscripción:', err);
-        if (!this.trialActive) {
-          alert(
-            'Tu periodo de prueba ha finalizado. Debes suscribirte para continuar.'
-          );
-          this.router.navigate(['/suscripcion']);
-        }
-      });
   }
 
   limpiarComandas() {
@@ -461,14 +481,11 @@ export class AdminPage implements OnInit {
   }
 
   gestionarSuscripcion() {
-    fetch(
-      'https://backendelcomensal.onrender.com/create-customer-portal-session',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId: 'cus_SytKdUzEAX1QmB' }),
-      }
-    )
+    fetch(`${this.backendUrl}/create-customer-portal-session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customerId: this.customerId }),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.url) {
