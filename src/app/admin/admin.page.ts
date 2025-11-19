@@ -86,6 +86,7 @@ export class AdminPage implements OnInit {
   usuarios$: Observable<any[]>;
   comandas: any[] = [];
   comandasPorMesa: { [mesa: string]: any[] } = {};
+  mesasOrdenadas: Array<{ key: string; value: any[] }> = [];
   informeMesa: any = null;
   informeTotal: number = 0;
   mostrarInforme: boolean = false;
@@ -245,6 +246,7 @@ export class AdminPage implements OnInit {
         if (!this.comandasPorMesa[c.mesa]) this.comandasPorMesa[c.mesa] = [];
         this.comandasPorMesa[c.mesa].push(c);
       });
+      this.recomputeMesasOrdenadas();
     });
     this.productos$.subscribe((productos) => {
       this.productos = productos;
@@ -329,6 +331,56 @@ export class AdminPage implements OnInit {
     // Forzar actualización inmediata de la lista de comandas
     this.comandas = this.comandas.filter((c) => c.mesa !== mesa);
     this.comandasPorMesa[mesa] = [];
+    this.recomputeMesasOrdenadas();
+  }
+
+  /**
+   * Reconstruye `mesasOrdenadas` a partir de `comandasPorMesa`.
+   * Ordena por prioridad:
+   *  - prioridad 0: tiene al menos una comanda con estado 'pago_pendiente'
+   *  - prioridad 1: tiene alguna comanda con estado diferente a 'preparado' (urgente)
+   *  - prioridad 2: todas las comandas están 'preparado' (menos urgente)
+   * Dentro de la misma prioridad, ordena por la fecha más reciente (desc).
+   */
+  recomputeMesasOrdenadas() {
+    const entradas = Object.keys(this.comandasPorMesa).map((k) => ({
+      key: k,
+      value: this.comandasPorMesa[k] || [],
+    }));
+
+    const mesaPriority = (m: { key: string; value: any[] }) => {
+      const v = m.value || [];
+      if (v.some((c) => c.estado === 'pago_pendiente')) return 0;
+      if (v.some((c) => c.estado !== 'preparado')) return 1;
+      return 2;
+    };
+
+    const latestFecha = (m: { key: string; value: any[] }) => {
+      const v = m.value || [];
+      let max = 0;
+      v.forEach((c) => {
+        const t = c && c.fecha ? new Date(c.fecha).getTime() : 0;
+        if (t > max) max = t;
+      });
+      return max;
+    };
+
+    entradas.sort((a, b) => {
+      const pa = mesaPriority(a);
+      const pb = mesaPriority(b);
+      if (pa !== pb) return pa - pb; // prioridad asc (0 primero)
+      // misma prioridad: mesas con más reciente comanda primero
+      const ta = latestFecha(a);
+      const tb = latestFecha(b);
+      if (ta !== tb) return tb - ta;
+      // fallback: ordenar numéricamente si es posible, sino lexicográfico
+      const na = parseInt(a.key as any, 10);
+      const nb = parseInt(b.key as any, 10);
+      if (!isNaN(na) && !isNaN(nb)) return na - nb;
+      return String(a.key).localeCompare(String(b.key));
+    });
+
+    this.mesasOrdenadas = entradas;
   }
 
   mesaSolicitaPago(comandas: any[]): boolean {
