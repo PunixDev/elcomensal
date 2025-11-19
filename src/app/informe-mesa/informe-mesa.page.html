@@ -1,0 +1,85 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ 'TABLE_REPORT.TITLE' | translate }} - {{mesa}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="volver()">
+        <ion-icon name="arrow-back"></ion-icon>
+        {{ 'COMMON.BACK' | translate }}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div id="printable-report">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title
+          >{{ 'TABLE_REPORT.POPULAR_ITEMS' | translate }}</ion-card-title
+        >
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list *ngIf="productosAgrupados.length">
+          <ion-item *ngFor="let prod of productosAgrupados">
+            <ion-label>
+              <strong>{{ prod.nombre }}</strong>
+              <span *ngIf="prod.opciones.length">
+                ({{ prod.opciones.join(', ') }})</span
+              >
+              <br />
+              <span
+                >Precio: {{ prod.precio | currency:'EUR':'symbol':'1.2-2'
+                }}</span
+              >
+              <br />
+              <span>Disponibles: {{ prod.cantidad }}</span>
+            </ion-label>
+            <ion-button
+              color="danger"
+              (click)="restarSeleccion(prod)"
+              [disabled]="seleccionados[prod.id] <= 0"
+            >
+              <ion-icon name="remove"></ion-icon>
+            </ion-button>
+            <span style="margin: 0 8px; font-weight: bold"
+              >{{ seleccionados[prod.id] || 0 }}</span
+            >
+            <ion-button
+              color="success"
+              (click)="sumarSeleccion(prod)"
+              [disabled]="seleccionados[prod.id] >= prod.cantidad"
+            >
+              <ion-icon name="add"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+        <div *ngIf="!productosAgrupados.length">
+          <ion-label color="medium">No hay productos para esta mesa.</ion-label>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Total seleccionado</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <h2>{{ getTotalSeleccionado() | currency:'EUR':'symbol':'1.2-2' }}</h2>
+        <ion-button
+          expand="block"
+          color="primary"
+          (click)="pedirPorSeparado()"
+          [disabled]="getTotalSeleccionado() === 0"
+        >
+          Pedir por separado
+        </ion-button>
+        <ion-button
+          expand="block"
+          color="tertiary"
+          (click)="imprimir()"
+          style="margin-top: 8px"
+        >
+          Imprimir (PDF/Impresora)
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

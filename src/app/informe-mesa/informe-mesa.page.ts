@@ -18,7 +18,7 @@ import {
   IonCardContent,
   IonItemDivider,
 } from '@ionic/angular/standalone';
-import { DataService } from './data.service';
+import { DataService } from '../data.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -126,7 +126,7 @@ export class InformeMesaPage implements OnInit {
   }
 
   pedirPorSeparado() {
-    // Filtrar productos seleccionados
+    // Filtrar productos seleccionados y crear resumen del pedido
     const productosPedido = this.productosAgrupados
       .filter((prod) => this.seleccionados[prod.id] > 0)
       .map((prod) => ({
@@ -136,16 +136,73 @@ export class InformeMesaPage implements OnInit {
         opciones: prod.opciones,
         precio: prod.precio,
       }));
-    // Eliminar de la lista los productos seleccionados
-    this.productosAgrupados = this.productosAgrupados.filter(
-      (prod) => !this.seleccionados[prod.id] || this.seleccionados[prod.id] < 1
-    );
-    // Limpiar seleccionados de los eliminados
-    for (const prod of productosPedido) {
-      this.seleccionados[prod.id] = 0;
+
+    // Restar las cantidades seleccionadas de los productos agrupados
+    for (const pedido of productosPedido) {
+      // Buscar la entrada correspondiente en productosAgrupados
+      const prodIndex = this.productosAgrupados.findIndex((p) => {
+        if (p.id !== pedido.id) return false;
+        // comparar opciones (ambas arrays) conservativamente
+        const a = p.opciones || [];
+        const b = pedido.opciones || [];
+        return (
+          a.length === b.length &&
+          a.every((val: any, i: number) => val === b[i])
+        );
+      });
+      if (prodIndex !== -1) {
+        const target = this.productosAgrupados[prodIndex];
+        // Restar la cantidad seleccionada, sin bajar de 0
+        target.cantidad = Math.max(0, target.cantidad - pedido.cantidad);
+        // Si la cantidad queda 0, se eliminará más abajo
+      }
+      // Resetear la selección del producto
+      this.seleccionados[pedido.id] = 0;
     }
-    // Puedes mostrar un resumen o enviar a la base de datos aquí si lo necesitas
-    // alert('Pedido por separado:\n' + JSON.stringify(productosPedido, null, 2));
+
+    // Eliminar productos cuya cantidad sea 0
+    this.productosAgrupados = this.productosAgrupados.filter(
+      (p) => p.cantidad > 0
+    );
+
+    // Aquí puedes enviar `productosPedido` al backend o mostrar un resumen
+    // console.log('Pedido por separado:', productosPedido);
+  }
+
+  imprimir() {
+    const element = document.getElementById('printable-report');
+    if (!element) {
+      console.error('Área imprimible no encontrada');
+      return;
+    }
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (!printWindow) {
+      console.error('No se pudo abrir la ventana de impresión');
+      return;
+    }
+    const styles = `
+      <style>
+        body { font-family: Arial, Helvetica, sans-serif; margin: 20px; }
+        h2 { font-size: 18px; }
+        ion-card { box-shadow: none; }
+      </style>
+    `;
+    printWindow.document.write(
+      '<html><head><title>Informe Mesa - ' +
+        this.mesa +
+        '</title>' +
+        styles +
+        '</head><body>'
+    );
+    printWindow.document.write(element.innerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    // Asegurar que el contenido se cargue antes de imprimir
+    printWindow.onload = () => {
+      printWindow.focus();
+      printWindow.print();
+      // printWindow.close();
+    };
   }
 
   volver() {

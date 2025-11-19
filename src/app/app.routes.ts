@@ -75,14 +75,18 @@ export const routes: Routes = [
   {
     path: 'informe-mesa/:mesa',
     loadComponent: () =>
-      import('./informe-mesa.page').then((m) => m.InformeMesaPage),
-  },  {
+      import('./informe-mesa/informe-mesa.page').then((m) => m.InformeMesaPage),
+  },
+  {
     path: 'aviso-legal',
-    loadComponent: () => import('./aviso-legal/aviso-legal.page').then( m => m.AvisoLegalPage)
+    loadComponent: () =>
+      import('./aviso-legal/aviso-legal.page').then((m) => m.AvisoLegalPage),
   },
   {
     path: 'sobre-nosotros',
-    loadComponent: () => import('./sobre-nosotros/sobre-nosotros.page').then( m => m.SobreNosotrosPage)
+    loadComponent: () =>
+      import('./sobre-nosotros/sobre-nosotros.page').then(
+        (m) => m.SobreNosotrosPage
+      ),
   },
-
 ];
