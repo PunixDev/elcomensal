@@ -115,7 +115,8 @@ export class DataService {
 
   updateProducto(barId: string, producto: Producto) {
     const ref = doc(this.firestore, `bares/${barId}/productos/${producto.id}`);
-    return setDoc(ref, producto);
+    // Use merge to avoid overwriting translation fields when they're not provided
+    return setDoc(ref, producto, { merge: true });
   }
 
   deleteProducto(barId: string, id: string) {
