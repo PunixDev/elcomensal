@@ -690,6 +690,17 @@ export class CartaPage implements OnInit {
     return !(normalized === 'basic' || normalized === 'estandar');
   }
 
+  // Determina si se debe mostrar el botón de añadir producto en la carta.
+  // Ocultamos el botón para el plan 'Basic'.
+  get showAddProduct(): boolean {
+    if (!this.subscriptionProductName) return true; // por defecto mostrar
+    const normalized = this.subscriptionProductName
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase();
+    return normalized !== 'basic';
+  }
+
   getCategoriaSeleccionada(): Categoria | undefined {
     return this.categorias.find((c) => c.id === this.categoriaSeleccionada);
   }

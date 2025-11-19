@@ -136,7 +136,7 @@
 }
 .producto-precio {
   font-size: 1em;
-  color: #888;
+  color: #444; /* más oscuro que el anterior #888 */
   font-weight: 500;
   margin-left: 1em;
 }
@@ -297,7 +297,7 @@
   margin-left: 0.5em;
 }
 .resumen-precio {
-  color: #888;
+  color: #444; /* más oscuro que el anterior #888 */
   font-weight: 500;
   margin-left: auto;
 }

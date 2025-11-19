@@ -201,7 +201,7 @@
               </div>
               <div class="producto-acciones">
                 <ion-button
-                  *ngIf="puedeAgregarProducto(prod)"
+                  *ngIf="puedeAgregarProducto(prod) && showAddProduct"
                   fill="solid"
                   color="success"
                   (click)="agregarProducto(prod)"
