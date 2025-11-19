@@ -57,7 +57,7 @@
         {{ 'ADMIN.SUBSCRIBE' | translate }}
       </ion-item>
       <ion-item
-        *ngIf="isSubscribed"
+        *ngIf="isSubscribed && showManageInMenu"
         (click)="goToSuscripcion()"
         color="success"
       >

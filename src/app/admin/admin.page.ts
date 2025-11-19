@@ -103,6 +103,8 @@ export class AdminPage implements OnInit {
   trialActive: boolean = false;
   remainingTrialDays: number = 0;
   isLoading: boolean = true;
+  // Controla si el enlace "Gestionar suscripción" aparece en el menú lateral
+  showManageInMenu: boolean = false;
 
   modificarCabecera() {
     // Crear input file dinámicamente
