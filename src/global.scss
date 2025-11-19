@@ -398,6 +398,15 @@ ion-toolbar[color="primary"],
 .ion-color-primary,
 ion-header,
 ion-toolbar {
+  /* Fix: remove top padding in Ionic Alert input group on Android/Material style */
+  .sc-ion-alert-md .alert-input-group {
+    padding-top: 0 !important;
+  }
+
+  /* If alerts still show extra spacing, also target the internal ion-item wrappers */
+  .sc-ion-alert-md .alert-input-group .alert-interface {
+    padding-top: 0 !important;
+  }
   --background: #e2725b !important;
   --color: #fff !important;
 }

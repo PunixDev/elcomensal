@@ -211,7 +211,7 @@
                   fill="solid"
                   color="danger"
                   (click)="quitarProducto(prod)"
-                  *ngIf="seleccionados[prod.id] && seleccionados[prod.id].cantidad"
+                  *ngIf="productoTieneSeleccion(prod)"
                   shape="round"
                   size="small"
                 >
@@ -219,10 +219,10 @@
                   {{ 'MENU.REMOVE' | translate }}
                 </ion-button>
                 <span
-                  *ngIf="seleccionados[prod.id] && seleccionados[prod.id].cantidad"
+                  *ngIf="productoTieneSeleccion(prod)"
                   class="producto-cantidad"
                 >
-                  {{seleccionados[prod.id].cantidad}}
+                  {{ cantidadSeleccionadaProducto(prod) }}
                 </span>
               </div>
             </div>
@@ -299,10 +299,36 @@
       <ion-content>
         <div class="resumen-lista">
           <div *ngFor="let key of seleccionadosKeys()" class="resumen-item">
-            <span class="resumen-nombre">{{getNombreProducto(key)}}</span>
-            <span class="resumen-cantidad"
-              >x{{seleccionados[key].cantidad}}</span
-            >
+            <div class="resumen-left">
+              <span class="resumen-nombre">{{getNombreProducto(key)}}</span>
+              <div class="resumen-controls">
+                <ion-button
+                  size="small"
+                  fill="clear"
+                  (click)="disminuirCantidadKey(key)"
+                >
+                  <ion-icon name="remove-circle-outline"></ion-icon>
+                </ion-button>
+                <span class="resumen-cantidad"
+                  >x{{seleccionados[key].cantidad}}</span
+                >
+                <ion-button
+                  size="small"
+                  fill="clear"
+                  (click)="aumentarCantidadKey(key)"
+                >
+                  <ion-icon name="add-circle-outline"></ion-icon>
+                </ion-button>
+                <ion-button
+                  size="small"
+                  color="danger"
+                  fill="clear"
+                  (click)="eliminarItemResumen(key)"
+                >
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
             <span class="resumen-precio"
               >{{getPrecioProducto(key) * seleccionados[key].cantidad |
               currency:'EUR':'symbol':'1.2-2'}}</span

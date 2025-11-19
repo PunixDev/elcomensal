@@ -244,10 +244,32 @@ export class CartaPage implements OnInit {
 
   quitarProducto(producto: Producto) {
     if (this.pagoSolicitado) return;
-    // Buscar todas las claves que correspondan a este producto (con o sin opción)
+    // Si el producto tiene opciones, priorizar la clave que coincide con la opción
+    // actualmente seleccionada (opcionSeleccionTemp). Si no hay opción seleccionada
+    // o no existe esa clave en `seleccionados`, caer en la eliminación de la primera
+    // clave encontrada para el producto.
     const keys = Object.keys(this.seleccionados).filter((k) =>
       k.startsWith(producto.id)
     );
+
+    if (!keys.length) return;
+
+    // Intentar eliminar la variante seleccionada actualmente
+    if (producto.opciones && producto.opciones.length > 0) {
+      const selOption = this.opcionSeleccionTemp[producto.id];
+      if (selOption) {
+        const keySel = producto.id + '|' + selOption;
+        if (this.seleccionados[keySel]) {
+          this.seleccionados[keySel].cantidad--;
+          if (this.seleccionados[keySel].cantidad <= 0)
+            delete this.seleccionados[keySel];
+          return;
+        }
+        // si no existe la clave exacta, continuar y eliminar la primera disponible
+      }
+    }
+
+    // Fallback: eliminar la primera clave con cantidad > 0
     for (const key of keys) {
       if (this.seleccionados[key].cantidad > 0) {
         this.seleccionados[key].cantidad--;
@@ -259,15 +281,50 @@ export class CartaPage implements OnInit {
     }
   }
 
+  // Devuelve la cantidad total seleccionada para un producto (suma de todas las claves con o sin opción)
+  cantidadSeleccionadaProducto(producto: Producto): number {
+    const keys = Object.keys(this.seleccionados).filter((k) =>
+      k.startsWith(producto.id)
+    );
+    return keys.reduce(
+      (sum, k) => sum + (this.seleccionados[k]?.cantidad || 0),
+      0
+    );
+  }
+
+  // True si existe al menos una selección (con o sin opción) para el producto
+  productoTieneSeleccion(producto: Producto): boolean {
+    return this.cantidadSeleccionadaProducto(producto) > 0;
+  }
+
   async enviarPedido() {
+    // Construir lista de productos para mostrar en la confirmación
+    const itemsText = this.seleccionadosKeys()
+      .map((key) => {
+        const nombre = this.getNombreProducto(key) || '';
+        const cantidad = this.seleccionados[key]?.cantidad || 0;
+        return `- ${nombre} x${cantidad}`;
+      })
+      .join('\n');
+
+    const headerText = itemsText
+      ? 'Productos a enviar:\n' + itemsText + '\n'
+      : '';
+    const introText =
+      'Por favor, revisa los artículos y las cantidades antes de enviar.';
+    // Usar un único salto de línea entre secciones para reducir espacio extra
+    const message =
+      headerText +
+      (introText ? introText + '\n' : '') +
+      '¿Quieres añadir observaciones?';
+
     const alert = await this.alertController.create({
       header: 'Confirmar pedido',
-      message: '¿Quieres añadir observaciones?',
+      message: message,
       inputs: [
         {
           name: 'observaciones',
           type: 'textarea',
-          placeholder: 'sin tomate por favor',
         },
       ],
       buttons: [
@@ -498,6 +555,29 @@ export class CartaPage implements OnInit {
 
   abrirResumenPedido() {
     this.modalResumenAbierto = true;
+  }
+
+  // Aumenta la cantidad de un item en el resumen (clave directa)
+  aumentarCantidadKey(key: string) {
+    if (this.pagoSolicitado) return;
+    if (!this.seleccionados[key]) return;
+    this.seleccionados[key].cantidad++;
+  }
+
+  // Disminuye la cantidad de un item en el resumen; elimina si llega a 0
+  disminuirCantidadKey(key: string) {
+    if (this.pagoSolicitado) return;
+    if (!this.seleccionados[key]) return;
+    this.seleccionados[key].cantidad--;
+    if (this.seleccionados[key].cantidad <= 0) {
+      delete this.seleccionados[key];
+    }
+  }
+
+  // Elimina completamente un item del resumen
+  eliminarItemResumen(key: string) {
+    if (this.pagoSolicitado) return;
+    if (this.seleccionados[key]) delete this.seleccionados[key];
   }
 
   abrirImagenAmpliada(url: string) {
