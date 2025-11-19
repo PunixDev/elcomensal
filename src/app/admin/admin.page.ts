@@ -188,6 +188,19 @@ export class AdminPage implements OnInit {
                 const data = await response.json();
                 console.log('Resultado check-subscription:', data);
                 this.isSubscribed = data.isSubscribed === true;
+                // Guardar el nombre del producto de la suscripción en localStorage si existe
+                if (
+                  data.items &&
+                  Array.isArray(data.items) &&
+                  data.items.length > 0 &&
+                  data.items[0].product &&
+                  data.items[0].product.name
+                ) {
+                  const productName = data.items[0].product.name;
+                  localStorage.setItem('subscriptionProductName', productName);
+                } else {
+                  localStorage.removeItem('subscriptionProductName');
+                }
                 this.isLoading = false;
               } else if (response.status === 500) {
                 const error = await response.json();
