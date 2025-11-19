@@ -14,7 +14,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="home-hero-bg">
+<ion-content class="home-hero-bg">
   <section class="home-hero-section">
     <div class="home-hero-text">
       <!-- Banner solicitado: imagen 6 encima del título -->
@@ -224,6 +224,30 @@
       </ion-button>
       <div class="cta-note">
         {{ 'HOME_LANDING.FINAL_CTA.NOTE' | translate }}
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Section -->
+  <section class="home-section home-footer">
+    <div class="home-section-content">
+      <div class="footer-links">
+        <ion-button
+          [routerLink]="['/aviso-legal']"
+          fill="clear"
+          size="large"
+          class="footer-button"
+        >
+          Aviso Legal
+        </ion-button>
+        <ion-button
+          [routerLink]="['/sobre-nosotros']"
+          fill="clear"
+          size="large"
+          class="footer-button"
+        >
+          Sobre Nosotros
+        </ion-button>
       </div>
     </div>
   </section>

@@ -54,17 +54,17 @@
     "PASSWORD": "Contraseña",
     "LOGIN_BUTTON": "Entrar",
     "FORGOT_PASSWORD": "¿Olvidaste tu contraseña?",
-    "NO_ACCOUNT": "¿Eres un bar nuevo? Regístrate aquí",
+    "NO_ACCOUNT": "¿Eres un restaurante nuevo? Regístrate aquí",
     "ERROR_MESSAGE": "Error de autenticación"
   },
   "REGISTER": {
-    "TITLE": "Registro de Bar",
-    "BAR_NAME": "Nombre del bar",
+    "TITLE": "Registro de Restaurante",
+    "BAR_NAME": "Nombre del restaurante",
     "ADMIN_USERNAME": "Usuario administrador",
     "PASSWORD": "Contraseña",
     "RECOVERY_EMAIL": "Correo de recuperación",
-    "REGISTER_BUTTON": "Registrar Bar",
-    "SUCCESS_MESSAGE": "Bar registrado exitosamente",
+    "REGISTER_BUTTON": "Registrar Restaurante",
+    "SUCCESS_MESSAGE": "Restaurante registrado exitosamente",
     "ERROR_MESSAGE": "Error en el registro"
   },
   "RECOVER": {
@@ -90,7 +90,7 @@
     "POPULAR_PRODUCTS": "Productos Populares"
   },
   "HOME_LANDING": {
-    "HERO_TITLE": "Convierte tu bar en un servicio ágil, moderno y rentable",
+    "HERO_TITLE": "Convierte tu restaurante en un servicio ágil, moderno y rentable",
     "HERO_SUBTITLE": "Pedidos por QR, solicitud de cuenta en mesa y control total del negocio desde tu móvil",
     "TRUST": {
       "SECURE": "100% seguro y sin líos",
@@ -164,7 +164,7 @@
       "TITLE": "Lo que dicen otros dueños",
       "1": {
         "TEXT": "Desde que lo pusimos, damos más turnos y el equipo está más tranquilo.",
-        "AUTHOR": "María, Bar Central"
+        "AUTHOR": "María, Restaurante Central"
       },
       "2": {
         "TEXT": "Los clientes piden la cuenta desde la mesa y evitamos colas al cerrar.",
@@ -176,9 +176,9 @@
       }
     },
     "FINAL_CTA": {
-      "TITLE": "¿Listo para transformar tu bar?",
+      "TITLE": "¿Listo para transformar tu restaurante?",
       "BUTTON": "Empieza ahora gratis",
-      "NOTE": "Sin tarjeta. Sin permanencia."
+      "NOTE": "Sin permanencia."
     }
   },
   "ADMIN": {

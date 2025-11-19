@@ -11,7 +11,7 @@ import {
   IonIcon,
   IonButtons,
 } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { PopoverController } from '@ionic/angular';
@@ -33,6 +33,7 @@ import { LanguageService } from '../language.service';
     CommonModule,
     TranslateModule,
     LanguageSelectorComponent,
+    RouterLink,
   ],
   providers: [PopoverController],
 })
