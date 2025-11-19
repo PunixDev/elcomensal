@@ -10,6 +10,7 @@ import {
   IonButton,
   IonItem,
   IonInput,
+  IonSpinner,
   IonSelect,
   IonSelectOption,
   IonTextarea,
@@ -36,6 +37,7 @@ import { TranslateModule } from '@ngx-translate/core';
     IonButton,
     IonItem,
     IonInput,
+    IonSpinner,
     IonSelect,
     IonSelectOption,
     IonTextarea,
@@ -61,6 +63,7 @@ export class EditProductModalComponent {
   editOpcionTemp = '';
   barId: string;
   backendUrl: string;
+  isLoading = false;
 
   constructor(
     private modalController: ModalController,
@@ -157,88 +160,96 @@ export class EditProductModalComponent {
       this.editCategoria &&
       this.editPrecio != null
     ) {
-      // Detectar si se han modificado campos traducibles
-      const nombreChanged =
-        this.editNombre.trim() !== (this.producto.nombre || '');
-      const descripcionChanged =
-        (this.editDescripcion || '') !== (this.producto.descripcion || '');
-      const alergenosChanged =
-        (this.editAlergenos || '') !== (this.producto.alergenos || '');
-      const opcionesChanged = !this.arraysEqualTrim(
-        this.editOpciones || [],
-        this.producto.opciones || []
-      );
-
-      const translatableChanged =
-        nombreChanged ||
-        descripcionChanged ||
-        alergenosChanged ||
-        opcionesChanged;
-
-      if (!translatableChanged) {
-        // No hay cambios en campos traducibles: actualizar solo campos editados y preservar traducciones
-        const producto: Producto = {
-          id: this.producto.id,
-          nombre: this.editNombre.trim(),
-          categoria: this.editCategoria,
-          precio: this.editPrecio,
-          imagen: this.editImagen || null,
-          descripcion: this.editDescripcion,
-          alergenos: this.editAlergenos,
-          opciones: [...this.editOpciones],
-        };
-        await this.dataService.updateProducto(this.barId, producto);
-        this.modalController.dismiss(producto, 'confirm');
-        return;
-      }
-
-      // Si hay cambios en campos traducibles, solicitar traducción al backend
-      const request = {
-        nombre: this.editNombre.trim(),
-        descripcion: this.editDescripcion,
-        alergenos: this.editAlergenos,
-        opciones: [...this.editOpciones],
-        nombreEn: '',
-        descripcionEn: '',
-        alergenosEn: '',
-        opcionesEn: this.editOpciones.map(() => ''),
-        nombreFr: '',
-        descripcionFr: '',
-        alergenosFr: '',
-        opcionesFr: this.editOpciones.map(() => ''),
-        nombreDe: '',
-        descripcionDe: '',
-        alergenosDe: '',
-        opcionesDe: this.editOpciones.map(() => ''),
-        nombreIt: '',
-        descripcionIt: '',
-        alergenosIt: '',
-        opcionesIt: this.editOpciones.map(() => ''),
-      };
-
+      this.isLoading = true;
       try {
-        const response = await fetch(`${this.backendUrl}/translate-dish`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(request),
-        });
-        const result = await response.json();
-        if (result.success) {
-          const productoTraducido: Producto = {
-            ...result.data,
+        // Detectar si se han modificado campos traducibles
+        const nombreChanged =
+          this.editNombre.trim() !== (this.producto.nombre || '');
+        const descripcionChanged =
+          (this.editDescripcion || '') !== (this.producto.descripcion || '');
+        const alergenosChanged =
+          (this.editAlergenos || '') !== (this.producto.alergenos || '');
+        const opcionesChanged = !this.arraysEqualTrim(
+          this.editOpciones || [],
+          this.producto.opciones || []
+        );
+
+        const translatableChanged =
+          nombreChanged ||
+          descripcionChanged ||
+          alergenosChanged ||
+          opcionesChanged;
+
+        if (!translatableChanged) {
+          // No hay cambios en campos traducibles: actualizar solo campos editados y preservar traducciones
+          const producto: Producto = {
             id: this.producto.id,
+            nombre: this.editNombre.trim(),
             categoria: this.editCategoria,
             precio: this.editPrecio,
             imagen: this.editImagen || null,
+            descripcion: this.editDescripcion,
+            alergenos: this.editAlergenos,
+            opciones: [...this.editOpciones],
           };
-          await this.dataService.updateProducto(this.barId, productoTraducido);
-          this.modalController.dismiss(productoTraducido, 'confirm');
-        } else {
-          alert('Error en la traducción');
+          await this.dataService.updateProducto(this.barId, producto);
+          this.modalController.dismiss(producto, 'confirm');
+          return;
         }
-      } catch (error) {
-        console.error('Error al traducir:', error);
-        alert('Error al traducir el producto');
+
+        // Si hay cambios en campos traducibles, solicitar traducción al backend
+        const request = {
+          nombre: this.editNombre.trim(),
+          descripcion: this.editDescripcion,
+          alergenos: this.editAlergenos,
+          opciones: [...this.editOpciones],
+          nombreEn: '',
+          descripcionEn: '',
+          alergenosEn: '',
+          opcionesEn: this.editOpciones.map(() => ''),
+          nombreFr: '',
+          descripcionFr: '',
+          alergenosFr: '',
+          opcionesFr: this.editOpciones.map(() => ''),
+          nombreDe: '',
+          descripcionDe: '',
+          alergenosDe: '',
+          opcionesDe: this.editOpciones.map(() => ''),
+          nombreIt: '',
+          descripcionIt: '',
+          alergenosIt: '',
+          opcionesIt: this.editOpciones.map(() => ''),
+        };
+
+        try {
+          const response = await fetch(`${this.backendUrl}/translate-dish`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+          });
+          const result = await response.json();
+          if (result.success) {
+            const productoTraducido: Producto = {
+              ...result.data,
+              id: this.producto.id,
+              categoria: this.editCategoria,
+              precio: this.editPrecio,
+              imagen: this.editImagen || null,
+            };
+            await this.dataService.updateProducto(
+              this.barId,
+              productoTraducido
+            );
+            this.modalController.dismiss(productoTraducido, 'confirm');
+          } else {
+            alert('Error en la traducción');
+          }
+        } catch (error) {
+          console.error('Error al traducir:', error);
+          alert('Error al traducir el producto');
+        }
+      } finally {
+        this.isLoading = false;
       }
     }
   }

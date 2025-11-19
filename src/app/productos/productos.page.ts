@@ -12,6 +12,7 @@ import {
   IonItem,
   IonInput,
   IonButton,
+  IonSpinner,
   IonList,
   IonLabel,
   IonSelect,
@@ -46,6 +47,7 @@ import { EditProductModalComponent } from '../edit-product-modal/edit-product-mo
     IonItem,
     IonInput,
     IonButton,
+    IonSpinner,
     IonList,
     IonLabel,
     IonSelect,
@@ -78,6 +80,7 @@ export class ProductosPage implements OnInit {
   categorias: Categoria[] = [];
   categoriasConOpen: { nombre: string; id: string; _open: boolean }[] = [];
   backendUrl: string;
+  isAdding = false;
 
   constructor(
     private dataService: DataService,
@@ -109,6 +112,7 @@ export class ProductosPage implements OnInit {
       this.nuevaCategoria &&
       this.nuevoPrecio != null
     ) {
+      this.isAdding = true;
       // Preparar el objeto para traducción
       const request = {
         nombre: this.nuevoNombre.trim(),
@@ -165,6 +169,8 @@ export class ProductosPage implements OnInit {
       } catch (error) {
         console.error('Error al traducir:', error);
         alert('Error al traducir el producto');
+      } finally {
+        this.isAdding = false;
       }
     }
   }

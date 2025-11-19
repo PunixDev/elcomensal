@@ -10,6 +10,9 @@
 </ion-header>
 
 <ion-content>
+  <div *ngIf="isLoading" class="loading-overlay">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
   <form (ngSubmit)="guardarEdicion()">
     <ion-item>
       <ion-icon name="pizza" slot="start"></ion-icon>
@@ -112,9 +115,12 @@
       color="success"
       type="submit"
       class="btn-guardar"
+      [disabled]="isLoading"
     >
-      <ion-icon name="checkmark" slot="start"></ion-icon>
-      {{ "SAVE" | translate }}
+      <ion-icon *ngIf="!isLoading" name="checkmark" slot="start"></ion-icon>
+      <ion-spinner *ngIf="isLoading" name="crescent" slot="start"></ion-spinner>
+      <span *ngIf="!isLoading">{{ "SAVE" | translate }}</span>
+      <span *ngIf="isLoading">{{ "PRODUCTS.SAVING" | translate }}</span>
     </ion-button>
   </form>
 </ion-content>
