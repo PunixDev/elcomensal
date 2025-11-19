@@ -20,6 +20,7 @@ import {
   IonCardTitle,
   IonCardContent,
   IonLabel,
+  IonBadge,
   IonButton,
   IonItemDivider,
   IonModal,
@@ -57,6 +58,7 @@ import { Observable } from 'rxjs';
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
+    IonBadge,
     IonLabel,
     IonButton,
     IonItemDivider,
@@ -87,6 +89,7 @@ export class AdminPage implements OnInit {
   comandas: any[] = [];
   comandasPorMesa: { [mesa: string]: any[] } = {};
   mesasOrdenadas: Array<{ key: string; value: any[] }> = [];
+  mesasExpanded: { [mesa: string]: boolean } = {};
   informeMesa: any = null;
   informeTotal: number = 0;
   mostrarInforme: boolean = false;
@@ -381,6 +384,64 @@ export class AdminPage implements OnInit {
     });
 
     this.mesasOrdenadas = entradas;
+  }
+
+  toggleMesa(mesaKey: string) {
+    this.mesasExpanded[mesaKey] = !this.mesasExpanded[mesaKey];
+  }
+
+  getPreviewItems(mesa: { key: string; value: any[] }): any[] {
+    try {
+      const items = mesa?.value?.[0]?.items;
+      if (Array.isArray(items)) return items.slice(0, 3);
+    } catch (e) {}
+    return [];
+  }
+
+  getPreviewCount(mesa: { key: string; value: any[] }): number {
+    try {
+      const items = mesa?.value?.[0]?.items;
+      if (Array.isArray(items)) return items.length;
+    } catch (e) {}
+    return 0;
+  }
+
+  badgeColor(mesa: { key: string; value: any[] }) {
+    const v = mesa.value || [];
+    if (v.some((c) => c.estado === 'pago_pendiente')) return 'danger';
+    if (v.some((c) => c.estado === 'preparando')) return 'warning';
+    if (v.every((c) => c.estado === 'preparado')) return 'success';
+    return 'medium';
+  }
+
+  badgeLabel(mesa: { key: string; value: any[] }) {
+    const v = mesa.value || [];
+    if (v.some((c) => c.estado === 'pago_pendiente')) return 'Pago pendiente';
+    if (v.some((c) => c.estado === 'preparando')) return 'En preparación';
+    if (v.every((c) => c.estado === 'preparado')) return 'Preparado';
+    return 'Recibido';
+  }
+
+  getLatestFecha(mesa: { key: string; value: any[] }) {
+    const v = mesa.value || [];
+    let max = 0;
+    v.forEach((c) => {
+      const t = c && c.fecha ? new Date(c.fecha).getTime() : 0;
+      if (t > max) max = t;
+    });
+    return max ? new Date(max) : null;
+  }
+
+  getTimeAgo(date: Date | null) {
+    if (!date) return '';
+    const diff = Date.now() - date.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'ahora';
+    if (mins < 60) return `${mins}m`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h`;
+    const days = Math.floor(hours / 24);
+    return `${days}d`;
   }
 
   mesaSolicitaPago(comandas: any[]): boolean {
