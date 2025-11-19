@@ -103,6 +103,10 @@ export class LoginPage implements OnInit {
     );
   }
 
+  goHome() {
+    this.router.navigate(['/home']);
+  }
+
   async presentLanguagePopover(event: any) {
     const popover = await this.popoverController.create({
       component: LanguageSelectorComponent,

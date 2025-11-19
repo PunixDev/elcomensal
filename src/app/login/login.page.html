@@ -1,5 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goHome()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>{{ 'LOGIN.TITLE' | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="presentLanguagePopover($event)" fill="clear">
