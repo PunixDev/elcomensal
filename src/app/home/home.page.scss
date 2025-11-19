@@ -185,6 +185,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1em;
+  padding: 0 1em;
 }
 .feature-card {
   background: #fff;
@@ -212,6 +213,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1em;
+  padding: 0 1em;
 }
 .step-card {
   background: #ffffff;
@@ -246,6 +248,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1em;
+  padding: 0 1em;
 }
 .testimonial-card {
   background: #fff;
