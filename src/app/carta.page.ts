@@ -29,7 +29,7 @@ import { HttpClient } from '@angular/common/http';
 import { doc, getDoc } from '@angular/fire/firestore';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageSelectorComponent } from './language-selector.component';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, AlertController } from '@ionic/angular';
 import { LanguageService } from './language.service';
 
 @Component({
@@ -93,7 +93,8 @@ export class CartaPage implements OnInit {
     private dataService: DataService,
     private route: ActivatedRoute,
     private popoverController: PopoverController,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private alertController: AlertController
   ) {}
 
   async ngOnInit() {
@@ -258,7 +259,35 @@ export class CartaPage implements OnInit {
     }
   }
 
-  enviarPedido() {
+  async enviarPedido() {
+    const alert = await this.alertController.create({
+      header: 'Confirmar pedido',
+      message: '¿Quieres añadir observaciones?',
+      inputs: [
+        {
+          name: 'observaciones',
+          type: 'textarea',
+          placeholder: 'sin tomate por favor',
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Enviar',
+          handler: (data) => {
+            this.procesarEnvioPedido(data.observaciones);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  procesarEnvioPedido(observaciones: string) {
     // Validar que todos los productos con opciones tengan opción seleccionada
     for (const key of this.seleccionadosKeys()) {
       const prod = this.productos.find(
@@ -290,6 +319,7 @@ export class CartaPage implements OnInit {
         };
       }),
       estado: 'pendiente',
+      observaciones: observaciones || '',
     };
     this.dataService.addComanda(this.barId, pedido);
     this.seleccionados = {};

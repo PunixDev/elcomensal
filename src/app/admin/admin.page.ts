@@ -25,6 +25,7 @@ import {
   IonModal,
   IonSpinner,
   PopoverController,
+  AlertController,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { DataService } from '../data.service';
@@ -131,7 +132,8 @@ export class AdminPage implements OnInit {
     private router: Router,
     private dataService: DataService,
     private languageService: LanguageService,
-    private popoverController: PopoverController
+    private popoverController: PopoverController,
+    private alertController: AlertController
   ) {
     this.barId = this.dataService.getBarId();
     this.comandas$ = this.dataService.getComandas(this.barId);
@@ -247,6 +249,32 @@ export class AdminPage implements OnInit {
     this.productos$.subscribe((productos) => {
       this.productos = productos;
     });
+  }
+
+  async confirmarLimpiarComandas() {
+    const alert = await this.alertController.create({
+      header: 'Confirmar',
+      message:
+        '¿Está usted seguro de eliminar todas las comandas de todas las mesas?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancelado');
+          },
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.limpiarComandas();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 
   limpiarComandas() {

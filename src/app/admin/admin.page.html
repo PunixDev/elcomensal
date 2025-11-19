@@ -253,7 +253,11 @@
               <ion-icon name="receipt" slot="start"></ion-icon>
               Comandas recibidas
             </ion-card-title>
-            <ion-button color="danger" size="small" (click)="limpiarComandas()">
+            <ion-button
+              color="danger"
+              size="small"
+              (click)="confirmarLimpiarComandas()"
+            >
               <ion-icon
                 name="trash-sharp"
                 slot="start"
@@ -318,6 +322,12 @@
                         >
                       </li>
                     </ul>
+                    <div
+                      *ngIf="comanda.observaciones"
+                      style="margin-top: 0.5em"
+                    >
+                      <strong>Observaciones:</strong> {{comanda.observaciones}}
+                    </div>
                     <div style="margin-top: 0.5em">
                       <strong>Estado:</strong>
                       <span [ngSwitch]="comanda.estado">
