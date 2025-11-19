@@ -60,6 +60,14 @@
             <ng-container *ngIf="editando !== categoria.id; else editBlock">
               <ion-icon name="pricetag" slot="start"></ion-icon>
               <ion-label>{{ getNombreCategoria(categoria) }}</ion-label>
+              <ion-input
+                type="number"
+                style="width: 80px; margin-left: 8px"
+                [(ngModel)]="ordenes[categoria.id]"
+                name="orden-{{categoria.id}}"
+                (ionBlur)="guardarOrden(categoria.id)"
+                slot="end"
+              ></ion-input>
               <ion-button
                 fill="clear"
                 color="primary"

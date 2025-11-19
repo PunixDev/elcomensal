@@ -22,6 +22,7 @@ export interface Categoria {
   nombreFr?: string;
   nombreDe?: string;
   nombreIt?: string;
+  orden?: number;
 }
 
 export interface Producto {
@@ -81,12 +82,24 @@ export class DataService {
   // --- CATEGORÍAS ---
   getCategorias(barId: string): Observable<Categoria[]> {
     const ref = collection(this.firestore, `bares/${barId}/categorias`);
-    return collectionData(ref, { idField: 'id' }) as Observable<Categoria[]>;
+    const q = query(ref, orderBy('orden', 'asc'));
+    return collectionData(q, { idField: 'id' }) as Observable<Categoria[]>;
   }
 
-  addCategoria(barId: string, categoria: Omit<Categoria, 'id'>) {
+  async addCategoria(barId: string, categoria: Omit<Categoria, 'id'>) {
     const ref = collection(this.firestore, `bares/${barId}/categorias`);
-    return addDoc(ref, categoria);
+    // Obtener categorías existentes para calcular el siguiente `orden`
+    const existing =
+      (await firstValueFrom(
+        collectionData(ref, { idField: 'id' }) as Observable<any[]>
+      )) || [];
+    const maxOrden = existing.reduce((m, c) => {
+      const o = typeof c.orden === 'number' ? c.orden : -1;
+      return Math.max(m, o);
+    }, -1);
+    const newOrden = maxOrden + 1;
+    const toAdd = { ...categoria, orden: newOrden } as any;
+    return addDoc(ref, toAdd);
   }
 
   updateCategoria(barId: string, categoria: Categoria) {
@@ -94,7 +107,8 @@ export class DataService {
       this.firestore,
       `bares/${barId}/categorias/${categoria.id}`
     );
-    return setDoc(ref, categoria);
+    // Usar merge para no sobreescribir campos existentes (p.ej. `orden`)
+    return setDoc(ref, categoria, { merge: true });
   }
 
   deleteCategoria(barId: string, id: string) {

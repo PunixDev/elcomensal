@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -19,7 +19,7 @@ import {
   IonIcon,
 } from '@ionic/angular/standalone';
 import { DataService, Categoria } from '../data.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from '../language.service';
 
@@ -51,6 +51,8 @@ import { LanguageService } from '../language.service';
 })
 export class CategoriasPage implements OnInit {
   categorias$: Observable<Categoria[]>;
+  ordenes: { [id: string]: number } = {};
+  private categoriasSub?: Subscription;
   nuevaCategoria = '';
   editando: string | null = null;
   editNombre = '';
@@ -70,7 +72,19 @@ export class CategoriasPage implements OnInit {
         : 'https://backendelcomensal.onrender.com';
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.categoriasSub = this.categorias$.subscribe((list) => {
+      (list || []).forEach((cat) => {
+        if (!cat || cat.id == null) return;
+        this.ordenes[cat.id] =
+          typeof cat.orden === 'number' ? cat.orden : this.ordenes[cat.id] ?? 0;
+      });
+    });
+  }
+
+  ngOnDestroy() {
+    this.categoriasSub?.unsubscribe();
+  }
 
   async agregarCategoria() {
     if (this.nuevaCategoria.trim()) {
@@ -155,6 +169,13 @@ export class CategoriasPage implements OnInit {
   cancelarEdicion() {
     this.editando = null;
     this.editNombre = '';
+  }
+
+  guardarOrden(id: string) {
+    const val = Number(this.ordenes[id]);
+    if (isNaN(val)) return;
+    const categoria: any = { id, orden: val };
+    this.dataService.updateCategoria(this.barId, categoria);
   }
 
   getNombreCategoria(cat: Categoria): string {
