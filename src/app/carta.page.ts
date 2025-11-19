@@ -88,6 +88,8 @@ export class CartaPage implements OnInit {
 
   // Imagen ampliada para modal
   imagenAmpliada: string | null = null;
+  // Nombre del producto de la suscripción (para controlar si mostrar selector)
+  subscriptionProductName: string | null = null;
 
   constructor(
     private dataService: DataService,
@@ -98,6 +100,8 @@ export class CartaPage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    // Leer nombre del producto de la suscripción (si fue guardado en localStorage)
+    this.subscriptionProductName = localStorage.getItem('subscriptionProductName');
     // Usar barId de la ruta si existe (path param), si no, query param, si no, localStorage
     this.route.paramMap.subscribe(async (params) => {
       const barIdFromPath = params.get('barId');
@@ -137,6 +141,8 @@ export class CartaPage implements OnInit {
         this.categorias$ = this.dataService.getCategorias(this.barId);
         this.productos$ = this.dataService.getProductos(this.barId);
         this.comandas$ = this.dataService.getComandas(this.barId);
+        // Cargar datos adicionales del restaurante (incluyendo plan/subscription)
+        this.cargarDatosRestaurante();
         this.categorias$.subscribe((cats) => {
           console.log('[DEBUG] Respuesta Firestore categorias:', cats);
         });
@@ -182,6 +188,21 @@ export class CartaPage implements OnInit {
         const data: any = barSnap.data();
         this.restauranteNombre = data.nombre || '';
         this.restauranteImg = data.imagen || '';
+        // Intentar obtener el nombre del producto/plan de la suscripción desde Firestore
+        const planFromDoc =
+          data.subscriptionProductName ||
+          (data.subscription && data.subscription.items && data.subscription.items[0]?.product?.name) ||
+          data.planName ||
+          null;
+        if (planFromDoc) {
+          this.subscriptionProductName = planFromDoc;
+          try {
+            localStorage.setItem('subscriptionProductName', planFromDoc);
+          } catch (e) {
+            // Silenciar si el almacenamiento falla
+            console.warn('No se pudo guardar subscriptionProductName en localStorage', e);
+          }
+        }
       }
     } catch (e) {
       this.restauranteNombre = '';
@@ -649,6 +670,17 @@ export class CartaPage implements OnInit {
       backdropDismiss: true,
     });
     return await popover.present();
+  }
+
+  // Determina si el selector de idioma debe mostrarse en la carta.
+  // Ocultamos el selector para planes 'Basic' y 'Estándar' (tolerando acentos y mayúsculas).
+  get showLanguageSelector(): boolean {
+    if (!this.subscriptionProductName) return true; // por defecto mostrar
+    const normalized = this.subscriptionProductName
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase();
+    return !(normalized === 'basic' || normalized === 'estandar');
   }
 
   getCategoriaSeleccionada(): Categoria | undefined {

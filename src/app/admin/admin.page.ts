@@ -105,6 +105,8 @@ export class AdminPage implements OnInit {
   isLoading: boolean = true;
   // Controla si el enlace "Gestionar suscripción" aparece en el menú lateral
   showManageInMenu: boolean = false;
+  // Nombre del producto de la suscripción (Basic, Estándar, Premium, etc.)
+  subscriptionProductName: string | null = null;
 
   modificarCabecera() {
     // Crear input file dinámicamente
@@ -152,6 +154,9 @@ export class AdminPage implements OnInit {
       window.location.hostname === 'localhost'
         ? 'http://localhost:3000'
         : 'https://backendelcomensal.onrender.com';
+    // Leer valor guardado previamente (si existe)
+    this.subscriptionProductName =
+      localStorage.getItem('subscriptionProductName');
     const email = localStorage.getItem('correo');
     if (email) {
       fetch(`${this.backendUrl}/get-customer-by-email`, {
@@ -198,8 +203,10 @@ export class AdminPage implements OnInit {
                 ) {
                   const productName = data.items[0].product.name;
                   localStorage.setItem('subscriptionProductName', productName);
+                  this.subscriptionProductName = productName;
                 } else {
                   localStorage.removeItem('subscriptionProductName');
+                  this.subscriptionProductName = null;
                 }
                 this.isLoading = false;
               } else if (response.status === 500) {
@@ -269,6 +276,17 @@ export class AdminPage implements OnInit {
     this.productos$.subscribe((productos) => {
       this.productos = productos;
     });
+  }
+
+  // Determina si el selector de idioma debe mostrarse.
+  // Ocultamos el selector para planes 'Basic' y 'Estándar' (tolerando acentos y mayúsculas).
+  get showLanguageSelector(): boolean {
+    if (!this.subscriptionProductName) return true; // por defecto mostrar
+    const normalized = this.subscriptionProductName
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase();
+    return !(normalized === 'basic' || normalized === 'estandar');
   }
 
   async confirmarLimpiarComandas() {

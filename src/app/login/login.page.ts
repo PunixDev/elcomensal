@@ -87,6 +87,13 @@ export class LoginPage implements OnInit {
           const trialStart = data?.trialStart || new Date().toISOString();
           localStorage.setItem('trialStart', trialStart);
         });
+
+        // Intentar obtener el nombre del plan desde el backend y guardarlo en Firestore
+        // (no bloqueamos la navegación; hacemos la operación en segundo plano)
+        this.fetchAndSaveSubscriptionProductName(result.barId, result.usuario.correo).catch((e) =>
+          console.warn('No se pudo obtener/guardar subscriptionProductName', e)
+        );
+
         this.router.navigate(['/admin']);
       } else {
         this.error = this.translate.instant('LOGIN.ERROR_INVALID');
@@ -95,6 +102,58 @@ export class LoginPage implements OnInit {
       this.error = this.translate.instant('LOGIN.ERROR_CONNECTION');
     }
     this.loading = false;
+  }
+
+  private async fetchAndSaveSubscriptionProductName(barId: string, correo: string) {
+    if (!correo) return;
+    const backendUrl =
+      window.location.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : 'https://backendelcomensal.onrender.com';
+    try {
+      const res = await fetch(`${backendUrl}/get-customer-by-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: correo }),
+      });
+      if (res.status === 404) {
+        // usuario no encontrado: limpiar key local y en Firestore
+        localStorage.removeItem('subscriptionProductName');
+        try {
+          await this.dataService.setSubscriptionProductName(barId, '');
+        } catch (e) {}
+        return;
+      }
+      if (res.ok) {
+        const data = await res.json();
+        const customerId = data.customerId;
+        if (!customerId) return;
+        const resp = await fetch(`${backendUrl}/check-subscription`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customerId }),
+        });
+        if (resp.status === 200) {
+          const sub = await resp.json();
+          const productName =
+            sub?.items && Array.isArray(sub.items) && sub.items[0]?.product?.name
+              ? sub.items[0].product.name
+              : null;
+          if (productName) {
+            try {
+              localStorage.setItem('subscriptionProductName', productName);
+            } catch (e) {}
+            try {
+              await this.dataService.setSubscriptionProductName(barId, productName);
+            } catch (e) {
+              console.warn('Error guardando subscriptionProductName en Firestore', e);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Error fetching subscription info:', e);
+    }
   }
 
   getCurrentLanguageFlag(): string {

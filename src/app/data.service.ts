@@ -295,4 +295,15 @@ export class DataService {
   getBarId(): string {
     return localStorage.getItem('usuario') || 'bar-demo';
   }
+
+  // Guarda el nombre del producto/plan de la suscripción en el documento del bar
+  async setSubscriptionProductName(barId: string, productName: string) {
+    const ref = doc(this.firestore, `bares/${barId}`);
+    try {
+      await updateDoc(ref, { subscriptionProductName: productName });
+    } catch (e) {
+      // Si update falla (p. ej. doc no existe), usar setDoc con merge
+      await setDoc(ref, { subscriptionProductName: productName }, { merge: true });
+    }
+  }
 }
