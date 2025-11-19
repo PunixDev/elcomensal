@@ -90,7 +90,10 @@ export class LoginPage implements OnInit {
 
         // Intentar obtener el nombre del plan desde el backend y guardarlo en Firestore
         // (no bloqueamos la navegación; hacemos la operación en segundo plano)
-        this.fetchAndSaveSubscriptionProductName(result.barId, result.usuario.correo).catch((e) =>
+        this.fetchAndSaveSubscriptionProductName(
+          result.barId,
+          result.usuario.correo
+        ).catch((e) =>
           console.warn('No se pudo obtener/guardar subscriptionProductName', e)
         );
 
@@ -104,7 +107,10 @@ export class LoginPage implements OnInit {
     this.loading = false;
   }
 
-  private async fetchAndSaveSubscriptionProductName(barId: string, correo: string) {
+  private async fetchAndSaveSubscriptionProductName(
+    barId: string,
+    correo: string
+  ) {
     if (!correo) return;
     const backendUrl =
       window.location.hostname === 'localhost'
@@ -136,7 +142,9 @@ export class LoginPage implements OnInit {
         if (resp.status === 200) {
           const sub = await resp.json();
           const productName =
-            sub?.items && Array.isArray(sub.items) && sub.items[0]?.product?.name
+            sub?.items &&
+            Array.isArray(sub.items) &&
+            sub.items[0]?.product?.name
               ? sub.items[0].product.name
               : null;
           if (productName) {
@@ -144,9 +152,15 @@ export class LoginPage implements OnInit {
               localStorage.setItem('subscriptionProductName', productName);
             } catch (e) {}
             try {
-              await this.dataService.setSubscriptionProductName(barId, productName);
+              await this.dataService.setSubscriptionProductName(
+                barId,
+                productName
+              );
             } catch (e) {
-              console.warn('Error guardando subscriptionProductName en Firestore', e);
+              console.warn(
+                'Error guardando subscriptionProductName en Firestore',
+                e
+              );
             }
           }
         }

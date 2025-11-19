@@ -303,7 +303,11 @@ export class DataService {
       await updateDoc(ref, { subscriptionProductName: productName });
     } catch (e) {
       // Si update falla (p. ej. doc no existe), usar setDoc con merge
-      await setDoc(ref, { subscriptionProductName: productName }, { merge: true });
+      await setDoc(
+        ref,
+        { subscriptionProductName: productName },
+        { merge: true }
+      );
     }
   }
 }

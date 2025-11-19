@@ -155,8 +155,9 @@ export class AdminPage implements OnInit {
         ? 'http://localhost:3000'
         : 'https://backendelcomensal.onrender.com';
     // Leer valor guardado previamente (si existe)
-    this.subscriptionProductName =
-      localStorage.getItem('subscriptionProductName');
+    this.subscriptionProductName = localStorage.getItem(
+      'subscriptionProductName'
+    );
     const email = localStorage.getItem('correo');
     if (email) {
       fetch(`${this.backendUrl}/get-customer-by-email`, {

@@ -90,7 +90,11 @@
       </span>
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button *ngIf="showLanguageSelector" (click)="presentLanguagePopover($event)" fill="clear">
+      <ion-button
+        *ngIf="showLanguageSelector"
+        (click)="presentLanguagePopover($event)"
+        fill="clear"
+      >
         <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
         <ion-icon name="chevron-down" size="small"></ion-icon>
       </ion-button>

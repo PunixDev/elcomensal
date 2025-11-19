@@ -101,7 +101,9 @@ export class CartaPage implements OnInit {
 
   async ngOnInit() {
     // Leer nombre del producto de la suscripción (si fue guardado en localStorage)
-    this.subscriptionProductName = localStorage.getItem('subscriptionProductName');
+    this.subscriptionProductName = localStorage.getItem(
+      'subscriptionProductName'
+    );
     // Usar barId de la ruta si existe (path param), si no, query param, si no, localStorage
     this.route.paramMap.subscribe(async (params) => {
       const barIdFromPath = params.get('barId');
@@ -191,7 +193,9 @@ export class CartaPage implements OnInit {
         // Intentar obtener el nombre del producto/plan de la suscripción desde Firestore
         const planFromDoc =
           data.subscriptionProductName ||
-          (data.subscription && data.subscription.items && data.subscription.items[0]?.product?.name) ||
+          (data.subscription &&
+            data.subscription.items &&
+            data.subscription.items[0]?.product?.name) ||
           data.planName ||
           null;
         if (planFromDoc) {
@@ -200,7 +204,10 @@ export class CartaPage implements OnInit {
             localStorage.setItem('subscriptionProductName', planFromDoc);
           } catch (e) {
             // Silenciar si el almacenamiento falla
-            console.warn('No se pudo guardar subscriptionProductName en localStorage', e);
+            console.warn(
+              'No se pudo guardar subscriptionProductName en localStorage',
+              e
+            );
           }
         }
       }
