@@ -156,6 +156,7 @@
     "PASSWORD": "Passwort",
     "RECOVERY_EMAIL": "Wiederherstellungs-E-Mail",
     "REGISTER_BUTTON": "Bar registrieren",
+    "DEFAULT_LANGUAGE": "Standardsprache",
     "SUCCESS_MESSAGE": "Bar erfolgreich registriert",
     "ERROR_MESSAGE": "Registrierungsfehler"
   },

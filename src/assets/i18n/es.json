@@ -64,6 +64,7 @@
     "PASSWORD": "Contraseña",
     "RECOVERY_EMAIL": "Correo de recuperación",
     "REGISTER_BUTTON": "Registrar Restaurante",
+    "DEFAULT_LANGUAGE": "Idioma predeterminado",
     "SUCCESS_MESSAGE": "Restaurante registrado exitosamente",
     "ERROR_MESSAGE": "Error en el registro"
   },

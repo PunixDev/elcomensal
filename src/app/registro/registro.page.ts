@@ -10,6 +10,8 @@ import {
   IonItem,
   IonLabel,
   IonInput,
+  IonSelect,
+  IonSelectOption,
   IonButton,
   IonText,
   IonButtons,
@@ -40,6 +42,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     IonItem,
     IonLabel,
     IonInput,
+    IonSelect,
+    IonSelectOption,
     IonButton,
     IonText,
     IonButtons,
@@ -63,7 +67,13 @@ export class RegistroPage {
     private languageService: LanguageService,
     private popoverController: PopoverController,
     private translate: TranslateService
-  ) {}
+  ) {
+    // Inicializar selector de idioma con el idioma actual de la app
+    this.availableLanguages = this.languageService.availableLanguages || [];
+    this.idiomaSeleccionado = this.languageService.getCurrentLanguage();
+  }
+  idiomaSeleccionado = '';
+  availableLanguages: any[] = [];
 
   async registrarBar() {
     this.error = '';
@@ -84,6 +94,8 @@ export class RegistroPage {
         password: this.password,
         correo: this.correo,
         trialStart: new Date().toISOString(),
+        defaultLanguage:
+          this.idiomaSeleccionado || this.languageService.getCurrentLanguage(),
       });
       this.exito = this.translate.instant('REGISTER.SUCCESS');
       setTimeout(() => this.router.navigate(['/login']), 2000);

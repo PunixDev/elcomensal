@@ -56,6 +56,20 @@
               required
             ></ion-input>
           </ion-item>
+          <ion-item>
+            <ion-label position="floating"
+              >{{ 'REGISTER.DEFAULT_LANGUAGE' | translate }}</ion-label
+            >
+            <ion-select [(ngModel)]="idiomaSeleccionado" name="defaultLanguage">
+              <ion-select-option
+                *ngFor="let lang of availableLanguages"
+                [value]="lang.code"
+              >
+                <span class="language-flag">{{ lang.flag }}</span>&nbsp;{{
+                lang.name }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
           <ion-button expand="block" color="success" type="submit">
             {{ 'REGISTER.REGISTER_BUTTON' | translate }}
           </ion-button>

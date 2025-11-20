@@ -156,6 +156,7 @@
     "PASSWORD": "Password",
     "RECOVERY_EMAIL": "Email di recupero",
     "REGISTER_BUTTON": "Registra Bar",
+    "DEFAULT_LANGUAGE": "Lingua predefinita",
     "SUCCESS_MESSAGE": "Bar registrato con successo",
     "ERROR_MESSAGE": "Errore nella registrazione"
   },

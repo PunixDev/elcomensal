@@ -58,6 +58,8 @@ export interface BarRegistro {
   password: string;
   correo: string;
   trialStart: string;
+  // Idioma predeterminado del bar (código: 'es'|'en'|'it'|'de'|'fr')
+  defaultLanguage?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -194,6 +196,8 @@ export class DataService {
       correo: data.correo,
       usuario: data.usuario,
       trialStart: data.trialStart,
+      // Guardar el idioma predeterminado del bar si viene en los datos
+      defaultLanguage: (data as any).defaultLanguage || 'es',
     });
     // Crea el usuario admin en la subcolección usuarios
     const usuariosRef = collection(
