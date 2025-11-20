@@ -264,7 +264,8 @@
     "STATUS_RECEIVED": "Received",
     "TOTAL_PAID": "Total paid",
     "REQUEST_PAYMENT": "Request payment",
-    "IMAGE_EXPANDED": "Expanded image"
+    "IMAGE_EXPANDED": "Expanded image",
+    "DOWNLOAD_REPORT": "Download report"
   },
   "QR_GENERATOR": {
     "TITLE": "QR Code Generator",

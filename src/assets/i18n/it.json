@@ -258,7 +258,8 @@
     "STATUS_RECEIVED": "Ricevuto",
     "TOTAL_PAID": "Totale pagato",
     "REQUEST_PAYMENT": "Richiedi pagamento",
-    "IMAGE_EXPANDED": "Immagine ingrandita"
+    "IMAGE_EXPANDED": "Immagine ingrandita",
+    "DOWNLOAD_REPORT": "Scarica il rapporto"
   },
   "QR_GENERATOR": {
     "TITLE": "Generatore Codici QR",
