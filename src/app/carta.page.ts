@@ -210,6 +210,18 @@ export class CartaPage implements OnInit {
             );
           }
         }
+
+        // Guardar idioma por defecto del restaurante en localStorage si existe
+        if (data.defaultLanguage) {
+          try {
+            localStorage.setItem('defaultLanguage', data.defaultLanguage);
+          } catch (e) {
+            console.warn(
+              'No se pudo guardar defaultLanguage en localStorage',
+              e
+            );
+          }
+        }
       }
     } catch (e) {
       this.restauranteNombre = '';
@@ -396,10 +408,15 @@ export class CartaPage implements OnInit {
         );
         return {
           id: prod?.id,
-          nombre: prod?.nombre,
+          nombre: this.getNombreParaEnvio(prod) || prod?.nombre,
           cantidad: this.seleccionados[key].cantidad,
           opciones: this.seleccionados[key].opcion
-            ? [this.seleccionados[key].opcion]
+            ? [
+                this.traducirOpcionParaEnvio(
+                  prod,
+                  this.seleccionados[key].opcion
+                ),
+              ]
             : [],
         };
       }),
@@ -460,9 +477,11 @@ export class CartaPage implements OnInit {
       );
       y += 5;
       for (const item of comanda.items) {
-        let linea = `${item.nombre} x${item.cantidad}`;
-        if (item.opciones && item.opciones.length) {
-          linea += ` (${item.opciones.join(', ')})`;
+        const nombreParaMostrar = this.getNombreItemParaMostrar(item);
+        const opcionesParaMostrar = this.getOpcionesItemParaMostrar(item);
+        let linea = `${nombreParaMostrar} x${item.cantidad}`;
+        if (opcionesParaMostrar && opcionesParaMostrar.length) {
+          linea += ` (${opcionesParaMostrar.join(', ')})`;
         }
         const prod = this.productos.find((p) => p.id === item.id);
         const precio = prod ? prod.precio : 0;
@@ -660,6 +679,129 @@ export class CartaPage implements OnInit {
     if (lang === 'de') return producto.opcionesDe || producto.opciones || [];
     if (lang === 'it') return producto.opcionesIt || producto.opciones || [];
     return producto.opciones || [];
+  }
+
+  // Helpers para enviar datos en el idioma por defecto del restaurante
+  private getDefaultLanguageForSending(): string | null {
+    try {
+      const dl = localStorage.getItem('defaultLanguage');
+      return dl ? dl : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  private getNombreParaEnvio(producto?: Producto | null): string {
+    if (!producto) return '';
+    const dl = this.getDefaultLanguageForSending();
+    if (!dl) return producto.nombre;
+    if (dl === 'en') return producto.nombreEn || producto.nombre;
+    if (dl === 'fr') return producto.nombreFr || producto.nombre;
+    if (dl === 'de') return producto.nombreDe || producto.nombre;
+    if (dl === 'it') return producto.nombreIt || producto.nombre;
+    return producto.nombre;
+  }
+
+  private traducirOpcionParaEnvio(
+    producto?: Producto | null,
+    opcion?: string
+  ): string {
+    if (!producto || !opcion) return opcion || '';
+    const dl = this.getDefaultLanguageForSending();
+    const lists: { [k: string]: string[] } = {
+      orig: producto.opciones || [],
+      en: producto.opcionesEn || [],
+      fr: producto.opcionesFr || [],
+      de: producto.opcionesDe || [],
+      it: producto.opcionesIt || [],
+    };
+
+    // Buscar índice intentando en todas las listas (original y traducidas)
+    let idx = lists['orig'].indexOf(opcion);
+    if (idx < 0) {
+      for (const k of ['en', 'fr', 'de', 'it']) {
+        const i = lists[k].indexOf(opcion);
+        if (i >= 0) {
+          idx = i;
+          break;
+        }
+      }
+    }
+
+    if (idx < 0) return opcion;
+
+    // Si no hay idioma por defecto conocido, devolvemos la original (o la traducida encontrada)
+    if (!dl) return lists['orig'][idx] || opcion;
+
+    const target =
+      dl === 'en'
+        ? lists['en']
+        : dl === 'fr'
+        ? lists['fr']
+        : dl === 'de'
+        ? lists['de']
+        : dl === 'it'
+        ? lists['it']
+        : lists['orig'];
+
+    return target && target[idx] ? target[idx] : lists['orig'][idx] || opcion;
+  }
+
+  // Helpers para mostrar items de comanda en el idioma actual de la carta (UI)
+  getNombreItemParaMostrar(item: any): string {
+    if (!item) return '';
+    const prod = this.productos.find((p) => p.id === item.id);
+    if (prod) return this.getNombre(prod);
+    return item.nombre || '';
+  }
+
+  private traducirOpcionParaMostrar(
+    producto?: Producto | null,
+    opcion?: string
+  ): string {
+    if (!producto || !opcion) return opcion || '';
+    const lang = this.languageService.getCurrentLanguage();
+    const lists: { [k: string]: string[] } = {
+      orig: producto.opciones || [],
+      en: producto.opcionesEn || [],
+      fr: producto.opcionesFr || [],
+      de: producto.opcionesDe || [],
+      it: producto.opcionesIt || [],
+    };
+
+    // Buscar índice en cualquiera de las listas
+    let idx = lists['orig'].indexOf(opcion);
+    if (idx < 0) {
+      for (const k of ['en', 'fr', 'de', 'it']) {
+        const i = lists[k].indexOf(opcion);
+        if (i >= 0) {
+          idx = i;
+          break;
+        }
+      }
+    }
+    if (idx < 0) return opcion;
+
+    const target =
+      lang === 'en'
+        ? lists['en']
+        : lang === 'fr'
+        ? lists['fr']
+        : lang === 'de'
+        ? lists['de']
+        : lang === 'it'
+        ? lists['it']
+        : lists['orig'];
+
+    return target && target[idx] ? target[idx] : lists['orig'][idx] || opcion;
+  }
+
+  getOpcionesItemParaMostrar(item: any): string[] {
+    if (!item || !item.opciones || !item.opciones.length) return [];
+    const prod = this.productos.find((p) => p.id === item.id);
+    return item.opciones.map((op: string) =>
+      this.traducirOpcionParaMostrar(prod, op)
+    );
   }
 
   getCurrentLanguageFlag(): string {

@@ -103,10 +103,10 @@
           </div>
           <ul class="historial-pedido">
             <li *ngFor="let item of comanda.items">
-              {{item.nombre}} x{{item.cantidad}}
-              <span *ngIf="item.opciones.length"
-                >- {{ 'MENU.OPTIONS' | translate }}: {{item.opciones.join(',
-                ')}}</span
+              {{ getNombreItemParaMostrar(item) }} x{{ item.cantidad }}
+              <span *ngIf="getOpcionesItemParaMostrar(item).length"
+                >- {{ 'MENU.OPTIONS' | translate }}: {{
+                getOpcionesItemParaMostrar(item).join(', ') }}</span
               >
             </li>
           </ul>
