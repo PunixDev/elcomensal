@@ -54,3 +54,39 @@
     padding: 1.2em 0.5em 1em 0.5em;
   }
 }
+
+/* Estilos para separar columnas con líneas verticales */
+.tabla-categorias-header .header-row ion-col,
+.fila-categoria .categoria-row ion-col {
+  padding: 8px 12px;
+}
+
+/* Centrar sólo el contenido de las cabeceras dentro de cada columna */
+.tabla-categorias-header .header-row ion-col {
+  text-align: center;
+}
+
+.tabla-categorias-header .header-row ion-col:not(:first-child),
+.fila-categoria .categoria-row ion-col:not(:first-child) {
+  border-left: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.fila-categoria ion-item {
+  --background: transparent;
+}
+
+/* Ajustes para que el icono no quede muy pegado */
+.col-icon ion-icon {
+  font-size: 1.2rem;
+}
+
+@media (max-width: 480px) {
+  .tabla-categorias-header .header-row ion-col,
+  .fila-categoria .categoria-row ion-col {
+    padding: 6px 8px;
+  }
+  .tabla-categorias-header .header-row ion-col:nth-child(3),
+  .fila-categoria .categoria-row ion-col:nth-child(3) {
+    text-align: left;
+  }
+}

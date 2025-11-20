@@ -234,6 +234,8 @@
     "EDIT_CATEGORY": "Edit Category",
     "DELETE_CATEGORY": "Delete Category",
     "NAME": "Name",
+    "ORDER": "Order",
+    "ACTIONS": "Actions",
     "DESCRIPTION": "Description",
     "COLOR": "Color",
     "ICON": "Icon",

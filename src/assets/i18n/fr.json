@@ -302,7 +302,19 @@
     "DOWNLOAD_REPORT": "Télécharger le rapport"
   },
   "CATEGORIES": {
+    "TITLE": "Gestion des Catégories",
     "ADD_CATEGORY": "Ajouter une catégorie",
-    "TITLE": "Gestion des Catégories"
+    "EDIT_CATEGORY": "Modifier la catégorie",
+    "DELETE_CATEGORY": "Supprimer la catégorie",
+    "NAME": "Nom",
+    "ORDER": "Ordre",
+    "ACTIONS": "Actions",
+    "DESCRIPTION": "Description",
+    "COLOR": "Couleur",
+    "ICON": "Icône",
+    "PRODUCTS_COUNT": "Nombre de Produits",
+    "NO_CATEGORIES": "Aucune catégorie disponible",
+    "CATEGORY_SAVED": "Catégorie enregistrée avec succès",
+    "CATEGORY_DELETED": "Catégorie supprimée avec succès"
   }
 }

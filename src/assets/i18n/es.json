@@ -234,6 +234,8 @@
     "EDIT_CATEGORY": "Editar Categoría",
     "DELETE_CATEGORY": "Eliminar Categoría",
     "NAME": "Nombre",
+    "ORDER": "Orden",
+    "ACTIONS": "Acciones",
     "DESCRIPTION": "Descripción",
     "COLOR": "Color",
     "ICON": "Icono",
