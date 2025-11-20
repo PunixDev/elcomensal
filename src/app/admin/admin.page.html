@@ -13,8 +13,8 @@
       <ion-label
         *ngIf="trialActive"
         style="font-size: small; display: block; text-align: center"
-        >Prueba gratuita activa - {{ remainingTrialDays }} días
-        restantes</ion-label
+        >{{ 'ADMIN.TRIAL_ACTIVE_DAYS' | translate:{days: remainingTrialDays}
+        }}</ion-label
       >
     </ion-toolbar>
   </ion-header>
@@ -112,14 +112,14 @@
           style="display: flex; flex-direction: column; align-items: center"
         >
           <ion-label color="success" style="margin-bottom: 0.5em">
-            <strong>Suscripción activa</strong>
+            <strong>{{ 'ADMIN.SUBSCRIPTION_ACTIVE' | translate }}</strong>
           </ion-label>
           <ion-button
             color="primary"
             (click)="gestionarSuscripcion()"
             style="width: 100%"
           >
-            Gestionar suscripción
+            {{ 'ADMIN.MANAGE_SUBSCRIPTION' | translate }}
           </ion-button>
           <ion-button
             color="medium"
@@ -255,7 +255,7 @@
           <ion-card-header>
             <ion-card-title>
               <ion-icon name="receipt" slot="start"></ion-icon>
-              Comandas recibidas
+              {{ 'ADMIN.RECEIVED_ORDERS' | translate }}
             </ion-card-title>
             <ion-button
               color="danger"
@@ -267,7 +267,7 @@
                 slot="start"
                 aria-hidden="true"
               ></ion-icon>
-              Limpiar comandas
+              {{ 'ADMIN.CLEAR_ORDERS' | translate }}
             </ion-button>
           </ion-card-header>
           <ion-card-content>
@@ -328,13 +328,13 @@
                           size="small"
                           color="tertiary"
                           (click)="goToInformeMesa(mesa.key)"
-                          >Ver informe</ion-button
+                          >{{ 'ADMIN.VIEW_REPORT' | translate }}</ion-button
                         >
                         <ion-button
                           size="small"
                           color="warning"
                           (click)="marcarMesaPagada(mesa.key)"
-                          >Pagado</ion-button
+                          >{{ 'ADMIN.PAID' | translate }}</ion-button
                         >
                       </div>
                       <div
@@ -369,22 +369,26 @@
                                   <span
                                     *ngSwitchCase="'preparando'"
                                     style="color: orange; font-weight: bold"
-                                    >En preparación</span
+                                    >{{ 'MENU.STATUS_PREPARING' | translate
+                                    }}</span
                                   >
                                   <span
                                     *ngSwitchCase="'preparado'"
                                     style="color: green; font-weight: bold"
-                                    >Preparado</span
+                                    >{{ 'MENU.STATUS_PREPARED' | translate
+                                    }}</span
                                   >
                                   <span
                                     *ngSwitchCase="'pago_pendiente'"
                                     style="color: #c77d00; font-weight: bold"
-                                    >Pago pendiente</span
+                                    >{{ 'MENU.PAYMENT_REQUESTED' | translate
+                                    }}</span
                                   >
                                   <span
                                     *ngSwitchDefault
                                     style="color: gray; font-weight: bold"
-                                    >Recibido</span
+                                    >{{ 'MENU.STATUS_RECEIVED' | translate
+                                    }}</span
                                   >
                                 </span>
                               </div>

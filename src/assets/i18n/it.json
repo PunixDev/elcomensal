@@ -180,6 +180,12 @@
   "ADMIN": {
     "TITLE": "Pannello di Amministrazione",
     "MANAGE_PRODUCTS": "Gestisci Prodotti",
+    "SUBSCRIPTION_ACTIVE": "Abbonamento attivo",
+    "TRIAL_ACTIVE_DAYS": "Prova gratuita attiva - {{days}} giorni rimanenti",
+    "RECEIVED_ORDERS": "Ordini ricevuti",
+    "CLEAR_ORDERS": "Svuota ordini",
+    "VIEW_REPORT": "Visualizza rapporto",
+    "PAID": "Pagato",
     "MANAGE_CATEGORIES": "Gestisci Categorie",
     "VIEW_STATISTICS": "Visualizza Statistiche",
     "SYSTEM_SETTINGS": "Impostazioni Sistema",

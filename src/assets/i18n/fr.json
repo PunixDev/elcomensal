@@ -163,6 +163,12 @@
   "ADMIN": {
     "TITLE": "Panneau d'Administration",
     "MANAGE_PRODUCTS": "Gérer Produits",
+    "SUBSCRIPTION_ACTIVE": "Abonnement actif",
+    "TRIAL_ACTIVE_DAYS": "Essai gratuit actif - {{days}} jours restants",
+    "RECEIVED_ORDERS": "Commandes reçues",
+    "CLEAR_ORDERS": "Supprimer les commandes",
+    "VIEW_REPORT": "Voir le rapport",
+    "PAID": "Payé",
     "MANAGE_CATEGORIES": "Gérer Catégories",
     "VIEW_STATISTICS": "Voir Statistiques",
     "SYSTEM_SETTINGS": "Paramètres Système",
@@ -293,7 +299,7 @@
     "TOTAL_PAID": "Total payé",
     "REQUEST_PAYMENT": "Demander le paiement",
     "IMAGE_EXPANDED": "Image agrandie"
-      "DOWNLOAD_REPORT": "Télécharger le rapport",
+      ,"DOWNLOAD_REPORT": "Télécharger le rapport"
   },
   "CATEGORIES": {
     "ADD_CATEGORY": "Ajouter une catégorie",

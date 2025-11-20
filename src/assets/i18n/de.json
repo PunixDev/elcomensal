@@ -163,6 +163,12 @@
   "ADMIN": {
     "TITLE": "Verwaltungsbereich",
     "MANAGE_PRODUCTS": "Produkte verwalten",
+    "SUBSCRIPTION_ACTIVE": "Abonnement aktiv",
+    "TRIAL_ACTIVE_DAYS": "Testversion aktiv - {{days}} Tage verbleibend",
+    "RECEIVED_ORDERS": "Eingegangene Bestellungen",
+    "CLEAR_ORDERS": "Bestellungen löschen",
+    "VIEW_REPORT": "Bericht anzeigen",
+    "PAID": "Bezahlt",
     "MANAGE_CATEGORIES": "Kategorien verwalten",
     "VIEW_STATISTICS": "Statistiken anzeigen",
     "SYSTEM_SETTINGS": "Systemeinstellungen",
