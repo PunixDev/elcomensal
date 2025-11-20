@@ -298,8 +298,8 @@
     "STATUS_RECEIVED": "Reçu",
     "TOTAL_PAID": "Total payé",
     "REQUEST_PAYMENT": "Demander le paiement",
-    "IMAGE_EXPANDED": "Image agrandie"
-      ,"DOWNLOAD_REPORT": "Télécharger le rapport"
+    "IMAGE_EXPANDED": "Image agrandie",
+    "DOWNLOAD_REPORT": "Télécharger le rapport"
   },
   "CATEGORIES": {
     "ADD_CATEGORY": "Ajouter une catégorie",
