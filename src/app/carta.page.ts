@@ -88,6 +88,9 @@ export class CartaPage implements OnInit {
 
   // Imagen ampliada para modal
   imagenAmpliada: string | null = null;
+  // Estado temporal para editar una comanda desde la UI
+  editingComanda: any = null;
+  editarModalAbierto = false;
   // Nombre del producto de la suscripción (para controlar si mostrar selector)
   subscriptionProductName: string | null = null;
 
@@ -844,5 +847,61 @@ export class CartaPage implements OnInit {
 
   getCategoriaSeleccionada(): Categoria | undefined {
     return this.categorias.find((c) => c.id === this.categoriaSeleccionada);
+  }
+
+  // Abre un diálogo para editar la comanda (por ahora permite editar observaciones)
+  async editarComanda(comanda: any) {
+    // Abrir modal de edición con copia de la comanda para evitar modificar la original hasta guardar
+    this.editingComanda = JSON.parse(JSON.stringify(comanda));
+    this.editarModalAbierto = true;
+  }
+
+  // Controles dentro del modal de edición
+  aumentarCantidadItem(idx: number) {
+    if (!this.editingComanda) return;
+    this.editingComanda.items[idx].cantidad++;
+  }
+
+  disminuirCantidadItem(idx: number) {
+    if (!this.editingComanda) return;
+    this.editingComanda.items[idx].cantidad--;
+    if (this.editingComanda.items[idx].cantidad <= 0) {
+      this.editingComanda.items.splice(idx, 1);
+    }
+  }
+
+  eliminarItemEditar(idx: number) {
+    if (!this.editingComanda) return;
+    this.editingComanda.items.splice(idx, 1);
+  }
+
+  cancelarEdicion() {
+    this.editingComanda = null;
+    this.editarModalAbierto = false;
+  }
+
+  async enviarModificacionComanda() {
+    if (!this.editingComanda) return;
+    try {
+      // Marcar la comanda para que el administrador la revise
+      this.editingComanda.estado = 'modificacion_solicitada';
+      // Añadir metadata para el admin (opcional)
+      this.editingComanda.usuarioModifico = true;
+      this.editingComanda.fechaModificacion = new Date().toISOString();
+      await this.dataService.updateComanda(this.barId, this.editingComanda);
+      this.editarModalAbierto = false;
+      this.editingComanda = null;
+      // Informar al usuario
+      const ok = await this.alertController.create({
+        header: 'Enviado',
+        message:
+          'La modificación ha sido enviada al administrador. Te informaremos cuando la apruebe.',
+        buttons: ['Aceptar'],
+      });
+      await ok.present();
+    } catch (e) {
+      console.error('Error al enviar modificación', e);
+      window.alert('No se pudo enviar la modificación.');
+    }
   }
 }

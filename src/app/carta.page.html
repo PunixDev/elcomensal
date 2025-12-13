@@ -94,6 +94,17 @@
               *ngIf="comanda.estado !== 'preparado' && comanda.estado !== 'preparando'"
               color="medium"
             ></ion-icon>
+            <!-- Icono lápiz: se muestra solo si el estado es STATUS_RECEIVED -->
+            <ion-icon
+              name="pencil"
+              *ngIf="comanda.estado === 'pendiente' || comanda.estado === 'STATUS_RECEIVED'"
+              color="primary"
+              style="margin-left: 0.5em; cursor: pointer"
+              aria-hidden="true"
+              (click)="editarComanda(comanda); $event.stopPropagation()"
+              role="button"
+              tabindex="0"
+            ></ion-icon>
             <span>
               {{ comanda.estado === 'preparado' ? ('MENU.STATUS_PREPARED' |
               translate) : (comanda.estado === 'preparando' ?
@@ -342,6 +353,93 @@
         <div class="resumen-total">
           {{ 'MENU.TOTAL' | translate }}: {{ getTotalPedido() |
           currency:'EUR':'symbol':'1.2-2' }}
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal edición de comanda (usuario) -->
+  <ion-modal [isOpen]="editarModalAbierto" (didDismiss)="cancelarEdicion()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>{{ 'MENU.EDIT_ORDER' | translate }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cancelarEdicion()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <div *ngIf="editingComanda">
+          <div class="edit-comanda-lista">
+            <div
+              *ngFor="let item of editingComanda.items; let i = index"
+              class="edit-comanda-item"
+            >
+              <div class="edit-item-left">
+                <div class="edit-item-nombre">
+                  {{ getNombreItemParaMostrar(item) }}
+                </div>
+                <div
+                  class="edit-item-opciones"
+                  *ngIf="getOpcionesItemParaMostrar(item).length"
+                >
+                  {{ getOpcionesItemParaMostrar(item).join(', ') }}
+                </div>
+              </div>
+              <div class="edit-item-acciones">
+                <ion-button
+                  size="small"
+                  fill="clear"
+                  (click)="disminuirCantidadItem(i)"
+                >
+                  <ion-icon name="remove-circle-outline"></ion-icon>
+                </ion-button>
+                <span class="edit-item-cantidad">x{{ item.cantidad }}</span>
+                <ion-button
+                  size="small"
+                  fill="clear"
+                  (click)="aumentarCantidadItem(i)"
+                >
+                  <ion-icon name="add-circle-outline"></ion-icon>
+                </ion-button>
+                <ion-button
+                  size="small"
+                  color="danger"
+                  fill="clear"
+                  (click)="eliminarItemEditar(i)"
+                >
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 1em">
+            <ion-item>
+              <ion-label position="stacked"
+                >{{ 'MENU.OBSERVATIONS' | translate }}</ion-label
+              >
+              <ion-textarea
+                [(ngModel)]="editingComanda.observaciones"
+              ></ion-textarea>
+            </ion-item>
+          </div>
+          <div style="padding: 1em; display: flex; gap: 0.5em">
+            <ion-button
+              expand="block"
+              color="medium"
+              (click)="cancelarEdicion()"
+              >{{ 'MENU.CANCEL' | translate }}</ion-button
+            >
+            <ion-button
+              expand="block"
+              color="primary"
+              (click)="enviarModificacionComanda()"
+              >{{ 'MENU.SEND_MODIFICATION' | translate }}</ion-button
+            >
+          </div>
         </div>
       </ion-content>
     </ng-template>
