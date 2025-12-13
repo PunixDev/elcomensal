@@ -76,3 +76,38 @@
     margin-bottom: 1rem;
   }
 }
+
+/* Estilos para tarjeta superior desplegable */
+.top-card .collapsible {
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.35s ease;
+  max-height: 2000px; /* suficientemente grande para contenido */
+  opacity: 1;
+}
+.top-card .collapsible.collapsed {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.top-card ion-card-header {
+  padding: 0.2rem 0.6rem;
+}
+
+.top-card .collapsed-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  gap: 0.5rem;
+}
+.top-card .collapsed-status .compact-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  display: inline-block;
+}
+
+/* Make sure the header button stays visible on the right */
+.top-card ion-card-header > ion-card-title > div {
+  width: 100%;
+}

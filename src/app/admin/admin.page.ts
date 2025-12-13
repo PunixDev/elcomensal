@@ -103,6 +103,8 @@ export class AdminPage implements OnInit {
   trialActive: boolean = false;
   remainingTrialDays: number = 0;
   isLoading: boolean = true;
+  // Controla si la tarjeta superior está desplegada (true) o plegada (false)
+  cardExpanded: boolean = true;
   // Controla si el enlace "Gestionar suscripción" aparece en el menú lateral
   showManageInMenu: boolean = false;
   // Nombre del producto de la suscripción (Basic, Estándar, Premium, etc.)
@@ -277,6 +279,15 @@ export class AdminPage implements OnInit {
     this.productos$.subscribe((productos) => {
       this.productos = productos;
     });
+
+    // Auto-plegar la tarjeta superior 5 segundos después de cargar la página
+    setTimeout(() => {
+      this.cardExpanded = false;
+    }, 5000);
+  }
+
+  toggleTopCard() {
+    this.cardExpanded = !this.cardExpanded;
   }
 
   // Determina si el selector de idioma debe mostrarse.
