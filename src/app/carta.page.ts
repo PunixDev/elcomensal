@@ -426,7 +426,6 @@ export class CartaPage implements OnInit {
     this.dataService.addComanda(this.barId, pedido);
     this.seleccionados = {};
     this.opcionSeleccionTemp = {};
-    alert('¡Pedido enviado!');
   }
 
   async pagarMesa() {
