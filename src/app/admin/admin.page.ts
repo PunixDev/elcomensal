@@ -327,6 +327,30 @@ export class AdminPage implements OnInit {
     await alert.present();
   }
 
+  async confirmarMarcarMesaPagada(mesa: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar',
+      message: 'Va a marcar el pedido como pagado. ¿Desea confirmar? ',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancelado marcar mesa pagada');
+          },
+        },
+        {
+          text: 'Confirmar',
+          handler: () => {
+            this.marcarMesaPagada(mesa);
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
   limpiarComandas() {
     this.comandas.forEach((c) =>
       this.dataService.deleteComanda(this.barId, c.id)
@@ -499,7 +523,24 @@ export class AdminPage implements OnInit {
   verInformeMesa(mesa: string) {
     this.productos$.subscribe((productos) => {
       const comandas = this.comandasPorMesa[mesa] || [];
-      this.informeMesa = comandas;
+      // Ordenar las comandas: primero las que son accionables
+      // - prioridad 0: estado 'preparando' (muestran botón 'Preparado')
+      // - prioridad 1: estados distintos de 'preparado' y 'pago_pendiente' (muestran botón 'En preparación')
+      // - prioridad 2: resto (por ejemplo 'preparado' o 'pago_pendiente')
+      const rank = (c: any) => {
+        if (!c || typeof c !== 'object') return 3;
+        if (c.estado === 'preparando') return 0;
+        if (c.estado !== 'preparado' && c.estado !== 'pago_pendiente') return 1;
+        return 2;
+      };
+      this.informeMesa = [...comandas].sort((a: any, b: any) => {
+        const ra = rank(a);
+        const rb = rank(b);
+        if (ra !== rb) return ra - rb;
+        const ta = a && a.fecha ? new Date(a.fecha).getTime() : 0;
+        const tb = b && b.fecha ? new Date(b.fecha).getTime() : 0;
+        return tb - ta; // más recientes primero
+      });
       this.informeTotal = comandas.reduce((total, comanda) => {
         return (
           total +

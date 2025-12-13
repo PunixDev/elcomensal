@@ -288,16 +288,13 @@
               <ion-row>
                 <ion-col
                   size="12"
-                  size-sm="6"
-                  size-md="4"
+                  size-sm="4"
+                  size-md="3"
                   *ngFor="let mesa of mesasOrdenadas"
                 >
                   <ion-card class="mesa-card">
                     <ion-card-header>
-                      <ion-card-title
-                        (click)="toggleMesa(mesa.key)"
-                        style="cursor: pointer"
-                      >
+                      <ion-card-title>
                         Mesa {{mesa.key}}
                         <small class="time-ago"
                           >{{ getTimeAgo(getLatestFecha(mesa)) }}</small
@@ -310,11 +307,10 @@
                         <ion-button
                           fill="clear"
                           size="small"
-                          (click)="toggleMesa(mesa.key)"
+                          (click)="verInformeMesa(mesa.key)"
+                          aria-label="Ver mesa"
                         >
-                          <ion-icon
-                            [name]="mesasExpanded[mesa.key] ? 'chevron-down' : 'chevron-up'"
-                          ></ion-icon>
+                          <ion-icon name="eye"></ion-icon>
                         </ion-button>
                       </div>
                     </ion-card-header>
@@ -324,14 +320,6 @@
                           <div class="total">
                             Total: {{ getTotalMesa(mesa.value) |
                             currency:'EUR':'symbol':'1.2-2' }}
-                          </div>
-                          <div class="items-preview">
-                            <small *ngFor="let it of getPreviewItems(mesa)"
-                              >{{it.nombre}} x{{it.cantidad}}&nbsp;</small
-                            >
-                            <small *ngIf="getPreviewCount(mesa) > 3"
-                              >...
-                            </small>
                           </div>
                         </div>
                       </div>
@@ -346,7 +334,7 @@
                         <ion-button
                           size="small"
                           color="warning"
-                          (click)="marcarMesaPagada(mesa.key)"
+                          (click)="confirmarMarcarMesaPagada(mesa.key)"
                           >{{ 'ADMIN.PAID' | translate }}</ion-button
                         >
                       </div>
@@ -491,8 +479,14 @@
 <ion-modal [isOpen]="mostrarInforme" (didDismiss)="cerrarInformeMesa()">
   <ion-header>
     <ion-toolbar color="primary">
-      <ion-title>Informe de mesa</ion-title>
+      <ion-title>Informe de mesa - Mesa {{mesaActual}}</ion-title>
       <ion-buttons slot="end">
+        <ion-button
+          color="warning"
+          (click)="confirmarMarcarMesaPagada(mesaActual)"
+        >
+          <ion-icon name="checkmark-done-outline"></ion-icon>
+        </ion-button>
         <ion-button (click)="cerrarInformeMesa()">
           <ion-icon name="close"></ion-icon>
         </ion-button>
@@ -565,7 +559,27 @@
                     </span>
                   </li>
                 </ul>
+                <div *ngIf="comanda?.observaciones" style="margin-top: 0.5em">
+                  <strong>Observaciones:</strong>
+                  {{ comanda?.observaciones }}
+                </div>
               </ion-label>
+              <div style="display: flex; gap: 8px; margin-left: 8px">
+                <ion-button
+                  color="warning"
+                  size="small"
+                  (click)="actualizarEstadoComanda(comanda, 'preparando')"
+                  *ngIf="comanda.estado !== 'preparando' && comanda.estado !== 'preparado' && comanda.estado !== 'pago_pendiente'"
+                  >En preparación</ion-button
+                >
+                <ion-button
+                  color="success"
+                  size="small"
+                  (click)="actualizarEstadoComanda(comanda, 'preparado')"
+                  *ngIf="comanda.estado === 'preparando'"
+                  >Preparado</ion-button
+                >
+              </div>
             </ion-item>
           </ion-list>
           <div

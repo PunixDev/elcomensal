@@ -77,6 +77,33 @@
   }
 }
 
+/* Botones más compactos en pantallas pequeñas para evitar que se oculten */
+@media (max-width: 599px) {
+  .mesa-card .card-actions ion-button,
+  .mesa-card ion-card-header ion-button {
+    --padding-top: 0.12rem;
+    --padding-bottom: 0.12rem;
+    --padding-start: 0.28rem;
+    --padding-end: 0.28rem;
+    font-size: 0.75rem;
+    min-width: 2.2rem;
+    height: auto;
+  }
+
+  .mesa-card .card-actions ion-button ion-icon,
+  .mesa-card ion-card-header ion-button ion-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* Si hay texto dentro del botón, reducir margen entre icono y texto */
+  .mesa-card .card-actions ion-button::part(native),
+  .mesa-card ion-card-header ion-button::part(native) {
+    gap: 0.25rem;
+  }
+}
+
 /* Estilos para tarjeta superior desplegable */
 .top-card .collapsible {
   overflow: hidden;
