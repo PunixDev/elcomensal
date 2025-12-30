@@ -28,6 +28,8 @@ import {
   PopoverController,
   AlertController,
 } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular/standalone';
+import { InformeMesaModalComponent } from '../informe-mesa-modal/informe-mesa-modal.component';
 import { Router } from '@angular/router';
 import { DataService } from '../data.service';
 import { LanguageService } from '../language.service';
@@ -67,6 +69,7 @@ import { Observable } from 'rxjs';
     CommonModule,
     FormsModule,
     TranslateModule,
+    InformeMesaModalComponent,
   ],
 })
 export class AdminPage implements OnInit {
@@ -143,7 +146,8 @@ export class AdminPage implements OnInit {
     private dataService: DataService,
     private languageService: LanguageService,
     private popoverController: PopoverController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private modalController: ModalController
   ) {
     this.barId = this.dataService.getBarId();
     this.comandas$ = this.dataService.getComandas(this.barId);
@@ -551,8 +555,24 @@ export class AdminPage implements OnInit {
         );
       }, 0);
       console.log('Total de la mesa', mesa, ':', this.informeTotal);
-      this.mostrarInforme = true;
       this.mesaActual = mesa; // Guardamos la mesa actual para imprimir/descargar
+      (async () => {
+        const modal = await this.modalController.create({
+          component: InformeMesaModalComponent,
+          componentProps: {
+            informeMesa: this.informeMesa,
+            informeTotal: this.informeTotal,
+            mesaActual: mesa,
+            productos: this.productos,
+            actualizarEstadoComanda: (comanda: any, estado: string) =>
+              this.actualizarEstadoComanda(comanda, estado),
+            confirmarMarcarMesaPagada: (m: string) =>
+              this.confirmarMarcarMesaPagada(m),
+            getPrecioProducto: (id: string) => this.getPrecioProducto(id),
+          },
+        });
+        await modal.present();
+      })();
     });
   }
 

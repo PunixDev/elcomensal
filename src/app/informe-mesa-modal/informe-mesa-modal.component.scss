@@ -1,0 +1,22 @@
+/* Styles for informe mesa modal */
+.no-print {
+  display: block;
+}
+.preview-img {
+  max-width: 100%;
+}
+
+.round-checkbox {
+  --size: 20px;
+  --border-radius: 50%;
+  --handle-box-shadow: none;
+  --background-checked: var(--ion-color-primary, #3880ff);
+  width: var(--size);
+  height: var(--size);
+}
+
+/* Ensure checkbox aligns visually with list content */
+ion-item .round-checkbox {
+  margin-left: 0.25rem;
+  margin-right: 0.5rem;
+}
