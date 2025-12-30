@@ -270,6 +270,13 @@
         >{{ 'MENU.TOTAL' | translate }}: {{ getTotalPedido() |
         currency:'EUR':'symbol':'1.2-2' }}</span
       >
+      <ion-icon
+        name="eye"
+        aria-hidden="true"
+        aria-label="Ver resumen"
+        title="Ver resumen"
+        style="margin-left: 0.5em; vertical-align: middle; opacity: 0.9"
+      ></ion-icon>
     </div>
     <ion-button
       expand="block"
@@ -280,19 +287,6 @@
       <ion-icon name="send" slot="start"></ion-icon>
       {{ 'MENU.SEND_ORDER' | translate }}
     </ion-button>
-    <!--
-    <ion-button
-      *ngIf="historialComandasMesa.length > 0"
-      expand="block"
-      color="warning"
-      style="margin-top: 0.5em"
-      (click)="confirmarSolicitarPago()"
-      class="pedido-bar-btn"
-    >
-      <ion-icon name="cash-outline" slot="start"></ion-icon>
-      {{ 'MENU.REQUEST_PAYMENT' | translate }}
-    </ion-button>
-    -->
   </div>
 
   <!-- Modal de resumen de pedido -->

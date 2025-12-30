@@ -97,14 +97,14 @@
                   comanda.estado !== 'preparado' &&
                   comanda.estado !== 'pago_pendiente'
                 "
-                >En preparación</ion-button
+                >Marcar En preparación</ion-button
               >
               <ion-button
                 color="success"
                 size="small"
                 (click)="aplicarEstado(comanda, 'preparado')"
                 *ngIf="comanda.estado === 'preparando'"
-                >Preparado</ion-button
+                >Marcar Preparado</ion-button
               >
             </div>
           </ion-item>
