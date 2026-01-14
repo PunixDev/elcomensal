@@ -277,7 +277,9 @@
     "TOTAL_PAID": "Total paid",
     "REQUEST_PAYMENT": "Request payment",
     "IMAGE_EXPANDED": "Expanded image",
-    "DOWNLOAD_REPORT": "Download report"
+    "DOWNLOAD_REPORT": "Download report",
+    "CALL_WAITER": "Call waiter",
+    "WAITER_CALLED": "Waiter called"
   },
   "QR_GENERATOR": {
     "TITLE": "QR Code Generator",

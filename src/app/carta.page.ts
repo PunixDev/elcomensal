@@ -21,15 +21,17 @@ import {
   IonSegmentButton,
   IonModal, // Added
   IonButtons, // Added
+  IonFab,
+  IonFabButton,
 } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria } from './data.service';
 import { FormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { doc, getDoc } from '@angular/fire/firestore';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LanguageSelectorComponent } from './language-selector.component';
-import { PopoverController, AlertController } from '@ionic/angular';
+import { PopoverController, AlertController, ToastController } from '@ionic/angular';
 import { LanguageService } from './language.service';
 
 @Component({
@@ -56,6 +58,8 @@ import { LanguageService } from './language.service';
     CommonModule,
     TranslateModule,
     LanguageSelectorComponent,
+    IonFab,
+    IonFabButton,
   ],
   providers: [PopoverController],
 })
@@ -99,7 +103,9 @@ export class CartaPage implements OnInit {
     private route: ActivatedRoute,
     private popoverController: PopoverController,
     private languageService: LanguageService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private translateService: TranslateService,
+    private toastController: ToastController
   ) {}
 
   async ngOnInit() {
@@ -159,6 +165,8 @@ export class CartaPage implements OnInit {
           const antesPago = this.pagoSolicitado;
           this.historialComandasMesa = comandas
             .filter((c: any) => c.mesa == this.mesa)
+            // Filtramos las llamadas al camarero para que no salgan en el historial del cliente
+            .filter((c: any) => !c.items.some((i: any) => i.id === 'call_waiter'))
             .sort(
               (a: any, b: any) =>
                 new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
@@ -902,6 +910,76 @@ export class CartaPage implements OnInit {
     } catch (e) {
       console.error('Error al enviar modificación', e);
       window.alert('No se pudo enviar la modificación.');
+    }
+  }
+  async llamarCamarero() {
+    if (!this.mesa) {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'No se ha identificado la mesa.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
+
+    const header = await firstValueFrom(this.translateService.get('MENU.CALL_WAITER'));
+    const confirmMessage = header + '?';
+
+    const alert = await this.alertController.create({
+      header: header,
+      message: confirmMessage,
+      buttons: [
+        {
+          text: await firstValueFrom(this.translateService.get('COMMON.CANCEL')),
+          role: 'cancel'
+        },
+        {
+          text: await firstValueFrom(this.translateService.get('COMMON.CONFIRM')),
+          handler: () => {
+            this.enviarAvisoCamarero();
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async enviarAvisoCamarero() {
+    const aviso = {
+      mesa: this.mesa,
+      fecha: new Date().toISOString(),
+      items: [{
+        id: 'call_waiter',
+        nombre: '🔔 LLAMADA CAMARERO',
+        cantidad: 1,
+        precio: 0,
+        opciones: []
+      }],
+      estado: 'pendiente',
+      observaciones: 'Solicitud de asistencia'
+    };
+    
+    try {
+      await this.dataService.addComanda(this.barId, aviso);
+      const msg = await firstValueFrom(this.translateService.get('MENU.WAITER_CALLED'));
+      const toast = await this.toastController.create({
+        message: msg,
+        duration: 2000,
+        position: 'top',
+        color: 'success',
+        icon: 'notifications'
+      });
+      await toast.present();
+    } catch (error) {
+      console.error('Error enviando aviso', error);
+      const toast = await this.toastController.create({
+        message: 'Error al conectar con el servidor',
+        duration: 2000,
+        position: 'top',
+        color: 'danger'
+      });
+      await toast.present();
     }
   }
 }

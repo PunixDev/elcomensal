@@ -299,6 +299,14 @@
                         <small class="time-ago"
                           >{{ getTimeAgo(getLatestFecha(mesa)) }}</small
                         >
+                        <ion-icon
+                          *ngIf="mesaTieneLlamada(mesa)"
+                          name="notifications"
+                          color="danger"
+                          style="margin-left: 0.5em; animation: beat 1s infinite alternate; cursor:pointer;"
+                          (click)="atenderLlamada(mesa.key, $event)"
+                          title="Atender llamada"
+                        ></ion-icon>
                       </ion-card-title>
                       <div style="display: flex; align-items: center; gap: 8px">
                         <ion-badge [color]="badgeColor(mesa)"
@@ -338,12 +346,13 @@
                           >{{ 'ADMIN.PAID' | translate }}</ion-button
                         >
                       </div>
+
                       <div
                         *ngIf="mesasExpanded[mesa.key]"
                         style="margin-top: 0.75rem"
                       >
                         <ion-list>
-                          <ion-item *ngFor="let comanda of mesa.value">
+                          <ion-item *ngFor="let comanda of getComandasComida(mesa)">
                             <ion-label>
                               <strong>Fecha:</strong> {{comanda.fecha |
                               date:'short'}}<br />

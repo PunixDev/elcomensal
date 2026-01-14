@@ -473,4 +473,9 @@
       <img [src]="imagenAmpliada" [alt]="'MENU.IMAGE_EXPANDED' | translate" />
     </div>
   </div>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" style="margin-bottom: 6em; margin-right: 0.5em;">
+    <ion-fab-button color="tertiary" (click)="llamarCamarero()">
+      <ion-icon name="notifications"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

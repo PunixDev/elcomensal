@@ -426,8 +426,18 @@ export class AdminPage implements OnInit {
 
     const mesaPriority = (m: { key: string; value: any[] }) => {
       const v = m.value || [];
+      // Filtrar items de llamada al camarero para la prioridad de estado de pedido,
+      // pero si hay llamada al camarero debe tener alta prioridad visual.
+      // Aquí definimos prioridad:
+      // -1: llamada camarero (muy urgente)
+      // 0: pago pendiente
+      // 1: pedido no preparado
+      // 2: todo ok/preparado
+      if (v.some((c) => c.items.some((i: any) => i.id === 'call_waiter'))) return -1;
       if (v.some((c) => c.estado === 'pago_pendiente')) return 0;
-      if (v.some((c) => c.estado !== 'preparado')) return 1;
+      // Filtrar comandas que solo sean llamadas al camarero para no afectar la logica de cocina si no queremos
+      const pedidosComida = v.filter(c => !c.items.some((i:any) => i.id === 'call_waiter'));
+      if (pedidosComida.some((c) => c.estado !== 'preparado')) return 1;
       return 2;
     };
 
@@ -444,7 +454,7 @@ export class AdminPage implements OnInit {
     entradas.sort((a, b) => {
       const pa = mesaPriority(a);
       const pb = mesaPriority(b);
-      if (pa !== pb) return pa - pb; // prioridad asc (0 primero)
+      if (pa !== pb) return pa - pb; // prioridad asc (-1 primero)
       // misma prioridad: mesas con más reciente comanda primero
       const ta = latestFecha(a);
       const tb = latestFecha(b);
@@ -726,6 +736,8 @@ export class AdminPage implements OnInit {
   getTotalMesa(comandas: any[]): number {
     if (!Array.isArray(comandas) || !this.productos) return 0;
     return comandas.reduce((total, comanda) => {
+      // Ignorar comandas que son solo llamadas al camarero en el total monetario
+      if (comanda.items.some((i: any) => i.id === 'call_waiter')) return total;
       return (
         total +
         comanda.items.reduce((subtotal: number, item: any) => {
@@ -770,5 +782,27 @@ export class AdminPage implements OnInit {
       .catch(() => {
         alert('Error al conectar con el portal de Stripe.');
       });
+  }
+  // Helper para saber si una mesa tiene una llamada de camarero activa
+  mesaTieneLlamada(mesa: { key: string; value: any[] }): boolean {
+    const v = mesa.value || [];
+    return v.some((c) => c.items.some((i: any) => i.id === 'call_waiter'));
+  }
+  
+  // Helper para obtener las comandas de comida (excluyendo llamadas)
+  getComandasComida(mesa: { key: string; value: any[] }): any[] {
+    const v = mesa.value || [];
+    return v.filter((c) => !c.items.some((i: any) => i.id === 'call_waiter'));
+  }
+
+  // Método para "atender" la llamada (borrar la notificacion)
+  atenderLlamada(mesaKey: string, event?: Event) {
+    if (event) event.stopPropagation();
+    const llamadas = (this.comandasPorMesa[mesaKey] || []).filter((c) => 
+      c.items.some((i: any) => i.id === 'call_waiter')
+    );
+    llamadas.forEach((c) => {
+       this.dataService.deleteComanda(this.barId, c.id);
+    });
   }
 }

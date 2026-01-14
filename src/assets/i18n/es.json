@@ -277,7 +277,9 @@
     "TOTAL_PAID": "Total pagado",
     "REQUEST_PAYMENT": "Solicitar pago",
     "IMAGE_EXPANDED": "Imagen ampliada",
-    "DOWNLOAD_REPORT": "Descargar informe"
+    "DOWNLOAD_REPORT": "Descargar informe",
+    "CALL_WAITER": "Llamar al camarero",
+    "WAITER_CALLED": "Aviso enviado al camarero"
   },
   "QR_GENERATOR": {
     "TITLE": "Generador de Códigos QR",
