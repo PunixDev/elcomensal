@@ -24,6 +24,10 @@
         <ion-label>{{ 'IMPORT_MENU.URL' | translate }}</ion-label>
         <ion-icon name="link"></ion-icon>
       </ion-segment-button>
+      <ion-segment-button value="qr">
+        <ion-label>QR</ion-label>
+        <ion-icon name="qr-code"></ion-icon>
+      </ion-segment-button>
     </ion-segment>
 
     <div *ngIf="mode === 'image'" class="input-section">
@@ -56,6 +60,22 @@
           type="url"
         ></ion-input>
       </ion-item>
+    </div>
+
+    <div *ngIf="mode === 'qr'" class="input-section qr-section">
+      <div class="video-container" *ngIf="isScanning">
+        <video #videoElement playsinline></video>
+        <div class="scan-overlay"></div>
+      </div>
+      <div class="qr-placeholder" *ngIf="!isScanning">
+        <ion-icon name="qr-code-outline"></ion-icon>
+        <p>Escanea el código QR del menú</p>
+      </div>
+      
+      <ion-button expand="block" (click)="toggleScan()" [color]="isScanning ? 'danger' : 'primary'">
+        {{ isScanning ? 'Detener Escaneo' : 'Iniciar Cámara' }}
+        <ion-icon [name]="isScanning ? 'stop-circle' : 'camera'" slot="end"></ion-icon>
+      </ion-button>
     </div>
 
     <div class="actions">

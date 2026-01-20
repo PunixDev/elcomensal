@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import jsQR from 'jsqr';
 import {
   IonContent,
   IonHeader,
@@ -47,13 +48,23 @@ import { DataService, Categoria } from '../data.service';
 export class ImportMenuModalComponent implements OnInit {
   @Input() existingCategories: Categoria[] = [];
   
-  mode: 'image' | 'url' = 'image';
+  // existing properties
+  mode: 'image' | 'url' | 'qr' = 'image';
   selectedImage: string | null = null;
   menuUrl: string = '';
   isProcessing = false;
   statusMessage = '';
   barId: string;
   backendUrl: string;
+
+  // QR properties
+  @ViewChild('videoElement') videoElement: any;
+  video: HTMLVideoElement | null = null;
+  canvas: HTMLCanvasElement | null = null;
+  canvasContext: CanvasRenderingContext2D | null = null;
+  isScanning = false;
+  stream: MediaStream | null = null;
+  animationFrameId: any;
 
   constructor(
     private modalController: ModalController,
@@ -67,15 +78,24 @@ export class ImportMenuModalComponent implements OnInit {
   }
 
   ngOnInit() {}
+  
+  ngOnDestroy() {
+    this.stopScan();
+  }
 
   cancel() {
+    this.stopScan();
     this.modalController.dismiss();
   }
 
   onModeChange() {
     this.statusMessage = '';
+    if (this.mode !== 'qr') {
+      this.stopScan();
+    }
   }
 
+  // --- Image Handling ---
   onImageSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -150,6 +170,88 @@ export class ImportMenuModalComponent implements OnInit {
     });
   }
 
+  // --- QR Scanning ---
+  async toggleScan() {
+    if (this.isScanning) {
+      this.stopScan();
+    } else {
+      await this.startScan();
+    }
+  }
+
+  async startScan() {
+    this.isScanning = true;
+    this.statusMessage = 'Accediendo a la cámara...';
+    
+    // Slight delay to allow DOM to update and videoElement to exist
+    setTimeout(async () => {
+      this.video = this.videoElement?.nativeElement;
+      this.canvas = document.createElement('canvas');
+      this.canvasContext = this.canvas.getContext('2d');
+
+      try {
+        this.stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'environment' } 
+        });
+        if (this.video) {
+            this.video.srcObject = this.stream;
+            this.video.setAttribute('playsinline', 'true'); // required to tell iOS safari we don't want fullscreen
+            await this.video.play();
+            requestAnimationFrame(this.tick.bind(this));
+            this.statusMessage = 'Escaneando...';
+        }
+      } catch (err) {
+        console.error('Error accessing camera:', err);
+        this.statusMessage = 'Error al acceder a la cámara. Verifica los permisos.';
+        this.isScanning = false;
+      }
+    }, 100);
+  }
+
+  tick() {
+    if (this.video && this.video.readyState === this.video.HAVE_ENOUGH_DATA && this.isScanning) {
+        if (!this.canvas) return;
+        
+        this.canvas.height = this.video.videoHeight;
+        this.canvas.width = this.video.videoWidth;
+        this.canvasContext?.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
+        
+        const imageData = this.canvasContext?.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        
+        if (imageData) {
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: 'dontInvert',
+            });
+
+            if (code && code.data && code.data.startsWith('http')) {
+                console.log('Found QR code', code.data);
+                this.stopScan();
+                this.menuUrl = code.data;
+                this.mode = 'url';
+                this.statusMessage = 'Código QR detectado. Listo para importar.';
+                // Optional: Auto process?
+                // this.processMenu();
+                return;
+            }
+        }
+    }
+    if (this.isScanning) {
+        this.animationFrameId = requestAnimationFrame(this.tick.bind(this));
+    }
+  }
+
+  stopScan() {
+    this.isScanning = false;
+    if (this.stream) {
+      this.stream.getTracks().forEach(track => track.stop());
+      this.stream = null;
+    }
+    if (this.animationFrameId) {
+        cancelAnimationFrame(this.animationFrameId);
+    }
+  }
+
+  // --- API Processing ---
   async processMenu() {
     this.isProcessing = true;
     this.statusMessage = 'Enviando menú a la IA...';
@@ -158,13 +260,29 @@ export class ImportMenuModalComponent implements OnInit {
     
     if (this.mode === 'image' && this.selectedImage) {
       payload.image = this.selectedImage;
-    } else if (this.mode === 'url' && this.menuUrl) {
+    } else if ((this.mode === 'url' || this.mode === 'qr') && this.menuUrl) {
       payload.url = this.menuUrl;
     } else {
       this.isProcessing = false;
       return;
     }
-
+    
+    // ... rest of processMenu implementation (unchanged logic, just re-included context if needed or left partial) 
+    // Wait, replace_file_content replaces the BLOCK. I need to make sure I don't lose the existing processMenu logic completely if I don't paste it.
+    // The instructions say "Add QR scanning logic...". I should reconstruct the full file content or target specific blocks carefully.
+    // Given the extensive changes (new methods, property initializations), a larger replacement is safer but I must be careful not to delete processMenu.
+    // I will use START/END lines to target the class body more precisely or include the full method. 
+    
+    // Let's RE-READ the file content and do a targeted replace for the constructor/properties and then ADD the new methods before processMenu.
+    // Actually, I can just replace everything from `export class ... {` down to `processMenu` or similar.
+    // BUT `processMenu` is at line 153.
+    // I will replace from `export class ...` down to `private compressImage` to add properties/imports.
+    // AND then add the new methods.
+    // Maybe better to do it in chunks.
+    
+    // Let's do it in one big chunk replacing from `export class` to end of `compressImage`.
+    // Wait, I need to import jsQR.
+    
     try {
       const response = await fetch(`${this.backendUrl}/parse-menu`, {
         method: 'POST',
