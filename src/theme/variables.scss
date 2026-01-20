@@ -2,21 +2,21 @@
 // http://ionicframework.com/docs/theming/
 
 :root {
-  /* Primary (trust/tech) */
-  --ion-color-primary: #3f88f0;
-  --ion-color-primary-rgb: 46, 127, 240;
+  /* Primary (Deep Blue - Trustworthy & Accessible) */
+  --ion-color-primary: #1d4ed8;
+  --ion-color-primary-rgb: 29, 78, 216;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #4581d4;
-  --ion-color-primary-tint: #609df1;
+  --ion-color-primary-shade: #1a44be;
+  --ion-color-primary-tint: #3460dc;
 
-  /* Secondary (warm accent for CTAs) */
-  --ion-color-secondary: #ffb300;
-  --ion-color-secondary-rgb: 255, 179, 0;
-  --ion-color-secondary-contrast: #1a1a1a;
-  --ion-color-secondary-contrast-rgb: 26, 26, 26;
-  --ion-color-secondary-shade: #e09e00;
-  --ion-color-secondary-tint: #ffbe26;
+  /* Secondary (Amber - Clear Actions) */
+  --ion-color-secondary: #f59e0b;
+  --ion-color-secondary-rgb: 245, 158, 11;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #d88b0a;
+  --ion-color-secondary-tint: #f6a823;
 
   /* Success (kept, slightly deeper) */
   --ion-color-success: #2e7d32;

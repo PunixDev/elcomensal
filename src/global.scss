@@ -385,70 +385,34 @@ ion-content.carta-content {
   }
 }
 
-:root {
-  --ion-color-primary: #e2725b;
-  --ion-color-primary-rgb: 226, 114, 91;
-  --ion-color-primary-contrast: #fff;
-  --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #b95a48;
-  --ion-color-primary-tint: #e98a74;
-}
 
-ion-toolbar[color="primary"],
-.ion-color-primary,
-ion-header,
-ion-toolbar {
-  /* Fix: remove top padding in Ionic Alert input group on Android/Material style */
-  .sc-ion-alert-md .alert-input-group {
-    padding-top: 0 !important;
-  }
 
-  /* If alerts still show extra spacing, also target the internal ion-item wrappers */
-  .sc-ion-alert-md .alert-input-group .alert-interface {
-    padding-top: 0 !important;
-  }
-  --background: #e2725b !important;
-  --color: #fff !important;
-}
-
-ion-title,
-ion-toolbar,
-ion-header,
-ion-label,
-ion-button,
-ion-icon,
-ion-item,
-ion-buttons,
-.home-title,
-.home-subtitle,
-.home-section-content h2,
-.home-section-content p,
-.home-benefits li,
-.home-results li {
-  color: initial !important;
-}
+/* 
+   Removed the aggressive 'color: initial !important' block 
+   that was breaking toolbar accessibility.
+*/
 
 .home-hero-bg {
-  background: linear-gradient(135deg, #e2725b 0%, #fff 100%);
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, #fff 100%);
 }
 
 .home-section,
 .home-section-content {
-  background: #e2725b !important;
-  color: #fff !important;
+  background: var(--ion-color-primary) !important;
+  color: var(--ion-color-primary-contrast) !important;
 }
 
 .home-section-dark {
-  background: #e2725b !important;
-  color: #fff !important;
+  background: var(--ion-color-primary-shade) !important;
+  color: var(--ion-color-primary-contrast) !important;
 }
 
 .home-section-cta {
-  background: linear-gradient(90deg, #e2725b 0%, #fff 100%) !important;
+  background: linear-gradient(90deg, var(--ion-color-primary) 0%, #f9fafb 100%) !important;
 }
 
 .home-section-cta h2 {
-  color: #e2725b !important;
+  color: var(--ion-color-primary) !important;
   background: #fff;
   padding: 0.2em 0.7em;
   border-radius: 8px;
@@ -456,8 +420,8 @@ ion-buttons,
 }
 
 .home-section-cta ion-button {
-  --background: #fff;
-  --color: #e2725b;
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
   font-weight: bold;
   margin-top: 1.2em;
 }
