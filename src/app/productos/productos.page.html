@@ -11,6 +11,12 @@
       ></ion-icon>
       {{ 'PRODUCTS.TITLE' | translate }}
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="abrirImportarModal()">
+        <ion-icon name="sparkles" slot="start"></ion-icon>
+        Importar con IA
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

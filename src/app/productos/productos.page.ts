@@ -30,6 +30,7 @@ import { Observable } from 'rxjs';
 import { CategoryFilterPipe } from './categoryFilter.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { EditProductModalComponent } from '../edit-product-modal/edit-product-modal.component';
+import { ImportMenuModalComponent } from '../import-menu-modal/import-menu-modal.component';
 
 @Component({
   selector: 'app-productos',
@@ -62,6 +63,7 @@ import { EditProductModalComponent } from '../edit-product-modal/edit-product-mo
     CategoryFilterPipe,
     TranslateModule,
     EditProductModalComponent,
+    ImportMenuModalComponent,
   ],
 })
 export class ProductosPage implements OnInit {
@@ -244,6 +246,21 @@ export class ProductosPage implements OnInit {
 
   eliminarOpcion(idx: number) {
     this.nuevasOpciones.splice(idx, 1);
+  }
+
+  async abrirImportarModal() {
+    const modal = await this.modalController.create({
+      component: ImportMenuModalComponent,
+      componentProps: {
+        existingCategories: this.categorias,
+      },
+    });
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data && data.imported) {
+      // Refresh or show success message if needed, though observables should update automatically
+    }
   }
 
   getNombreCategoria(cat: Categoria | undefined): string {

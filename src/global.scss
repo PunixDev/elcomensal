@@ -524,3 +524,19 @@ ion-popover.language-popover {
   50% { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
+
+/* Estilos del botón flotante para llamar al camarero */
+.fab-llamar-camarero {
+  margin-bottom: 6em;
+  margin-right: 0.5em;
+}
+
+.fab-button-camarero {
+  --background: #FFD700 !important;
+}
+
+.icon-camarero {
+  /* Usamos !important para anular el 'color: initial !important' de la línea 428 */
+  --color: #1268be !important;
+  color: #1268be !important;
+}

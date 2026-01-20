@@ -381,5 +381,14 @@
       "SATURDAY": "Sáb",
       "SUNDAY": "Dom"
     }
+  },
+  "IMPORT_MENU": {
+    "TITLE": "Importar Menú con IA",
+    "DESCRIPTION": "Carga automáticamente tus productos subiendo una foto de tu carta o proporcionando una URL.",
+    "IMAGE": "Imagen",
+    "URL": "URL",
+    "UPLOAD_INSTRUCTION": "Haz clic o arrastra una imagen aquí",
+    "URL_LABEL": "URL del Menú (PDF o Web)",
+    "PROCESS_BUTTON": "Procesar con IA"
   }
 }

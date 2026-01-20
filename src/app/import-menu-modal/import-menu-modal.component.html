@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ 'IMPORT_MENU.TITLE' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="import-container">
+    <p class="description">
+      {{ 'IMPORT_MENU.DESCRIPTION' | translate }}
+    </p>
+
+    <ion-segment [(ngModel)]="mode" (ionChange)="onModeChange()">
+      <ion-segment-button value="image">
+        <ion-label>{{ 'IMPORT_MENU.IMAGE' | translate }}</ion-label>
+        <ion-icon name="image"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button value="url">
+        <ion-label>{{ 'IMPORT_MENU.URL' | translate }}</ion-label>
+        <ion-icon name="link"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+
+    <div *ngIf="mode === 'image'" class="input-section">
+      <div
+        class="image-drop-zone"
+        (click)="fileInput.click()"
+        [class.has-image]="!!selectedImage"
+      >
+        <div *ngIf="!selectedImage" class="placeholder">
+          <ion-icon name="cloud-upload-outline"></ion-icon>
+          <p>{{ 'IMPORT_MENU.UPLOAD_INSTRUCTION' | translate }}</p>
+        </div>
+        <img *ngIf="selectedImage" [src]="selectedImage" alt="Menu Preview" />
+      </div>
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        (change)="onImageSelected($event)"
+        hidden
+      />
+    </div>
+
+    <div *ngIf="mode === 'url'" class="input-section">
+      <ion-item>
+        <ion-label position="stacked">{{ 'IMPORT_MENU.URL_LABEL' | translate }}</ion-label>
+        <ion-input
+          [(ngModel)]="menuUrl"
+          placeholder="https://example.com/menu.pdf"
+          type="url"
+        ></ion-input>
+      </ion-item>
+    </div>
+
+    <div class="actions">
+      <ion-button
+        expand="block"
+        (click)="processMenu()"
+        [disabled]="isProcessing || (!selectedImage && !menuUrl)"
+      >
+        <span *ngIf="!isProcessing">{{ 'IMPORT_MENU.PROCESS_BUTTON' | translate }}</span>
+        <ion-spinner *ngIf="isProcessing" name="crescent"></ion-spinner>
+      </ion-button>
+    </div>
+
+    <div *ngIf="statusMessage" class="status-message">
+      <p>{{ statusMessage }}</p>
+    </div>
+  </div>
+</ion-content>
