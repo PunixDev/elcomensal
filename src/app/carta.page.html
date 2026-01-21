@@ -156,12 +156,20 @@
         >
           <div class="producto-flex-row">
             <!-- Imagen con aspecto 16:9 o similar -->
-            <div
-              class="producto-img-container"
-              *ngIf="prod.imagen"
-              (click)="abrirImagenAmpliada(prod.imagen)"
-            >
-              <img [src]="prod.imagen" [alt]="prod.nombre" loading="lazy" />
+            <div class="producto-img-container">
+              <img 
+                *ngIf="prod.imagen" 
+                [src]="prod.imagen" 
+                [alt]="prod.nombre" 
+                loading="lazy" 
+                (click)="abrirImagenAmpliada(prod.imagen)"
+              />
+              <div *ngIf="!prod.imagen" class="no-img-placeholder">
+                <ion-icon name="restaurant-outline"></ion-icon>
+              </div>
+              <div *ngIf="prod.agotado" class="badge-agotado">
+                {{ 'MENU.OUT_OF_STOCK' | translate | uppercase }}
+              </div>
             </div>
 
             <div class="producto-info">
@@ -228,9 +236,6 @@
                 >
                   <ion-icon name="add-circle" style="font-size: 32px"></ion-icon>
                 </ion-button>
-                <div *ngIf="prod.agotado" class="badge-agotado">
-                  AGOTADO
-                </div>
               </div>
             </div>
           </div>

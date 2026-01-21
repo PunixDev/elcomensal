@@ -279,7 +279,8 @@
     "IMAGE_EXPANDED": "Imagen ampliada",
     "DOWNLOAD_REPORT": "Descargar informe",
     "CALL_WAITER": "Llamar al camarero",
-    "WAITER_CALLED": "Aviso enviado al camarero"
+    "WAITER_CALLED": "Aviso enviado al camarero",
+    "OUT_OF_STOCK": "Agotado"
   },
   "QR_GENERATOR": {
     "TITLE": "Generador de Códigos QR",

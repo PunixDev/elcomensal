@@ -1,157 +1,110 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Informe de mesa - Mesa {{ mesaActual }}</ion-title>
+<ion-header mode="md" class="ion-no-border">
+  <ion-toolbar>
+    <ion-title style="font-weight: 800">Mesa {{ mesaActual }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="marcarMesaPagada()" color="warning">
-        <ion-icon name="checkmark-done-outline"></ion-icon>
+      <ion-button (click)="marcarMesaPagada()" color="success" fill="solid" style="--border-radius: 10px; margin-right: 8px;">
+        <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+        PAGADA
       </ion-button>
       <ion-button (click)="cerrar()">
-        <ion-icon name="close"></ion-icon>
+        <ion-icon name="close-circle" size="large" color="medium"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Resumen de pedidos</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div id="informe-mesa">
-        <div
-          style="
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin-bottom: 1em;
-          "
-          class="no-print"
-        >
-          <ion-button color="primary" (click)="imprimirInformeMesa()">
-            <ion-icon name="print" slot="start"></ion-icon>
-            Imprimir comanda
-          </ion-button>
-          <ion-button color="tertiary" (click)="imprimirTotal()">
-            <ion-icon name="receipt-outline" slot="start"></ion-icon>
-            Imprimir Total
-          </ion-button>
-          <ion-button color="secondary" (click)="hacerCalculoPorSeparado()">
-            <ion-icon name="calculator-outline" slot="start"></ion-icon>
-            Hacer cálculo por separado
-          </ion-button>
+<ion-content class="carta-content">
+  <div class="main-container">
+    
+    <!-- Action Bar -->
+    <div class="action-bar-modal no-print">
+      <ion-button fill="soft" color="primary" (click)="imprimirInformeMesa()" size="small">
+        <ion-icon name="print-outline" slot="start"></ion-icon>
+        Cocina
+      </ion-button>
+      <ion-button fill="soft" color="tertiary" (click)="imprimirTotal()" size="small">
+        <ion-icon name="receipt-outline" slot="start"></ion-icon>
+        Ticket
+      </ion-button>
+      <ion-button fill="soft" color="secondary" (click)="hacerCalculoPorSeparado()" size="small">
+        <ion-icon name="calculator-outline" slot="start"></ion-icon>
+        Dividir
+      </ion-button>
+    </div>
+
+    <!-- Informe List -->
+    <div class="resumen-lista" *ngIf="informeMesa && informeMesa.length">
+      <div *ngFor="let comanda of informeMesa" class="comanda-group">
+        <div class="comanda-header-modal">
+          <span class="fecha">{{ comanda?.fecha | date : "HH:mm" }}</span>
+          <ion-badge [color]="comanda.estado === 'preparado' ? 'success' : (comanda.estado === 'preparando' ? 'warning' : 'medium')">
+            {{ comanda.estado === 'preparado' ? 'Preparado' : (comanda.estado === 'preparando' ? 'En preparación' : 'Recibido') }}
+          </ion-badge>
         </div>
-        <ion-list *ngIf="informeMesa && informeMesa.length">
-          <ion-item *ngFor="let comanda of informeMesa">
-            <ion-label>
-              <strong>Fecha:</strong> {{ comanda?.fecha | date : "short"
-              }}<br />
-              <ul>
-                <li *ngFor="let item of comanda?.items">
-                  {{ item?.nombre }} x{{ item?.cantidad }}
-                  <span *ngIf="item?.opciones?.length">
-                    - Opciones: {{ item.opciones.join(", ") }}</span
-                  >
-                  <span
-                    style="
-                      margin-left: 10px;
-                      color: var(--ion-color-success);
-                      font-weight: bold;
-                    "
-                  >
-                    {{
-                      (getPrecioProducto ? getPrecioProducto(item?.id) : 0) *
-                        item?.cantidad | number : "1.2-2"
-                    }}
-                    €
-                  </span>
-                </li>
-              </ul>
-              <div *ngIf="comanda?.observaciones" style="margin-top: 0.5em">
-                <strong>Observaciones:</strong>
-                {{ comanda?.observaciones }}
-              </div>
-            </ion-label>
-            <div style="display: flex; gap: 8px; margin-left: 8px; align-items: center">
-              <ion-button
-                color="warning"
-                size="small"
-                (click)="aplicarEstado(comanda, 'preparando')"
-                *ngIf="
-                  comanda.estado !== 'preparando' &&
-                  comanda.estado !== 'preparado' &&
-                  comanda.estado !== 'pago_pendiente'
-                "
-                >Marcar En preparación</ion-button
-              >
-              <div
-                *ngIf="comanda.estado === 'preparando'"
-                style="display: flex; gap: 4px; align-items: center"
-              >
-                <ion-button
-                  color="success"
-                  size="small"
-                  (click)="aplicarEstado(comanda, 'preparado')"
-                  >Marcar Preparado</ion-button
-                >
-                <ion-button
-                  color="medium"
-                  fill="clear"
-                  size="small"
-                  (click)="aplicarEstado(comanda, '')"
-                  title="Volver a Recibido"
-                >
-                  <ion-icon name="arrow-undo-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-              </div>
-              <div
-                *ngIf="comanda.estado === 'preparado'"
-                style="display: flex; gap: 4px; align-items: center"
-              >
-                <ion-badge color="success">Preparado</ion-badge>
-                <ion-button
-                  color="medium"
-                  fill="clear"
-                  size="small"
-                  (click)="aplicarEstado(comanda, 'preparando')"
-                  title="Volver a En preparación"
-                >
-                  <ion-icon name="arrow-undo-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-              </div>
+
+        <div *ngFor="let item of comanda?.items" class="resumen-item">
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <span class="item-name">{{ item?.nombre }} <small>x{{ item?.cantidad }}</small></span>
+            <div *ngIf="item?.opciones?.length" class="item-options">
+              {{ item.opciones.join(", ") }}
             </div>
-          </ion-item>
-        </ion-list>
-        <div
-          *ngIf="informeMesa && informeMesa.length"
-          style="margin-top: 1.5em; text-align: right"
-        >
+          </div>
+          <span class="item-price">
+            {{ (getPrecioProducto ? getPrecioProducto(item?.id) : 0) * item?.cantidad | currency:'EUR':'symbol':'1.2-2' }}
+          </span>
+        </div>
+
+        <div *ngIf="comanda?.observaciones" class="comanda-obs">
+          <ion-icon name="chatbubble-outline" slot="start"></ion-icon>
+          <span>{{ comanda?.observaciones }}</span>
+        </div>
+
+        <div class="comanda-actions no-print">
           <ion-button
-            color="success"
-            style="
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-              min-width: 220px;
-              height: 44px;
-              padding: 0.5rem;
-              text-align: center;
-            "
+            color="warning"
+            size="small"
+            fill="outline"
+            (click)="aplicarEstado(comanda, 'preparando')"
+            *ngIf="comanda.estado !== 'preparando' && comanda.estado !== 'preparado' && comanda.estado !== 'pago_pendiente'"
           >
-            <div style="line-height: 1">
-              <div style="font-size: 0.85em; font-weight: 600; color: white">
-                Suma total del pedido:
-              </div>
-              <div style="font-size: 1.1em; font-weight: 700; color: white">
-                {{ informeTotal | number : "1.2-2" }} €
-              </div>
-            </div>
+            Preparar
           </ion-button>
-        </div>
-        <div *ngIf="informeMesa && !informeMesa.length" style="margin: 1em 0">
-          No hay pedidos para esta mesa.
+          
+          <ng-container *ngIf="comanda.estado === 'preparando'">
+            <ion-button color="success" size="small" (click)="aplicarEstado(comanda, 'preparado')">
+              Listo
+            </ion-button>
+            <ion-button color="medium" fill="clear" size="small" (click)="aplicarEstado(comanda, '')">
+              <ion-icon name="arrow-undo-outline"></ion-icon>
+            </ion-button>
+          </ng-container>
+
+          <ion-button
+            color="medium"
+            fill="clear"
+            size="small"
+            (click)="aplicarEstado(comanda, 'preparando')"
+            *ngIf="comanda.estado === 'preparado'"
+          >
+            <ion-icon name="arrow-undo-outline" slot="start"></ion-icon>
+            Volver
+          </ion-button>
         </div>
       </div>
-    </ion-card-content>
-  </ion-card>
+    </div>
+
+    <div *ngIf="informeMesa && !informeMesa.length" class="empty-state-modal">
+      <ion-icon name="receipt-outline"></ion-icon>
+      <p>No hay pedidos para esta mesa.</p>
+    </div>
+
+  </div>
 </ion-content>
+
+<!-- Total Footer -->
+<div class="modal-footer-sticky no-print" *ngIf="informeMesa && informeMesa.length">
+  <div class="total-container">
+    <span class="total-label">Suma total:</span>
+    <span class="total-amount">{{ informeTotal | currency:'EUR':'symbol':'1.2-2' }}</span>
+  </div>
+</div>

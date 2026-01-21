@@ -271,7 +271,8 @@
     "TOTAL_PAID": "Totale pagato",
     "REQUEST_PAYMENT": "Richiedi pagamento",
     "IMAGE_EXPANDED": "Immagine ingrandita",
-    "DOWNLOAD_REPORT": "Scarica il rapporto"
+    "DOWNLOAD_REPORT": "Scarica il rapporto",
+    "OUT_OF_STOCK": "Esaurito"
   },
   "QR_GENERATOR": {
     "TITLE": "Generatore Codici QR",

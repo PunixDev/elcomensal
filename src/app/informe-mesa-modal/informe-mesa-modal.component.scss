@@ -1,22 +1,144 @@
-/* Styles for informe mesa modal */
+@import "../../global.scss";
+
+.action-bar-modal {
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  background: white;
+  
+  ion-button {
+    --border-radius: 12px;
+    font-weight: 600;
+  }
+}
+
+.comanda-group {
+  background: white;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.03);
+  padding: 1rem;
+}
+
+.comanda-header-modal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed #e2e8f0;
+
+  .fecha {
+    font-weight: 800;
+    color: var(--text-muted);
+    font-size: 0.9em;
+  }
+}
+
+.item-name {
+  font-weight: 700;
+  color: var(--text-main);
+  
+  small {
+    color: var(--accent-color);
+    margin-left: 4px;
+    font-size: 0.9em;
+  }
+}
+
+.item-options {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.item-price {
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.comanda-obs {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #fffbeb;
+  border-radius: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  color: #92400e;
+  font-size: 0.9em;
+  
+  ion-icon {
+    font-size: 1.2em;
+  }
+}
+
+.comanda-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.modal-footer-sticky {
+  position: sticky;
+  bottom: 0px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--glass-border);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+  z-index: 10;
+}
+
+.total-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-label {
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.total-amount {
+  font-size: 1.5em;
+  font-weight: 900;
+  color: var(--text-main);
+}
+
+.empty-state-modal {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+  
+  ion-icon {
+    font-size: 4em;
+    opacity: 0.1;
+  }
+  
+  p {
+    margin-top: 1rem;
+    font-weight: 500;
+  }
+}
+
 .no-print {
   display: block;
 }
-.preview-img {
-  max-width: 100%;
-}
 
-.round-checkbox {
-  --size: 20px;
-  --border-radius: 50%;
-  --handle-box-shadow: none;
-  --background-checked: var(--ion-color-primary, #3880ff);
-  width: var(--size);
-  height: var(--size);
-}
-
-/* Ensure checkbox aligns visually with list content */
-ion-item .round-checkbox {
-  margin-left: 0.25rem;
-  margin-right: 0.5rem;
+@media print {
+  .no-print {
+    display: none !important;
+  }
 }

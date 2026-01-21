@@ -279,7 +279,8 @@
     "IMAGE_EXPANDED": "Expanded image",
     "DOWNLOAD_REPORT": "Download report",
     "CALL_WAITER": "Call waiter",
-    "WAITER_CALLED": "Waiter called"
+    "WAITER_CALLED": "Waiter called",
+    "OUT_OF_STOCK": "Out of stock"
   },
   "QR_GENERATOR": {
     "TITLE": "QR Code Generator",

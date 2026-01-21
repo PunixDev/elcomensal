@@ -304,7 +304,8 @@
     "TOTAL_PAID": "Gesamt bezahlt",
     "REQUEST_PAYMENT": "Zahlung anfordern",
     "IMAGE_EXPANDED": "Vergrößertes Bild",
-    "DOWNLOAD_REPORT": "Bericht herunterladen"
+    "DOWNLOAD_REPORT": "Bericht herunterladen",
+    "OUT_OF_STOCK": "Ausverkauft"
   },
   "CATEGORIES": {
     "TITLE": "Kategorienverwaltung",
