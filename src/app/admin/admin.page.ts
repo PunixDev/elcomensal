@@ -498,6 +498,16 @@ export class AdminPage implements OnInit {
   badgeColor(mesa: { key: string; value: any[] }) {
     const v = mesa.value || [];
     if (v.some((c) => c.estado === 'pago_pendiente')) return 'danger';
+    // Prioridad para "Recibido": si hay alguna comanda que no esté ni preparando ni preparada
+    if (
+      v.some(
+        (c) =>
+          c.estado !== 'preparando' &&
+          c.estado !== 'preparado' &&
+          c.estado !== 'pago_pendiente'
+      )
+    )
+      return 'medium';
     if (v.some((c) => c.estado === 'preparando')) return 'warning';
     if (v.every((c) => c.estado === 'preparado')) return 'success';
     return 'medium';
@@ -506,6 +516,16 @@ export class AdminPage implements OnInit {
   badgeLabel(mesa: { key: string; value: any[] }) {
     const v = mesa.value || [];
     if (v.some((c) => c.estado === 'pago_pendiente')) return 'Pago pendiente';
+    // Prioridad para "Recibido"
+    if (
+      v.some(
+        (c) =>
+          c.estado !== 'preparando' &&
+          c.estado !== 'preparado' &&
+          c.estado !== 'pago_pendiente'
+      )
+    )
+      return 'Recibido';
     if (v.some((c) => c.estado === 'preparando')) return 'En preparación';
     if (v.every((c) => c.estado === 'preparado')) return 'Preparado';
     return 'Recibido';

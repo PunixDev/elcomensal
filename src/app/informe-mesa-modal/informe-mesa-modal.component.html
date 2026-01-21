@@ -36,28 +36,9 @@
             <ion-icon name="calculator-outline" slot="start"></ion-icon>
             Hacer cálculo por separado
           </ion-button>
-          <ion-button
-            color="tertiary"
-            [disabled]="!anySeleccionada()"
-            (click)="imprimirSeleccionados()"
-          >
-            <ion-icon name="print" slot="start"></ion-icon>
-            Imprimir seleccionados
-          </ion-button>
         </div>
         <ion-list *ngIf="informeMesa && informeMesa.length">
           <ion-item *ngFor="let comanda of informeMesa">
-            <ion-checkbox
-              *ngIf="
-                comanda &&
-                comanda.estado !== 'preparado' &&
-                comanda.estado !== 'pago_pendiente'
-              "
-              [(ngModel)]="selectedComandas[comanda.id]"
-              (ionChange)="toggleSeleccionada(comanda, $event.detail.checked)"
-              class="round-checkbox"
-              slot="start"
-            ></ion-checkbox>
             <ion-label>
               <strong>Fecha:</strong> {{ comanda?.fecha | date : "short"
               }}<br />

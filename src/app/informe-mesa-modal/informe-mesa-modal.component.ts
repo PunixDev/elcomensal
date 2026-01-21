@@ -62,77 +62,67 @@ export class InformeMesaModalComponent {
 
   constructor(private modalController: ModalController) {}
 
-  // Track selected comandas by id
-  selectedComandas: { [id: string]: boolean } = {};
-
-  toggleSeleccionada(comanda: any, checked: boolean) {
-    if (!comanda || !comanda.id) return;
-    this.selectedComandas[comanda.id] = !!checked;
-  }
-
-  anySeleccionada(): boolean {
-    return Object.values(this.selectedComandas).some(Boolean);
-  }
-
-  imprimirSeleccionados() {
-    const seleccionadas = (this.informeMesa || []).filter(
-      (c: any) => c && c.id && this.selectedComandas[c.id]
-    );
-    if (!seleccionadas.length)
-      return alert('No hay comandas seleccionadas para imprimir.');
-
-    // Construir contenido para imprimir solo las comandas seleccionadas
-    let contenido = `<div>`;
-    contenido += `<h2>Informe de mesa ${this.mesaActual}</h2>`;
-    seleccionadas.forEach((comanda: any, idx: number) => {
-      contenido += `<h3>Comanda #${idx + 1} - Fecha: ${new Date(
-        comanda.fecha
-      ).toLocaleString()}</h3>`;
-      contenido += `<ul>`;
-      (comanda.items || []).forEach((item: any) => {
-        const precio = this.getPrecioProducto
-          ? this.getPrecioProducto(item.id)
-          : 0;
-        contenido += `<li>${item.nombre} x${item.cantidad}`;
-        if (item.opciones && item.opciones.length)
-          contenido += ` (Opciones: ${item.opciones.join(', ')})`;
-        contenido += ` - ${(precio * item.cantidad).toFixed(2)} EUR`;
-        contenido += `</li>`;
-      });
-      contenido += `</ul>`;
-      if (comanda.observaciones)
-        contenido += `<div><strong>Observaciones:</strong> ${comanda.observaciones}</div>`;
-      contenido += `<hr/>`;
-    });
-    contenido += `</div>`;
-
-    const w = window.open('', '_blank');
-    if (!w) return;
-    w.document.write(
-      `<!doctype html><html><head><title>Informe seleccionado</title></head><body>${contenido}</body></html>`
-    );
-    w.document.close();
-    w.focus();
-    w.print();
-    w.close();
-  }
-
   cerrar() {
     this.modalController.dismiss(null, 'close');
   }
 
   imprimirInformeMesa() {
-    const contenido = document.getElementById('informe-mesa')?.innerHTML;
-    if (!contenido) return;
+    if (!this.informeMesa || !this.informeMesa.length) return;
+
+    // Filtrar solo las que están en estado "Recibido" (las que muestran el botón "Marcar En preparación")
+    const aImprimir = this.informeMesa.filter(
+      (comanda) =>
+        comanda.estado !== 'preparando' &&
+        comanda.estado !== 'preparado' &&
+        comanda.estado !== 'pago_pendiente'
+    );
+
+    if (aImprimir.length === 0) {
+      alert('No hay nuevos pedidos pendientes de impresión.');
+      return;
+    }
+
+    // Construir contenido para imprimir
+    let contenido = `<div style="font-family: Arial, sans-serif; max-width: 300px; margin: 0 auto;">`;
+    contenido += `<h2 style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 5px;">MESA ${this.mesaActual}</h2>`;
+    
+    aImprimir.forEach((comanda: any, idx: number) => {
+      contenido += `<div style="margin-bottom: 15px;">`;
+      contenido += `<div style="font-size: 0.8em; color: #666;">Fecha: ${new Date(comanda.fecha).toLocaleString()}</div>`;
+      contenido += `<ul style="list-style: none; padding: 0; margin: 5px 0;">`;
+      
+      (comanda.items || []).forEach((item: any) => {
+        contenido += `<li style="font-size: 1.1em; margin-bottom: 3px;"><strong>${item.cantidad}x</strong> ${item.nombre}</li>`;
+        if (item.opciones && item.opciones.length) {
+          contenido += `<li style="font-size: 0.9em; padding-left: 20px; color: #333;">- ${item.opciones.join(', ')}</li>`;
+        }
+      });
+      
+      contenido += `</ul>`;
+      if (comanda.observaciones) {
+        contenido += `<div style="font-size: 0.9em; background: #eee; padding: 5px;"><strong>OBS:</strong> ${comanda.observaciones}</div>`;
+      }
+      contenido += `</div>`;
+      contenido += `<hr style="border: 0; border-top: 1px dashed #000;" />`;
+    });
+    
+    contenido += `<div style="text-align: center; margin-top: 10px; font-weight: bold;">*** FIN TICKET ***</div>`;
+    contenido += `</div>`;
+
     const w = window.open('', '_blank');
     if (!w) return;
     w.document.write(
-      `<!doctype html><html><head><title>Informe</title></head><body>${contenido}</body></html>`
+      `<!doctype html><html><head><title>Cocina - Mesa ${this.mesaActual}</title></head><body>${contenido}</body></html>`
     );
     w.document.close();
     w.focus();
     w.print();
     w.close();
+
+    // Actualizar estados automáticamente al imprimir
+    aImprimir.forEach((comanda) => {
+      this.aplicarEstado(comanda, 'preparando');
+    });
   }
 
   async descargarInformeMesa() {
