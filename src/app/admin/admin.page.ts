@@ -27,6 +27,7 @@ import {
   IonSpinner,
   PopoverController,
   AlertController,
+  MenuController,
 } from '@ionic/angular/standalone';
 import { ModalController } from '@ionic/angular/standalone';
 import { InformeMesaModalComponent } from '../informe-mesa-modal/informe-mesa-modal.component';
@@ -147,12 +148,17 @@ export class AdminPage implements OnInit {
     private languageService: LanguageService,
     private popoverController: PopoverController,
     private alertController: AlertController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private menuController: MenuController
   ) {
     this.barId = this.dataService.getBarId();
     this.comandas$ = this.dataService.getComandas(this.barId);
     this.productos$ = this.dataService.getProductos(this.barId);
     this.usuarios$ = this.dataService.getUsuarios(this.barId);
+  }
+
+  toggleMenu() {
+    this.menuController.toggle();
   }
 
   ngOnInit() {

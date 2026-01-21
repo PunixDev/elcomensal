@@ -75,7 +75,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar style="padding: 0; position: relative">
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-button (click)="toggleMenu()" fill="clear" style="font-weight: bold; --color: inherit;">
+        <ion-icon name="menu" slot="start"></ion-icon>
+        {{ 'ADMIN.TITLE' | translate }}
+      </ion-button>
     </ion-buttons>
     <ion-title>
       <ion-icon
