@@ -16,7 +16,6 @@ import {
   IonItem,
   IonLabel,
   IonIcon,
-  IonCheckbox,
   ModalController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
@@ -43,7 +42,6 @@ import { TranslateModule } from '@ngx-translate/core';
     IonIcon,
     CommonModule,
     FormsModule,
-    IonCheckbox,
     TranslateModule,
   ],
 })

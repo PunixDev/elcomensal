@@ -1,17 +1,12 @@
-<ion-header [translucent]="true">
-  <ion-toolbar
-    [style.background]="cabeceraImagen ? 'none' : ''"
-    [style.padding]="0"
-    [style.position]="'relative'"
-  >
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar color="light">
     <ion-title>
-      <ion-icon
-        name="restaurant"
-        slot="start"
-        style="margin-right: 8px"
-        aria-hidden="true"
-      ></ion-icon>
-      {{ 'MENU.TITLE' | translate }}
+      <div style="display: flex; align-items: center; gap: 8px">
+        <ion-icon name="restaurant" color="primary"></ion-icon>
+        <span style="font-weight: 800; letter-spacing: -0.5px">
+          {{ restauranteNombre || ('MENU.TITLE' | translate) }}
+        </span>
+      </div>
     </ion-title>
     <ion-buttons slot="end">
       <ion-button
@@ -27,280 +22,263 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="carta-content">
-  <div class="categorias-scroll">
-    <button
-      *ngFor="let cat of categorias"
-      (click)="seleccionarCategoria(cat.id)"
-      [class.selected]="categoriaSeleccionada === cat.id"
-      class="categoria-btn"
-    >
-      {{ getNombreCategoria(cat) }}
-    </button>
+  <!-- Hero Section -->
+  <div class="menu-hero" *ngIf="cabeceraImagen">
+    <img [src]="cabeceraImagen" class="menu-hero-img" alt="Restaurant Header" />
+    <div class="menu-hero-overlay">
+      <h1 class="menu-hero-title">{{ restauranteNombre }}</h1>
+    </div>
   </div>
 
-  <!-- Historial de pedidos: MOVIDO ARRIBA -->
-  <div *ngIf="mesa && historialComandasMesa.length" class="historial-bar">
-    <ion-item
-      button
-      detail
-      lines="none"
-      (click)="mostrarHistorial = !mostrarHistorial"
-    >
-      <ion-icon
-        name="chevron-down"
-        slot="start"
-        *ngIf="!mostrarHistorial"
-      ></ion-icon>
-      <ion-icon
-        name="chevron-up"
-        slot="start"
-        *ngIf="mostrarHistorial"
-      ></ion-icon>
-      <ion-label class="historial-titulo"
-        >{{ 'MENU.ORDER_HISTORY' | translate }}</ion-label
+  <!-- Categories Sticky Selection -->
+  <div class="categorias-wrapper">
+    <div class="categorias-scroll">
+      <button
+        *ngFor="let cat of categorias"
+        (click)="seleccionarCategoria(cat.id)"
+        [class.selected]="categoriaSeleccionada === cat.id"
+        class="categoria-btn"
       >
-      <span
-        *ngIf="!mostrarHistorial"
-        style="
-          margin-left: auto;
-          font-weight: 700;
-          color: #0070f3;
-          font-size: 1.08em;
-        "
+        {{ getNombreCategoria(cat) }}
+      </button>
+    </div>
+  </div>
+
+  <div class="main-container" style="padding-bottom: 40px">
+    <!-- Historial de pedidos -->
+    <div *ngIf="mesa && historialComandasMesa.length" class="historial-bar">
+      <ion-item
+        button
+        detail="false"
+        lines="none"
+        (click)="mostrarHistorial = !mostrarHistorial"
+        style="--padding-start: 1rem"
       >
-        {{getTotalHistorialMesa() | currency:'EUR':'symbol':'1.2-2'}}
-      </span>
-    </ion-item>
-    <div *ngIf="mostrarHistorial">
-      <div class="historial-lista">
-        <div
-          *ngFor="let comanda of historialComandasMesa"
-          class="historial-item"
+        <ion-icon
+          [name]="mostrarHistorial ? 'chevron-up' : 'chevron-down'"
+          slot="start"
+          color="primary"
+        ></ion-icon>
+        <ion-label>
+          <h2 style="font-weight: 700; margin: 0">
+            {{ 'MENU.ORDER_HISTORY' | translate }}
+          </h2>
+        </ion-label>
+        <ion-badge
+          slot="end"
+          color="primary"
+          *ngIf="!mostrarHistorial"
+          style="padding: 6px 10px; border-radius: 8px"
         >
-          <div class="historial-fecha">{{comanda.fecha | date:'short'}}</div>
-          <div class="historial-estado">
-            <ion-icon
-              name="checkmark-circle"
-              *ngIf="comanda.estado === 'preparado'"
-              color="success"
-            ></ion-icon>
-            <ion-icon
-              name="time"
-              *ngIf="comanda.estado === 'preparando'"
-              color="warning"
-            ></ion-icon>
-            <ion-icon
-              name="ellipse"
-              *ngIf="comanda.estado !== 'preparado' && comanda.estado !== 'preparando'"
-              color="medium"
-            ></ion-icon>
-            <!-- Icono lápiz: se muestra solo si el estado es STATUS_RECEIVED -->
-            <ion-icon
-              name="pencil"
-              *ngIf="comanda.estado === 'pendiente' || comanda.estado === 'STATUS_RECEIVED'"
-              color="primary"
-              style="margin-left: 0.5em; cursor: pointer"
-              aria-hidden="true"
-              (click)="editarComanda(comanda); $event.stopPropagation()"
-              role="button"
-              tabindex="0"
-            ></ion-icon>
-            <span>
-              {{ comanda.estado === 'preparado' ? ('MENU.STATUS_PREPARED' |
-              translate) : (comanda.estado === 'preparando' ?
-              ('MENU.STATUS_PREPARING' | translate) : ('MENU.STATUS_RECEIVED' |
-              translate)) }}
-            </span>
+          {{getTotalHistorialMesa() | currency:'EUR':'symbol':'1.2-2'}}
+        </ion-badge>
+      </ion-item>
+
+      <div *ngIf="mostrarHistorial" style="padding: 0 1rem 1rem">
+        <div class="historial-lista">
+          <div
+            *ngFor="let comanda of historialComandasMesa"
+            class="historial-item"
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+              "
+            >
+              <span class="historial-fecha">{{comanda.fecha | date:'shortTime'}}</span>
+              <div class="historial-estado">
+                <ion-badge [color]="comanda.estado === 'preparado' ? 'success' : (comanda.estado === 'preparando' ? 'warning' : 'medium')">
+                  {{ comanda.estado === 'preparado' ? ('MENU.STATUS_PREPARED' | translate) : (comanda.estado === 'preparando' ? ('MENU.STATUS_PREPARING' | translate) : ('MENU.STATUS_RECEIVED' | translate)) }}
+                </ion-badge>
+                <ion-button
+                  fill="clear"
+                  size="small"
+                  *ngIf="comanda.estado === 'pendiente' || comanda.estado === 'STATUS_RECEIVED'"
+                  (click)="editarComanda(comanda); $event.stopPropagation()"
+                >
+                  <ion-icon name="pencil" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+            <ul class="historial-pedido" style="list-style: none; padding-left: 0; margin: 0">
+              <li *ngFor="let item of comanda.items" style="font-size: 0.9em; margin-bottom: 4px; color: var(--text-main)">
+                <span style="font-weight: 600">x{{ item.cantidad }}</span> {{ getNombreItemParaMostrar(item) }}
+                <div *ngIf="getOpcionesItemParaMostrar(item).length" style="font-size: 0.85em; color: var(--text-muted); margin-left: 1.5em">
+                  {{ getOpcionesItemParaMostrar(item).join(', ') }}
+                </div>
+              </li>
+            </ul>
           </div>
-          <ul class="historial-pedido">
-            <li *ngFor="let item of comanda.items">
-              {{ getNombreItemParaMostrar(item) }} x{{ item.cantidad }}
-              <span *ngIf="getOpcionesItemParaMostrar(item).length"
-                >- {{ 'MENU.OPTIONS' | translate }}: {{
-                getOpcionesItemParaMostrar(item).join(', ') }}</span
-              >
-            </li>
-          </ul>
+        </div>
+        <div
+          style="
+            text-align: right;
+            border-top: 1px solid #f1f5f9;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+          "
+        >
+          <span style="font-weight: 800; font-size: 1.1em">
+            {{ 'MENU.TOTAL_PAID' | translate }}: {{getTotalHistorialMesa() | currency:'EUR':'symbol':'1.2-2'}}
+          </span>
         </div>
       </div>
-      <div class="historial-total">
-        <span>
-          {{ 'MENU.TOTAL_PAID' | translate }}: {{getTotalHistorialMesa() |
-          currency:'EUR':'symbol':'1.2-2'}}
-        </span>
+
+      <!-- Botón Solicitar Pago -->
+      <div
+        *ngIf="mesa && historialComandasMesa.length && !pagoSolicitado"
+        style="padding: 0 1rem 1rem"
+      >
+        <ion-button
+          expand="block"
+          color="warning"
+          (click)="solicitarPago()"
+          style="--border-radius: 12px; font-weight: 700; height: 48px"
+        >
+          <ion-icon name="cash-outline" slot="start"></ion-icon>
+          {{ 'MENU.REQUEST_PAYMENT' | translate }}
+        </ion-button>
       </div>
     </div>
-    <!-- Botón Solicitar Pago debajo de historial -->
-    <div
-      *ngIf="mesa && historialComandasMesa.length && !pagoSolicitado"
-      class="solicitar-pago-bar"
-      style="margin-top: 1em"
-    >
-      <ion-button expand="block" color="warning" (click)="solicitarPago()">
-        <ion-icon name="cash-outline" slot="start"></ion-icon>
-        {{ 'MENU.REQUEST_PAYMENT' | translate }}
-      </ion-button>
-    </div>
-  </div>
 
-  <div class="categoria-titulo" *ngIf="categoriaSeleccionada">
-    <h2>{{ getNombreCategoria(getCategoriaSeleccionada()) }}</h2>
-  </div>
-
-  <div class="productos-lista">
-    <ion-item button detail lines="none" (click)="mostrarCarta = !mostrarCarta">
-      <ion-icon
-        name="chevron-down"
-        slot="start"
-        *ngIf="!mostrarCarta"
-      ></ion-icon>
-      <ion-icon name="chevron-up" slot="start" *ngIf="mostrarCarta"></ion-icon>
-      <ion-label class="categoria-titulo"
-        >{{ 'MENU.TITLE' | translate }}</ion-label
-      >
-    </ion-item>
-    <div *ngIf="mostrarCarta">
+    <!-- Lista de Productos -->
+    <div class="productos-lista">
       <ng-container
         *ngIf="getProductosPorCategoriaSeleccionada().length; else sinProductos"
       >
-        <ion-card
+        <div
           *ngFor="let prod of getProductosPorCategoriaSeleccionada()"
           class="producto-card"
         >
-          <ion-card-content class="producto-flex-row">
+          <div class="producto-flex-row">
+            <!-- Imagen con aspecto 16:9 o similar -->
             <div
-              class="producto-img-cuadrada"
+              class="producto-img-container"
               *ngIf="prod.imagen"
               (click)="abrirImagenAmpliada(prod.imagen)"
             >
-              <img [src]="prod.imagen" [alt]="prod.nombre" />
+              <img [src]="prod.imagen" [alt]="prod.nombre" loading="lazy" />
             </div>
+
             <div class="producto-info">
               <div class="producto-header">
                 <span class="producto-nombre">{{ getNombre(prod) }}</span>
-                <span class="producto-precio"
-                  >{{ prod.precio | currency:'EUR':'symbol':'1.2-2' }}</span
-                >
+                <span class="producto-precio">
+                  {{ prod.precio | currency:'EUR':'symbol':'1.2-2' }}
+                </span>
               </div>
-              <div class="producto-desc">{{ getDescripcion(prod) }}</div>
+              <p class="producto-desc">{{ getDescripcion(prod) }}</p>
+
               <div *ngIf="getAlergenos(prod)" class="producto-alergenos">
-                <ion-icon
-                  name="alert-circle-outline"
-                  color="warning"
-                ></ion-icon>
-                <span
-                  >{{ 'MENU.ALLERGENS' | translate }}:
-                  {{getAlergenos(prod)}}</span
-                >
+                <ion-icon name="warning-outline" color="warning"></ion-icon>
+                <span>{{ 'MENU.ALLERGENS' | translate }}: {{getAlergenos(prod)}}</span>
               </div>
+
+              <!-- Opciones del producto -->
               <div
                 *ngIf="getOpciones(prod) && getOpciones(prod).length"
-                class="producto-opciones"
+                style="margin-top: 0.5rem"
               >
-                <strong>{{ 'MENU.OPTIONS' | translate }}:</strong>
                 <ion-segment
+                  mode="md"
                   [ngModel]="getOpcionSeleccionada(prod)"
                   (ngModelChange)="onSeleccionOpcion(prod, $event)"
+                  style="--background: #f1f5f9; border-radius: 10px; padding: 2px"
                 >
                   <ion-segment-button
                     *ngFor="let op of getOpciones(prod); let i = index"
                     [value]="op"
+                    style="--border-radius: 8px; font-size: 0.8em; min-height: 32px"
                   >
-                    {{op}}
+                    <ion-label>{{op}}</ion-label>
                   </ion-segment-button>
                 </ion-segment>
               </div>
+
+              <!-- Acciones de cantidad -->
               <div class="producto-acciones">
                 <ion-button
-                  *ngIf="puedeAgregarProducto(prod) && showAddProduct"
-                  fill="solid"
-                  color="success"
-                  (click)="agregarProducto(prod)"
-                  shape="round"
-                  size="small"
-                >
-                  <ion-icon name="add-circle" slot="start"></ion-icon>
-                  {{ 'MENU.ADD' | translate }}
-                </ion-button>
-                <ion-button
-                  fill="solid"
+                  fill="clear"
                   color="danger"
                   (click)="quitarProducto(prod)"
                   *ngIf="productoTieneSeleccion(prod)"
-                  shape="round"
-                  size="small"
+                  class="btn-circle"
                 >
-                  <ion-icon name="remove-circle" slot="start"></ion-icon>
-                  {{ 'MENU.REMOVE' | translate }}
+                  <ion-icon name="remove-circle" style="font-size: 32px"></ion-icon>
                 </ion-button>
+
                 <span
                   *ngIf="productoTieneSeleccion(prod)"
                   class="producto-cantidad"
                 >
                   {{ cantidadSeleccionadaProducto(prod) }}
                 </span>
+
+                <ion-button
+                  fill="clear"
+                  color="success"
+                  (click)="agregarProducto(prod)"
+                  *ngIf="showAddProduct"
+                  [disabled]="!puedeAgregarProducto(prod)"
+                  class="btn-circle"
+                >
+                  <ion-icon name="add-circle" style="font-size: 32px"></ion-icon>
+                </ion-button>
               </div>
             </div>
-          </ion-card-content>
-        </ion-card>
+          </div>
+        </div>
       </ng-container>
       <ng-template #sinProductos>
-        <ion-label color="medium">{{ 'MENU.NO_ITEMS' | translate }}</ion-label>
+        <div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted)">
+          <ion-icon name="restaurant-outline" style="font-size: 48px; opacity: 0.2"></ion-icon>
+          <p style="margin-top: 1rem">{{ 'MENU.NO_ITEMS' | translate }}</p>
+        </div>
       </ng-template>
     </div>
   </div>
 
-  <!-- Barra flotante de resumen y envío de pedido -->
+  <!-- Barra flotante de resumen -->
   <div
     class="pedido-bar"
     *ngIf="!pagoSolicitado && mesa && seleccionadosKeys().length"
   >
-    <div
-      class="pedido-bar-info"
-      (click)="abrirResumenPedido()"
-      style="cursor: pointer"
-    >
-      <span class="pedido-bar-cantidad"
-        >{{ seleccionadosKeys().length }} {{ 'MENU.PRODUCT' | translate
-        }}<ng-container *ngIf="seleccionadosKeys().length > 1"
-          >{{ 'MENU.PRODUCT_PLURAL' | translate }}</ng-container
-        ></span
-      >
-      <span class="pedido-bar-total"
-        >{{ 'MENU.TOTAL' | translate }}: {{ getTotalPedido() |
-        currency:'EUR':'symbol':'1.2-2' }}</span
-      >
-      <ion-icon
-        name="eye"
-        aria-hidden="true"
-        aria-label="Ver resumen"
-        title="Ver resumen"
-        style="margin-left: 0.5em; vertical-align: middle; opacity: 0.9"
-      ></ion-icon>
+    <div class="pedido-bar-info" (click)="abrirResumenPedido()">
+      <span class="pedido-bar-cantidad">
+        {{ seleccionadosKeys().length }} {{ (seleccionadosKeys().length === 1 ? 'MENU.PRODUCT' : 'MENU.PRODUCT_PLURAL') | translate }}
+      </span>
+      <span class="pedido-bar-total">
+        {{ getTotalPedido() | currency:'EUR':'symbol':'1.2-2' }}
+      </span>
     </div>
     <ion-button
-      expand="block"
-      color="primary"
-      (click)="enviarPedido()"
       class="pedido-bar-btn"
+      (click)="enviarPedido()"
+      mode="ios"
     >
       <ion-icon name="send" slot="start"></ion-icon>
       {{ 'MENU.SEND_ORDER' | translate }}
     </ion-button>
   </div>
 
-  <!-- Modal de resumen de pedido -->
+  <!-- Modales (Resumen, Edición, Imagen) - Manteniendo funcionalidad original -->
+  <!-- Resumen Pedido -->
   <ion-modal
     [isOpen]="modalResumenAbierto"
     (didDismiss)="modalResumenAbierto = false"
+    [initialBreakpoint]="0.5"
+    [breakpoints]="[0, 0.5, 0.9]"
   >
     <ng-template>
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>{{ 'MENU.ORDER_SUMMARY' | translate }}</ion-title>
+      <ion-header mode="md" class="ion-no-border">
+        <ion-toolbar>
+          <ion-title style="font-weight: 800">{{ 'MENU.ORDER_SUMMARY' | translate }}</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="modalResumenAbierto = false">
-              <ion-icon name="close"></ion-icon>
+              <ion-icon name="close-circle" size="large" color="medium"></ion-icon>
             </ion-button>
           </ion-buttons>
         </ion-toolbar>
@@ -308,51 +286,38 @@
       <ion-content>
         <div class="resumen-lista">
           <div *ngFor="let key of seleccionadosKeys()" class="resumen-item">
-            <div class="resumen-left">
-              <span class="resumen-nombre">{{getNombreProducto(key)}}</span>
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <span style="font-weight: 700; color: var(--text-main)">{{getNombreProducto(key)}}</span>
               <div class="resumen-controls">
-                <ion-button
-                  size="small"
-                  fill="clear"
-                  (click)="disminuirCantidadKey(key)"
-                >
-                  <ion-icon name="remove-circle-outline"></ion-icon>
+                <ion-button size="small" fill="clear" color="danger" (click)="disminuirCantidadKey(key)">
+                  <ion-icon name="remove-circle-outline" size="small"></ion-icon>
                 </ion-button>
-                <span class="resumen-cantidad"
-                  >x{{seleccionados[key].cantidad}}</span
-                >
-                <ion-button
-                  size="small"
-                  fill="clear"
-                  (click)="aumentarCantidadKey(key)"
-                >
-                  <ion-icon name="add-circle-outline"></ion-icon>
+                <span style="font-weight: 800; min-width: 25px; text-align: center">
+                  {{seleccionados[key].cantidad}}
+                </span>
+                <ion-button size="small" fill="clear" color="success" (click)="aumentarCantidadKey(key)">
+                  <ion-icon name="add-circle-outline" size="small"></ion-icon>
                 </ion-button>
-                <ion-button
-                  size="small"
-                  color="danger"
-                  fill="clear"
-                  (click)="eliminarItemResumen(key)"
-                >
-                  <ion-icon name="trash-outline"></ion-icon>
+                <ion-button size="small" color="danger" fill="clear" (click)="eliminarItemResumen(key)">
+                  <ion-icon name="trash-outline" size="small"></ion-icon>
                 </ion-button>
               </div>
             </div>
-            <span class="resumen-precio"
-              >{{getPrecioProducto(key) * seleccionados[key].cantidad |
-              currency:'EUR':'symbol':'1.2-2'}}</span
-            >
+            <span style="font-weight: 800; color: var(--text-main)">
+              {{getPrecioProducto(key) * seleccionados[key].cantidad | currency:'EUR':'symbol':'1.2-2'}}
+            </span>
           </div>
         </div>
-        <div class="resumen-total">
-          {{ 'MENU.TOTAL' | translate }}: {{ getTotalPedido() |
-          currency:'EUR':'symbol':'1.2-2' }}
+        <div style="padding: 1.5rem; text-align: right; border-top: 1px solid #f1f5f9">
+          <span style="font-size: 1.4em; font-weight: 900">
+            TOTAL: {{ getTotalPedido() | currency:'EUR':'symbol':'1.2-2' }}
+          </span>
         </div>
       </ion-content>
     </ng-template>
   </ion-modal>
 
-  <!-- Modal edición de comanda (usuario) -->
+  <!-- Edición Comanda -->
   <ion-modal [isOpen]="editarModalAbierto" (didDismiss)="cancelarEdicion()">
     <ng-template>
       <ion-header>
@@ -366,116 +331,78 @@
         </ion-toolbar>
       </ion-header>
       <ion-content>
-        <div *ngIf="editingComanda">
-          <div class="edit-comanda-lista">
-            <div
-              *ngFor="let item of editingComanda.items; let i = index"
-              class="edit-comanda-item"
-            >
-              <div class="edit-item-left">
-                <div class="edit-item-nombre">
-                  {{ getNombreItemParaMostrar(item) }}
-                </div>
-                <div
-                  class="edit-item-opciones"
-                  *ngIf="getOpcionesItemParaMostrar(item).length"
-                >
-                  {{ getOpcionesItemParaMostrar(item).join(', ') }}
-                </div>
-              </div>
-              <div class="edit-item-acciones">
-                <ion-button
-                  size="small"
-                  fill="clear"
-                  (click)="disminuirCantidadItem(i)"
-                >
+        <div *ngIf="editingComanda" class="edit-comanda-lista" style="padding: 1rem">
+          <div *ngFor="let item of editingComanda.items; let i = index" class="resumen-item" style="margin-bottom: 1rem">
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <span style="font-weight: 700">{{ getNombreItemParaMostrar(item) }}</span>
+              <div class="resumen-controls">
+                <ion-button size="small" fill="clear" (click)="disminuirCantidadItem(i)">
                   <ion-icon name="remove-circle-outline"></ion-icon>
                 </ion-button>
-                <span class="edit-item-cantidad">x{{ item.cantidad }}</span>
-                <ion-button
-                  size="small"
-                  fill="clear"
-                  (click)="aumentarCantidadItem(i)"
-                >
+                <span style="font-weight: 800">x{{ item.cantidad }}</span>
+                <ion-button size="small" fill="clear" (click)="aumentarCantidadItem(i)">
                   <ion-icon name="add-circle-outline"></ion-icon>
                 </ion-button>
-                <ion-button
-                  size="small"
-                  color="danger"
-                  fill="clear"
-                  (click)="eliminarItemEditar(i)"
-                >
+                <ion-button size="small" color="danger" fill="clear" (click)="eliminarItemEditar(i)">
                   <ion-icon name="trash-outline"></ion-icon>
                 </ion-button>
               </div>
             </div>
           </div>
-          <div style="padding: 1em">
-            <ion-item>
-              <ion-label position="stacked"
-                >{{ 'MENU.OBSERVATIONS' | translate }}</ion-label
-              >
-              <ion-textarea
-                [(ngModel)]="editingComanda.observaciones"
-              ></ion-textarea>
-            </ion-item>
-          </div>
-          <div style="padding: 1em; display: flex; gap: 0.5em">
-            <ion-button
-              expand="block"
-              color="medium"
-              (click)="cancelarEdicion()"
-              >{{ 'MENU.CANCEL' | translate }}</ion-button
-            >
-            <ion-button
-              expand="block"
-              color="primary"
-              (click)="enviarModificacionComanda()"
-              >{{ 'MENU.SEND_MODIFICATION' | translate }}</ion-button
-            >
+          <ion-item lines="none" style="margin-top: 1rem; --background: #f8fafc; border-radius: 12px">
+            <ion-label position="stacked" style="font-weight: 700">{{ 'MENU.OBSERVATIONS' | translate }}</ion-label>
+            <ion-textarea [(ngModel)]="editingComanda.observaciones" rows="4"></ion-textarea>
+          </ion-item>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem">
+            <ion-button expand="block" color="medium" fill="soft" (click)="cancelarEdicion()" style="--border-radius: 12px">
+              {{ 'MENU.CANCEL' | translate }}
+            </ion-button>
+            <ion-button expand="block" color="primary" (click)="enviarModificacionComanda()" style="--border-radius: 12px; font-weight: 700">
+              {{ 'MENU.SEND_MODIFICATION' | translate }}
+            </ion-button>
           </div>
         </div>
       </ion-content>
     </ng-template>
   </ion-modal>
 
-  <!-- Estado de pedido y pago -->
+  <!-- Estado Pago -->
   <div *ngIf="pagoSolicitado" class="estado-pago-bar">
-    <ion-icon
-      name="alert"
-      color="warning"
-      style="margin-right: 0.5em"
-    ></ion-icon>
-    <span> {{ 'MENU.PAYMENT_REQUESTED' | translate }} </span>
+    <div style="display: flex; flex-direction: column; flex: 1">
+      <div style="display: flex; align-items: center; gap: 8px; color: #92400e; font-weight: 800">
+        <ion-icon name="alert-circle" size="large"></ion-icon>
+        <span>{{ 'MENU.PAYMENT_REQUESTED' | translate }}</span>
+      </div>
+    </div>
     <ion-button
-      expand="block"
       color="primary"
-      style="margin-left: 1em"
       (click)="descargarInformeMesa()"
+      style="--border-radius: 12px; font-weight: 700"
     >
       <ion-icon name="download" slot="start"></ion-icon>
-      {{ 'MENU.DOWNLOAD_REPORT' | translate }}
+      PDF
     </ion-button>
   </div>
 
-  <!-- Eliminado: Botón Solicitar Pago duplicado -->
-
-  <!-- MODAL IMAGEN AMPLIADA -->
+  <!-- Imagen Ampliada -->
   <div
     *ngIf="imagenAmpliada"
     class="modal-imagen-ampliada"
     (click)="cerrarImagenAmpliada()"
+    style="backdrop-filter: blur(10px)"
   >
-    <div class="modal-imagen-contenido" (click)="$event.stopPropagation()">
-      <button class="cerrar-modal" (click)="cerrarImagenAmpliada()">
-        &times;
+    <div class="modal-imagen-contenido" (click)="$event.stopPropagation()" style="background: transparent; box-shadow: none">
+      <button class="cerrar-modal" (click)="cerrarImagenAmpliada()" style="color: white; right: 0; top: -40px">
+        <ion-icon name="close-circle" size="large"></ion-icon>
       </button>
-      <img [src]="imagenAmpliada" [alt]="'MENU.IMAGE_EXPANDED' | translate" />
+      <img [src]="imagenAmpliada" [alt]="'MENU.IMAGE_EXPANDED' | translate" style="border-radius: 20px" />
     </div>
   </div>
+
+  <!-- FAB Llamar Camarero -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="fab-llamar-camarero">
-    <ion-fab-button class="fab-button-camarero" (click)="llamarCamarero()">
-      <ion-icon name="person" class="icon-camarero"></ion-icon>
+    <ion-fab-button class="fab-button-camarero" (click)="llamarCamarero()" style="--box-shadow: 0 4px 16px rgba(0,0,0,0.2)">
+      <ion-icon name="hand-right" class="icon-camarero" style="font-size: 28px"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>

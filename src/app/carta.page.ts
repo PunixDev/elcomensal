@@ -23,6 +23,7 @@ import {
   IonButtons, // Added
   IonFab,
   IonFabButton,
+  IonBadge,
 } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria } from './data.service';
 import { FormsModule } from '@angular/forms';
@@ -60,6 +61,7 @@ import { LanguageService } from './language.service';
     LanguageSelectorComponent,
     IonFab,
     IonFabButton,
+    IonBadge,
   ],
   providers: [PopoverController],
 })

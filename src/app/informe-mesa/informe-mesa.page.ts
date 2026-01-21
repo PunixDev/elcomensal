@@ -16,7 +16,6 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
-  IonItemDivider,
 } from '@ionic/angular/standalone';
 import { DataService } from '../data.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -42,7 +41,6 @@ import { TranslateModule } from '@ngx-translate/core';
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
-    IonItemDivider,
     TranslateModule,
   ],
 })
