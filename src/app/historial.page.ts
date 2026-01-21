@@ -127,7 +127,7 @@ export class HistorialPage implements OnInit {
     this.agrupadoPorMesa = {};
     
     pedidos.forEach((p) => {
-      const mesaKey = p['mesa'] || 'Sin mesa';
+      const mesaKey = p['mesa'] || this.translateService.instant('HISTORY.NO_TABLE');
       if (!this.agrupadoPorMesa[mesaKey]) this.agrupadoPorMesa[mesaKey] = [];
       this.agrupadoPorMesa[mesaKey].push(p);
     });
@@ -164,7 +164,7 @@ export class HistorialPage implements OnInit {
     if (registro.tipo === 'resumen_mesa' && registro.pedidos) {
       registro.pedidos.forEach((p: any) => {
         const horaPedido = new Date(p.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        itemsHtml += `<div style="font-size: 10px; border-bottom: 1px dashed #ccc; margin-top: 5px;">Pedido: ${horaPedido}</div>`;
+        itemsHtml += `<div style="font-size: 10px; border-bottom: 1px dashed #ccc; margin-top: 5px;">${this.translateService.instant('HISTORY.ORDER')}: ${horaPedido}</div>`;
         p.items.forEach((item: any) => {
           itemsHtml += `
             <div style="display: flex; justify-content: space-between; font-size: 12px; margin: 2px 0;">
@@ -190,7 +190,7 @@ export class HistorialPage implements OnInit {
       printWindow.document.write(`
         <html>
           <head>
-            <title>Ticket - Mesa ${mesa}</title>
+            <title>Ticket - ${this.translateService.instant('HISTORY.TABLE')} ${mesa}</title>
             <style>
               body { font-family: 'Courier New', Courier, monospace; width: 80mm; margin: 0 auto; padding: 10px; }
               .header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
@@ -209,7 +209,7 @@ export class HistorialPage implements OnInit {
               ${itemsHtml}
             </div>
             <div class="total">
-              <span>TOTAL</span>
+              <span>${this.translateService.instant('HISTORY.TOTAL')}</span>
               <span>${total}</span>
             </div>
             <div class="footer">

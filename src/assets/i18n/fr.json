@@ -356,7 +356,18 @@
     "ORDER_AT": "Commande de {{time}}",
     "TOTAL_TICKET": "Total Ticket",
     "NO_RESULTS": "Aucun résultat",
-    "NO_RECORDS_FOUND": "Aucun enregistrement pour ce jour ou ces filtres."
+    "NO_RECORDS_FOUND": "Aucun enregistrement pour ce jour ou ces filtres.",
+    "NO_TABLE": "Sans table",
+    "ORDER": "Commande",
+    "TICKET": "Ticket",
+    "BACK_TO_PANEL": "Retour au panneau",
+    "SELECT_DATE_FILTER": "Sélectionner la date pour filtrer",
+    "APPLY_DATE_FILTER": "Appliquer le filtre de date",
+    "SHOW_ALL_TABLES": "Afficher toutes les tables",
+    "FILTER_TABLE": "Filtrer la table {{mesa}}",
+    "TOTAL_INVOICED_TODAY": "Total facturé aujourd'hui",
+    "TABLES_SERVED_TODAY": "Tables servies aujourd'hui",
+    "PRINT_THIS_TICKET": "Imprimer ce ticket"
   },
   "TABLE_REPORT": {
     "TITLE": "Rapport Table",

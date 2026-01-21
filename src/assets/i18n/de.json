@@ -367,7 +367,18 @@
     "ORDER_AT": "Bestellung von {{time}}",
     "TOTAL_TICKET": "Gesamtbeleg",
     "NO_RESULTS": "Keine Ergebnisse",
-    "NO_RECORDS_FOUND": "Keine Datensätze für diesen Tag oder Filter."
+    "NO_RECORDS_FOUND": "Keine Datensätze für diesen Tag oder Filter.",
+    "NO_TABLE": "Kein Tisch",
+    "ORDER": "Bestellung",
+    "TICKET": "Beleg",
+    "BACK_TO_PANEL": "Zurück zum Panel",
+    "SELECT_DATE_FILTER": "Datum zum Filtern auswählen",
+    "APPLY_DATE_FILTER": "Datumsfilter anwenden",
+    "SHOW_ALL_TABLES": "Alle Tische anzeigen",
+    "FILTER_TABLE": "Tisch {{mesa}} filtern",
+    "TOTAL_INVOICED_TODAY": "Heute insgesamt fakturiert",
+    "TABLES_SERVED_TODAY": "Heute bediente Tische",
+    "PRINT_THIS_TICKET": "Diesen Beleg drucken"
   },
   "TABLE_REPORT": {
     "TITLE": "Tischbericht",

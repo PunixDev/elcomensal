@@ -1,230 +1,272 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-title> ElRestauranteQR </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="presentLanguagePopover($event)" fill="clear">
-        <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
-        <ion-icon name="chevron-down" size="small"></ion-icon>
-      </ion-button>
-      <ion-button color="light" (click)="goToLogin()">
-        <ion-icon name="log-in" slot="start"></ion-icon>
-        {{ 'NAVIGATION.LOGIN' | translate }}
-      </ion-button>
-    </ion-buttons>
+<ion-header class="main-header" [translucent]="true">
+  <ion-toolbar>
+    <div class="header-container">
+      <ion-title class="brand-title">ElRestauranteQR</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="presentLanguagePopover($event)" class="lang-btn" fill="clear">
+          <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
+          <ion-icon name="chevron-down" size="small"></ion-icon>
+        </ion-button>
+        <ion-button class="login-btn" fill="solid" color="primary" (click)="goToLogin()">
+          <ion-icon name="log-in-outline" slot="start"></ion-icon>
+          {{ 'NAVIGATION.LOGIN' | translate }}
+        </ion-button>
+      </ion-buttons>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="home-hero-bg">
+<ion-content [fullscreen]="true">
   <!-- Hero Section -->
-  <section class="home-hero-section">
-    <div class="home-hero-text">
-      <img
-        src="assets/6.png"
-        [alt]="('HOME_LANDING.ALT.MENU_VIEW' | translate)"
-        class="home-hero-banner"
-      />
-
-      <h1 class="home-title">{{ 'HOME_LANDING.HERO_TITLE' | translate }}</h1>
-      <p class="home-subtitle">
-        {{ 'HOME_LANDING.HERO_SUBTITLE' | translate }}
-      </p>
-
-      <div class="home-trustbar">
-        <div class="trust-item">
-          <ion-icon name="shield-checkmark" color="primary"></ion-icon>
-          <span>{{ 'HOME_LANDING.TRUST.SECURE' | translate }}</span>
+  <section class="hero-section">
+    <div class="hero-bg-shape"></div>
+    <div class="container hero-container">
+      <div class="hero-content fade-in-up">
+        <div class="hero-badge">
+          <ion-icon name="sparkles" color="warning"></ion-icon>
+          <span>La solución #1 para hostelería</span>
         </div>
-        <div class="trust-item">
-          <ion-icon name="flash" color="warning"></ion-icon>
-          <span>{{ 'HOME_LANDING.TRUST.SETUP_FAST' | translate }}</span>
+        <h1 class="hero-title">
+          {{ 'HOME_LANDING.HERO_TITLE' | translate }}
+        </h1>
+        <p class="hero-subtitle">
+          {{ 'HOME_LANDING.HERO_SUBTITLE' | translate }}
+        </p>
+
+        <div class="hero-actions">
+          <ion-button size="large" class="cta-primary" (click)="goToLogin()">
+            {{ 'HOME_LANDING.CTA_PRIMARY' | translate }}
+            <ion-icon name="arrow-forward" slot="end"></ion-icon>
+          </ion-button>
+          <div class="trust-pill">
+            <ion-icon name="shield-checkmark" color="success"></ion-icon>
+            <span>{{ 'HOME_LANDING.TRUST.SECURE' | translate }}</span>
+          </div>
         </div>
-        <div class="trust-item">
-          <ion-icon name="happy" color="success"></ion-icon>
-          <span>{{ 'HOME_LANDING.TRUST.HAPPIER_CLIENTS' | translate }}</span>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <ion-icon name="flash-outline"></ion-icon>
+            <span class="stat-text">{{ 'HOME_LANDING.TRUST.SETUP_FAST' | translate }}</span>
+          </div>
+          <div class="stat-item">
+            <ion-icon name="people-outline"></ion-icon>
+            <span class="stat-text">{{ 'HOME_LANDING.TRUST.HAPPIER_CLIENTS' | translate }}</span>
+          </div>
         </div>
       </div>
 
-      <ul class="home-benefits">
-        <li>
-          <ion-icon name="qr-code-outline" color="primary"></ion-icon>
+      <div class="hero-image-wrapper fade-in-right">
+        <div class="image-blobs"></div>
+        <img src="assets/6.png" [alt]="('HOME_LANDING.ALT.MENU_VIEW' | translate)" class="hero-img" />
+        
+        <!-- Floating Elements for visual flair -->
+        <div class="float-card float-1">
+          <ion-icon name="qr-code" color="primary"></ion-icon>
           <span>{{ 'HOME_LANDING.BENEFITS.QR_ORDERS' | translate }}</span>
-        </li>
-        <li>
-          <ion-icon name="hand-left-outline" color="tertiary"></ion-icon>
-          <span>{{ 'HOME_LANDING.BENEFITS.REQUEST_BILL' | translate }}</span>
-        </li>
-        <li>
-          <ion-icon name="globe-outline" color="primary"></ion-icon>
+        </div>
+        <div class="float-card float-2">
+          <ion-icon name="globe" color="secondary"></ion-icon>
           <span>{{ 'HOME_LANDING.BENEFITS.AI_TRANSLATION' | translate }}</span>
-        </li>
-      </ul>
-
-      <div class="home-cta">
-        <ion-button color="success" size="large" (click)="goToLogin()">
-          <ion-icon name="rocket-outline" slot="start"></ion-icon>
-          {{ 'HOME_LANDING.CTA_PRIMARY' | translate }}
-        </ion-button>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Features Grid -->
-  <section class="home-section home-section-dark">
-    <div class="home-section-content">
-      <h2 class="ion-text-center">{{ 'HOME_LANDING.FEATURES.TITLE' | translate }}</h2>
+  <section class="section features-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">{{ 'HOME_LANDING.FEATURES.TITLE' | translate }}</h2>
+        <div class="section-divider"></div>
+      </div>
+
       <div class="features-grid">
-        <ion-card class="feature-card">
-          <ion-card-content>
-            <ion-icon name="qr-code-outline" class="feature-icon"></ion-icon>
-            <h3>{{ 'HOME_LANDING.FEATURES.QR.TITLE' | translate }}</h3>
-            <p>{{ 'HOME_LANDING.FEATURES.QR.DESC' | translate }}</p>
-          </ion-card-content>
-        </ion-card>
-        <ion-card class="feature-card">
-          <ion-card-content>
-            <ion-icon name="hand-left-outline" class="feature-icon"></ion-icon>
-            <h3>{{ 'HOME_LANDING.FEATURES.REQUEST_BILL.TITLE' | translate }}</h3>
-            <p>{{ 'HOME_LANDING.FEATURES.REQUEST_BILL.DESC' | translate }}</p>
-          </ion-card-content>
-        </ion-card>
-        <ion-card class="feature-card">
-          <ion-card-content>
-            <ion-icon name="restaurant-outline" class="feature-icon"></ion-icon>
-            <h3>{{ 'HOME_LANDING.FEATURES.MENU.TITLE' | translate }}</h3>
-            <p>{{ 'HOME_LANDING.FEATURES.MENU.DESC' | translate }}</p>
-          </ion-card-content>
-        </ion-card>
-        <ion-card class="feature-card">
-          <ion-card-content>
-            <ion-icon name="storefront-outline" class="feature-icon"></ion-icon>
-            <h3>{{ 'HOME_LANDING.FEATURES.FLOOR.TITLE' | translate }}</h3>
-            <p>{{ 'HOME_LANDING.FEATURES.FLOOR.DESC' | translate }}</p>
-          </ion-card-content>
-        </ion-card>
-        <ion-card class="feature-card">
-          <ion-card-content>
-            <ion-icon name="cash-outline" class="feature-icon"></ion-icon>
-            <h3>{{ 'HOME_LANDING.FEATURES.REPORTS.TITLE' | translate }}</h3>
-            <p>{{ 'HOME_LANDING.FEATURES.REPORTS.DESC' | translate }}</p>
-          </ion-card-content>
-        </ion-card>
-        <ion-card class="feature-card">
-          <ion-card-content>
-            <ion-icon name="globe-outline" class="feature-icon"></ion-icon>
-            <h3>{{ 'HOME_LANDING.FEATURES.AI.TITLE' | translate }}</h3>
-            <p>{{ 'HOME_LANDING.FEATURES.AI.DESC' | translate }}</p>
-          </ion-card-content>
-        </ion-card>
-      </div>
-    </div>
-  </section>
+        <div class="feature-card">
+          <div class="icon-box">
+            <ion-icon name="qr-code-outline"></ion-icon>
+          </div>
+          <h3>{{ 'HOME_LANDING.FEATURES.QR.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.QR.DESC' | translate }}</p>
+        </div>
 
-  <!-- Steps Vertical (Modern) -->
-  <section class="home-section">
-    <div class="home-section-content">
-      <h2 class="ion-text-center">{{ 'HOME_LANDING.STEPS.TITLE' | translate }}</h2>
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-number">1</div>
-          <h3>{{ 'HOME_LANDING.STEPS.1.TITLE' | translate }}</h3>
-          <p>{{ 'HOME_LANDING.STEPS.1.DESC' | translate }}</p>
+        <div class="feature-card">
+          <div class="icon-box color-2">
+            <ion-icon name="hand-left-outline"></ion-icon>
+          </div>
+          <h3>{{ 'HOME_LANDING.FEATURES.REQUEST_BILL.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.REQUEST_BILL.DESC' | translate }}</p>
         </div>
-        <div class="step-card">
-          <div class="step-number">2</div>
-          <h3>{{ 'HOME_LANDING.STEPS.2.TITLE' | translate }}</h3>
-          <p>{{ 'HOME_LANDING.STEPS.2.DESC' | translate }}</p>
+
+        <div class="feature-card">
+          <div class="icon-box color-3">
+            <ion-icon name="restaurant-outline"></ion-icon>
+          </div>
+          <h3>{{ 'HOME_LANDING.FEATURES.MENU.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.MENU.DESC' | translate }}</p>
         </div>
-        <div class="step-card">
-          <div class="step-number">3</div>
-          <h3>{{ 'HOME_LANDING.STEPS.3.TITLE' | translate }}</h3>
-          <p>{{ 'HOME_LANDING.STEPS.3.DESC' | translate }}</p>
+
+        <div class="feature-card">
+          <div class="icon-box color-4">
+            <ion-icon name="storefront-outline"></ion-icon>
+          </div>
+          <h3>{{ 'HOME_LANDING.FEATURES.FLOOR.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.FLOOR.DESC' | translate }}</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box color-5">
+            <ion-icon name="cash-outline"></ion-icon>
+          </div>
+          <h3>{{ 'HOME_LANDING.FEATURES.REPORTS.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.REPORTS.DESC' | translate }}</p>
+        </div>
+
+        <div class="feature-card highlight">
+          <div class="icon-box color-6">
+            <ion-icon name="globe-outline"></ion-icon>
+          </div>
+          <h3>{{ 'HOME_LANDING.FEATURES.AI.TITLE' | translate }}</h3>
+          <p>{{ 'HOME_LANDING.FEATURES.AI.DESC' | translate }}</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Impact Results -->
-  <section class="home-section home-section-dark">
-    <div class="home-section-content">
-      <h2 class="ion-text-center">{{ 'HOME_LANDING.RESULTS.TITLE' | translate }}</h2>
-      <ul class="home-results">
-        <li>
-          <ion-icon name="trending-up" color="success"></ion-icon>
-          <span>{{ 'HOME_LANDING.RESULTS.ROTATION' | translate }}</span>
-        </li>
-        <li>
-          <ion-icon name="thumbs-up" color="primary"></ion-icon>
-          <span>{{ 'HOME_LANDING.RESULTS.SATISFACTION' | translate }}</span>
-        </li>
-        <li>
-          <ion-icon name="alarm" color="tertiary"></ion-icon>
-          <span>{{ 'HOME_LANDING.RESULTS.WAIT' | translate }}</span>
-        </li>
-        <li>
-          <ion-icon name="cash" color="warning"></ion-icon>
-          <span>{{ 'HOME_LANDING.RESULTS.AVGTICKET' | translate }}</span>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- Testimonials Cards -->
-  <section class="home-section">
-    <div class="home-section-content">
-      <h2 class="ion-text-center">{{ 'HOME_LANDING.TESTIMONIALS.TITLE' | translate }}</h2>
-      <div class="testimonials">
-        <ion-card class="testimonial-card">
-          <ion-card-content>
-            <div class="stars">
-              <ion-icon name="star" color="warning" *ngFor="let i of [1,2,3,4,5]"></ion-icon>
+  <!-- Value Proposition / Results -->
+  <section class="section results-section">
+    <div class="container">
+      <div class="results-wrapper">
+        <div class="results-content">
+          <h2>{{ 'HOME_LANDING.RESULTS.TITLE' | translate }}</h2>
+          <div class="results-list">
+            <div class="result-item">
+              <ion-icon name="trending-up-outline" class="result-icon"></ion-icon>
+              <span>{{ 'HOME_LANDING.RESULTS.ROTATION' | translate }}</span>
             </div>
-            <p>{{ 'HOME_LANDING.TESTIMONIALS.1.TEXT' | translate }}</p>
-            <span class="author">{{ 'HOME_LANDING.TESTIMONIALS.1.AUTHOR' | translate }}</span>
-          </ion-card-content>
-        </ion-card>
-        <ion-card class="testimonial-card">
-          <ion-card-content>
-            <div class="stars">
-              <ion-icon name="star" color="warning" *ngFor="let i of [1,2,3,4,5]"></ion-icon>
+            <div class="result-item">
+              <ion-icon name="heart-outline" class="result-icon"></ion-icon>
+              <span>{{ 'HOME_LANDING.RESULTS.SATISFACTION' | translate }}</span>
             </div>
-            <p>{{ 'HOME_LANDING.TESTIMONIALS.2.TEXT' | translate }}</p>
-            <span class="author">{{ 'HOME_LANDING.TESTIMONIALS.2.AUTHOR' | translate }}</span>
-          </ion-card-content>
-        </ion-card>
-        <ion-card class="testimonial-card">
-          <ion-card-content>
-            <div class="stars">
-              <ion-icon name="star" color="warning" *ngFor="let i of [1,2,3,4,5]"></ion-icon>
+            <div class="result-item">
+              <ion-icon name="timer-outline" class="result-icon"></ion-icon>
+              <span>{{ 'HOME_LANDING.RESULTS.WAIT' | translate }}</span>
             </div>
-            <p>{{ 'HOME_LANDING.TESTIMONIALS.3.TEXT' | translate }}</p>
-            <span class="author">{{ 'HOME_LANDING.TESTIMONIALS.3.AUTHOR' | translate }}</span>
-          </ion-card-content>
-        </ion-card>
+          </div>
+        </div>
+        <div class="results-visual">
+          <!-- Abstract visual representation -->
+          <div class="circle-graph">
+            <div class="inner-text">
+              <span class="big-num">+30%</span>
+              <span class="label">{{ 'HOME_LANDING.RESULTS.AVGTICKET' | translate }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Final CTA Premium -->
-  <section class="home-section home-section-cta">
-    <div class="home-section-content">
+  <!-- How it Works (Steps) -->
+  <section class="section steps-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">{{ 'HOME_LANDING.STEPS.TITLE' | translate }}</h2>
+      </div>
+      
+      <div class="steps-timeline">
+        <div class="step-item">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h3>{{ 'HOME_LANDING.STEPS.1.TITLE' | translate }}</h3>
+            <p>{{ 'HOME_LANDING.STEPS.1.DESC' | translate }}</p>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h3>{{ 'HOME_LANDING.STEPS.2.TITLE' | translate }}</h3>
+            <p>{{ 'HOME_LANDING.STEPS.2.DESC' | translate }}</p>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h3>{{ 'HOME_LANDING.STEPS.3.TITLE' | translate }}</h3>
+            <p>{{ 'HOME_LANDING.STEPS.3.DESC' | translate }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section testimonials-section">
+    <div class="container">
+      <h2 class="ion-text-center white-text">{{ 'HOME_LANDING.TESTIMONIALS.TITLE' | translate }}</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-box">
+          <div class="stars">
+            <ion-icon name="star" *ngFor="let s of [1,2,3,4,5]"></ion-icon>
+          </div>
+          <p>"{{ 'HOME_LANDING.TESTIMONIALS.1.TEXT' | translate }}"</p>
+          <div class="author">
+            <div class="author-avatar">{{ 'HOME_LANDING.TESTIMONIALS.1.AUTHOR' | translate | slice:0:1 }}</div>
+            <span>{{ 'HOME_LANDING.TESTIMONIALS.1.AUTHOR' | translate }}</span>
+          </div>
+        </div>
+        
+        <div class="testimonial-box">
+          <div class="stars">
+            <ion-icon name="star" *ngFor="let s of [1,2,3,4,5]"></ion-icon>
+          </div>
+          <p>"{{ 'HOME_LANDING.TESTIMONIALS.2.TEXT' | translate }}"</p>
+          <div class="author">
+            <div class="author-avatar">{{ 'HOME_LANDING.TESTIMONIALS.2.AUTHOR' | translate | slice:0:1 }}</div>
+            <span>{{ 'HOME_LANDING.TESTIMONIALS.2.AUTHOR' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="testimonial-box">
+          <div class="stars">
+            <ion-icon name="star" *ngFor="let s of [1,2,3,4,5]"></ion-icon>
+          </div>
+          <p>"{{ 'HOME_LANDING.TESTIMONIALS.3.TEXT' | translate }}"</p>
+          <div class="author">
+            <div class="author-avatar">{{ 'HOME_LANDING.TESTIMONIALS.3.AUTHOR' | translate | slice:0:1 }}</div>
+            <span>{{ 'HOME_LANDING.TESTIMONIALS.3.AUTHOR' | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="cta-section">
+    <div class="cta-content">
       <h2>{{ 'HOME_LANDING.FINAL_CTA.TITLE' | translate }}</h2>
-      <ion-button color="light" size="large" (click)="goToLogin()">
-        <ion-icon name="rocket-outline" slot="start"></ion-icon>
+      <p class="cta-note">{{ 'HOME_LANDING.FINAL_CTA.NOTE' | translate }}</p>
+      <ion-button color="light" size="large" class="cta-big-btn" (click)="goToLogin()">
         {{ 'HOME_LANDING.FINAL_CTA.BUTTON' | translate }}
+        <ion-icon name="rocket" slot="end"></ion-icon>
       </ion-button>
-      <div class="cta-note">{{ 'HOME_LANDING.FINAL_CTA.NOTE' | translate }}</div>
     </div>
   </section>
 
-  <!-- Friendly Footer -->
-  <footer class="home-footer">
-    <div class="footer-links">
-      <ion-button [routerLink]="['/aviso-legal']" fill="clear" class="footer-button">
-        Aviso Legal
-      </ion-button>
-      <ion-button [routerLink]="['/sobre-nosotros']" fill="clear" class="footer-button">
-        Sobre Nosotros
-      </ion-button>
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <h3>ElRestauranteQR</h3>
+        <p>© 2024. Todos los derechos reservados.</p>
+      </div>
+      <div class="footer-nav">
+        <ion-button fill="clear" [routerLink]="['/aviso-legal']">Aviso Legal</ion-button>
+        <ion-button fill="clear" [routerLink]="['/sobre-nosotros']">Sobre Nosotros</ion-button>
+      </div>
     </div>
   </footer>
+
 </ion-content>

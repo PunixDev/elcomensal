@@ -323,7 +323,18 @@
     "ORDER_AT": "Order at {{time}}",
     "TOTAL_TICKET": "Total Ticket",
     "NO_RESULTS": "No results",
-    "NO_RECORDS_FOUND": "No records for this day or filters."
+    "NO_RECORDS_FOUND": "No records for this day or filters.",
+    "NO_TABLE": "No table",
+    "ORDER": "Order",
+    "TICKET": "Ticket",
+    "BACK_TO_PANEL": "Back to panel",
+    "SELECT_DATE_FILTER": "Select date to filter",
+    "APPLY_DATE_FILTER": "Apply date filter",
+    "SHOW_ALL_TABLES": "Show all tables",
+    "FILTER_TABLE": "Filter table {{mesa}}",
+    "TOTAL_INVOICED_TODAY": "Total invoiced today",
+    "TABLES_SERVED_TODAY": "Tables served today",
+    "PRINT_THIS_TICKET": "Print this ticket"
   },
   "TABLE_REPORT": {
     "TITLE": "Table Report",

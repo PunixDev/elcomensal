@@ -315,7 +315,18 @@
     "ORDER_AT": "Ordine delle {{time}}",
     "TOTAL_TICKET": "Totale Ticket",
     "NO_RESULTS": "Nessun risultato",
-    "NO_RECORDS_FOUND": "Nessun record per questo giorno o filtri."
+    "NO_RECORDS_FOUND": "Nessun record per questo giorno o filtri.",
+    "NO_TABLE": "Senza tavolo",
+    "ORDER": "Ordine",
+    "TICKET": "Ticket",
+    "BACK_TO_PANEL": "Torna al pannello",
+    "SELECT_DATE_FILTER": "Seleziona data per filtrare",
+    "APPLY_DATE_FILTER": "Applica filtro data",
+    "SHOW_ALL_TABLES": "Mostra tutti i tavoli",
+    "FILTER_TABLE": "Filtra tavolo {{mesa}}",
+    "TOTAL_INVOICED_TODAY": "Totale fatturato oggi",
+    "TABLES_SERVED_TODAY": "Tavoli serviti oggi",
+    "PRINT_THIS_TICKET": "Stampa questo ticket"
   },
   "TABLE_REPORT": {
     "TITLE": "Report Tavolo",
