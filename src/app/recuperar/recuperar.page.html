@@ -1,64 +1,122 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>{{ 'RECOVER.TITLE' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true">
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <form (ngSubmit)="buscarUsuario()" *ngIf="!mostrarCambio">
-          <ion-item>
-            <ion-label position="floating"
-              >{{ 'RECOVER.EMAIL' | translate }}</ion-label
-            >
-            <ion-input
-              [(ngModel)]="correo"
-              name="correo"
-              type="email"
-              required
-            ></ion-input>
-          </ion-item>
-          <ion-button expand="block" color="primary" type="submit">
-            {{ 'RECOVER.SEND_BUTTON' | translate }}
-          </ion-button>
-        </form>
-        <form (ngSubmit)="cambiarPassword()" *ngIf="mostrarCambio">
-          <ion-item>
-            <ion-label position="floating"
-              >{{ 'LOGIN.USERNAME' | translate }}</ion-label
-            >
-            <ion-input [value]="usuario" readonly></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating"
-              >{{ 'REGISTER.PASSWORD' | translate }}</ion-label
-            >
-            <ion-input
-              [(ngModel)]="nuevaPassword"
-              name="nuevaPassword"
-              type="password"
-              required
-            ></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating"
-              >{{ 'RECOVER.CONFIRM_PASSWORD' | translate }}</ion-label
-            >
-            <ion-input
-              [(ngModel)]="confirmarPassword"
-              name="confirmarPassword"
-              type="password"
-              required
-            ></ion-input>
-          </ion-item>
-          <ion-button expand="block" color="success" type="submit">
-            {{ 'REGISTER.PASSWORD' | translate }}
-          </ion-button>
-        </form>
-        <ion-text color="danger" *ngIf="error">{{error}}</ion-text>
-        <ion-text color="success" *ngIf="exito">{{exito}}</ion-text>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div class="recuperar-container">
+    <ion-grid fixed>
+      <ion-row class="ion-justify-content-center ion-align-items-center full-height">
+        <ion-col size="12" size-md="8" size-lg="6" size-xl="5">
+          
+          <ion-card class="recuperar-card">
+            <div class="brand-section ion-text-center">
+              <div class="logo-wrapper">
+                <ion-icon name="key-outline" color="primary"></ion-icon>
+              </div>
+              <h1 class="brand-name">BarAdmin</h1>
+              <p class="brand-tagline">{{ 'RECOVER.TITLE' | translate }}</p>
+            </div>
+
+            <ion-card-content>
+              <!-- Formulario 1: Buscar Usuario -->
+              <form (ngSubmit)="buscarUsuario()" *ngIf="!mostrarCambio" class="recuperar-form">
+                <p class="form-instruction">Introduce tu correo para buscar tu cuenta:</p>
+                <div class="form-grid">
+                  <ion-item fill="outline" mode="md" class="recuperar-item">
+                    <ion-label position="stacked">{{ 'RECOVER.EMAIL' | translate }}</ion-label>
+                    <ion-input
+                      [(ngModel)]="correo"
+                      name="correo"
+                      type="email"
+                      required
+                      [placeholder]="'tu@email.com'"
+                    ></ion-input>
+                    <ion-icon name="mail-outline" slot="end" size="small"></ion-icon>
+                  </ion-item>
+                </div>
+
+                <ion-button expand="block" color="primary" type="submit" class="btn-primary ion-margin-top">
+                  {{ 'RECOVER.SEND_BUTTON' | translate }}
+                </ion-button>
+              </form>
+
+              <!-- Formulario 2: Cambiar Contraseña -->
+              <form (ngSubmit)="cambiarPassword()" *ngIf="mostrarCambio" class="recuperar-form">
+                <p class="form-instruction">Hola <strong>{{usuario}}</strong>, establece tu nueva contraseña:</p>
+                <div class="form-grid">
+                  <ion-item fill="outline" mode="md" class="recuperar-item">
+                    <ion-label position="stacked">{{ 'LOGIN.USERNAME' | translate }}</ion-label>
+                    <ion-input [value]="usuario" readonly></ion-input>
+                    <ion-icon name="person-outline" slot="end" size="small"></ion-icon>
+                  </ion-item>
+
+                  <ion-item fill="outline" mode="md" class="recuperar-item ion-margin-top">
+                    <ion-label position="stacked">{{ 'REGISTER.PASSWORD' | translate }}</ion-label>
+                    <ion-input
+                      [(ngModel)]="nuevaPassword"
+                      name="nuevaPassword"
+                      type="password"
+                      required
+                      [placeholder]="'••••••••'"
+                    ></ion-input>
+                    <ion-icon name="lock-open-outline" slot="end" size="small"></ion-icon>
+                  </ion-item>
+
+                  <ion-item fill="outline" mode="md" class="recuperar-item ion-margin-top">
+                    <ion-label position="stacked">{{ 'RECOVER.CONFIRM_PASSWORD' | translate }}</ion-label>
+                    <ion-input
+                      [(ngModel)]="confirmarPassword"
+                      name="confirmarPassword"
+                      type="password"
+                      required
+                      [placeholder]="'••••••••'"
+                    ></ion-input>
+                    <ion-icon name="lock-closed-outline" slot="end" size="small"></ion-icon>
+                  </ion-item>
+                </div>
+
+                <ion-button expand="block" color="success" type="submit" class="btn-primary ion-margin-top">
+                  {{ 'REGISTER.PASSWORD' | translate }}
+                </ion-button>
+              </form>
+
+              <div class="message-container" *ngIf="error">
+                <ion-text color="danger" class="status-message">
+                  <ion-icon name="alert-circle-outline"></ion-icon>
+                  <span>{{error}}</span>
+                </ion-text>
+              </div>
+
+              <div class="message-container" *ngIf="exito">
+                <ion-text color="success" class="status-message">
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  <span>{{exito}}</span>
+                </ion-text>
+              </div>
+
+              <div class="aux-actions">
+                <ion-button
+                  expand="block"
+                  fill="clear"
+                  color="medium"
+                  [routerLink]="['/login']"
+                  class="btn-aux"
+                >
+                  Volver al inicio de sesión
+                </ion-button>
+              </div>
+            </ion-card-content>
+          </ion-card>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

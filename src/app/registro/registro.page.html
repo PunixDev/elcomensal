@@ -1,5 +1,10 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>{{ 'REGISTER.TITLE' | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="presentLanguagePopover($event)" fill="clear">
@@ -9,74 +14,129 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true">
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <form (ngSubmit)="registrarBar()">
-          <ion-item>
-            <ion-label position="floating"
-              >{{ 'REGISTER.BAR_NAME' | translate }}</ion-label
-            >
-            <ion-input
-              [(ngModel)]="nombreBar"
-              name="nombreBar"
-              required
-            ></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating"
-              >{{ 'REGISTER.ADMIN_USERNAME' | translate }}</ion-label
-            >
-            <ion-input
-              [(ngModel)]="usuarioAdmin"
-              name="usuarioAdmin"
-              required
-            ></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating"
-              >{{ 'REGISTER.PASSWORD' | translate }}</ion-label
-            >
-            <ion-input
-              [(ngModel)]="password"
-              name="password"
-              type="password"
-              required
-            ></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating"
-              >{{ 'REGISTER.RECOVERY_EMAIL' | translate }}</ion-label
-            >
-            <ion-input
-              [(ngModel)]="correo"
-              name="correo"
-              type="email"
-              required
-            ></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating"
-              >{{ 'REGISTER.DEFAULT_LANGUAGE' | translate }}</ion-label
-            >
-            <ion-select [(ngModel)]="idiomaSeleccionado" name="defaultLanguage">
-              <ion-select-option
-                *ngFor="let lang of availableLanguages"
-                [value]="lang.code"
-              >
-                <span class="language-flag">{{ lang.flag }}</span>&nbsp;{{
-                lang.name }}
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
-          <ion-button expand="block" color="success" type="submit">
-            {{ 'REGISTER.REGISTER_BUTTON' | translate }}
-          </ion-button>
-        </form>
-        <ion-text color="danger" *ngIf="error">{{error}}</ion-text>
-        <ion-text color="success" *ngIf="exito">{{exito}}</ion-text>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div class="registro-container">
+    <ion-grid fixed>
+      <ion-row class="ion-justify-content-center ion-align-items-center full-height">
+        <ion-col size="12" size-md="8" size-lg="6" size-xl="5">
+          
+          <ion-card class="registro-card">
+            <div class="brand-section ion-text-center">
+              <div class="logo-wrapper">
+                <ion-icon name="person-add-outline" color="primary"></ion-icon>
+              </div>
+              <h1 class="brand-name">BarAdmin</h1>
+              <p class="brand-tagline">{{ 'REGISTER.TITLE' | translate }}</p>
+            </div>
+
+            <ion-card-content>
+              <form (ngSubmit)="registrarBar()" class="registro-form">
+                <div class="form-grid">
+                  <!-- Nombre del Bar -->
+                  <ion-item fill="outline" mode="md" class="registro-item">
+                    <ion-label position="stacked">{{ 'REGISTER.BAR_NAME' | translate }}</ion-label>
+                    <ion-input
+                      [(ngModel)]="nombreBar"
+                      name="nombreBar"
+                      required
+                      [placeholder]="'Nombre de tu establecimiento'"
+                    ></ion-input>
+                    <ion-icon name="restaurant-outline" slot="end" size="small"></ion-icon>
+                  </ion-item>
+
+                  <!-- Usuario Admin -->
+                  <ion-item fill="outline" mode="md" class="registro-item ion-margin-top">
+                    <ion-label position="stacked">{{ 'REGISTER.ADMIN_USERNAME' | translate }}</ion-label>
+                    <ion-input
+                      [(ngModel)]="usuarioAdmin"
+                      name="usuarioAdmin"
+                      required
+                      [placeholder]="'Ej: admin_bar'"
+                    ></ion-input>
+                    <ion-icon name="person-outline" slot="end" size="small"></ion-icon>
+                  </ion-item>
+
+                  <!-- Password -->
+                  <ion-item fill="outline" mode="md" class="registro-item ion-margin-top">
+                    <ion-label position="stacked">{{ 'REGISTER.PASSWORD' | translate }}</ion-label>
+                    <ion-input
+                      [(ngModel)]="password"
+                      name="password"
+                      type="password"
+                      required
+                      [placeholder]="'••••••••'"
+                    ></ion-input>
+                    <ion-icon name="lock-closed-outline" slot="end" size="small"></ion-icon>
+                  </ion-item>
+
+                  <!-- Email -->
+                  <ion-item fill="outline" mode="md" class="registro-item ion-margin-top">
+                    <ion-label position="stacked">{{ 'REGISTER.RECOVERY_EMAIL' | translate }}</ion-label>
+                    <ion-input
+                      [(ngModel)]="correo"
+                      name="correo"
+                      type="email"
+                      required
+                      [placeholder]="'tu@email.com'"
+                    ></ion-input>
+                    <ion-icon name="mail-outline" slot="end" size="small"></ion-icon>
+                  </ion-item>
+
+                  <!-- Idioma -->
+                  <ion-item fill="outline" mode="md" class="registro-item ion-margin-top">
+                    <ion-label position="stacked">{{ 'REGISTER.DEFAULT_LANGUAGE' | translate }}</ion-label>
+                    <ion-select [(ngModel)]="idiomaSeleccionado" name="defaultLanguage" interface="popover">
+                      <ion-select-option
+                        *ngFor="let lang of availableLanguages"
+                        [value]="lang.code"
+                      >
+                        {{ lang.flag }} {{ lang.name }}
+                      </ion-select-option>
+                    </ion-select>
+                    <ion-icon name="globe-outline" slot="end" size="small"></ion-icon>
+                  </ion-item>
+                </div>
+
+                <div class="message-container" *ngIf="error">
+                  <ion-text color="danger" class="status-message">
+                    <ion-icon name="alert-circle-outline"></ion-icon>
+                    <span>{{error}}</span>
+                  </ion-text>
+                </div>
+
+                <div class="message-container" *ngIf="exito">
+                  <ion-text color="success" class="status-message">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    <span>{{exito}}</span>
+                  </ion-text>
+                </div>
+
+                <ion-button expand="block" color="success" type="submit" class="btn-register ion-margin-top">
+                  {{ 'REGISTER.REGISTER_BUTTON' | translate }}
+                </ion-button>
+
+                <div class="aux-actions">
+                  <ion-button
+                    expand="block"
+                    fill="clear"
+                    color="primary"
+                    [routerLink]="['/login']"
+                    class="btn-aux"
+                  >
+                    ¿Ya tienes cuenta? Inicia sesión
+                  </ion-button>
+                </div>
+              </form>
+            </ion-card-content>
+          </ion-card>
+
+          <div class="footer-actions ion-text-center">
+             <p class="privacy-note">Al registrarte, aceptas nuestros términos y condiciones.</p>
+          </div>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

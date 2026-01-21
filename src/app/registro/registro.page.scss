@@ -1,0 +1,203 @@
+$primary-color: var(--ion-color-primary, #1268be);
+$secondary-color: var(--ion-color-secondary, #3dc2ff);
+$success-color: var(--ion-color-success, #2dd36f);
+$bg-light: #f4f7fa;
+$shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+.registro-container {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e1e8f0 100%);
+  position: relative;
+  overflow: hidden;
+
+  // Círculos decorativos de fondo
+  &::before, &::after {
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background: rgba($primary-color, 0.05);
+    z-index: 0;
+  }
+
+  &::before { top: -120px; left: -120px; }
+  &::after { bottom: -120px; right: -120px; }
+}
+
+.full-height {
+  min-height: calc(100vh - 80px);
+  padding: 20px 0;
+}
+
+.registro-card {
+  border-radius: 28px;
+  box-shadow: $shadow-premium;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  z-index: 1;
+  animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brand-section {
+  padding: 20px 0 10px;
+
+  .logo-wrapper {
+    width: 60px;
+    height: 60px;
+    background: rgba($primary-color, 0.1);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    
+    ion-icon {
+      font-size: 30px;
+    }
+  }
+
+  .brand-name {
+    font-size: 1.8rem;
+    font-weight: 850;
+    color: #222;
+    margin: 0;
+    letter-spacing: -0.8px;
+  }
+
+  .brand-tagline {
+    font-size: 0.9rem;
+    color: #777;
+    margin: 4px 0 0;
+    font-weight: 500;
+  }
+}
+
+.registro-form {
+  padding: 4px;
+}
+
+.registro-item {
+  --border-radius: 14px;
+  --padding-start: 16px;
+  --highlight-height: 0;
+  --background: transparent;
+  
+  ion-label {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 6px !important;
+    font-size: 0.85rem;
+    letter-spacing: 0.3px;
+  }
+
+  ion-input, ion-select {
+    font-size: 0.95rem;
+    --placeholder-color: #999;
+    --placeholder-opacity: 0.8;
+  }
+
+  ion-select {
+    width: 100%;
+    --padding-start: 0;
+  }
+}
+
+.message-container {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.status-message {
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  ion-icon {
+    font-size: 1.2rem;
+  }
+}
+
+ion-text[color="danger"] .status-message {
+  color: var(--ion-color-danger);
+}
+
+ion-text[color="success"] .status-message {
+  color: var(--ion-color-success);
+}
+
+.btn-register {
+  --border-radius: 16px;
+  height: 54px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin-top: 20px;
+  box-shadow: 0 8px 16px rgba($success-color, 0.15);
+  text-transform: none;
+  letter-spacing: 0.5px;
+}
+
+.aux-actions {
+  margin-top: 12px;
+  
+  .btn-aux {
+    --color: #{$primary-color};
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: none;
+  }
+}
+
+.footer-actions {
+  margin-top: 20px;
+  padding: 0 20px;
+  animation: fadeIn 1.2s ease;
+  
+  .privacy-note {
+    font-size: 0.75rem;
+    color: #999;
+    margin: 0;
+  }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// Media query for small devices
+@media (max-width: 576px) {
+  .full-height {
+    min-height: auto;
+    padding: 0;
+  }
+  
+  .registro-card {
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: none;
+  }
+  
+  .registro-container {
+    background: white;
+  }
+}

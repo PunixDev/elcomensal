@@ -12,11 +12,15 @@ import {
   IonInput,
   IonButton,
   IonText,
+  IonButtons,
+  IonIcon,
+  IonCard,
+  IonCardContent,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../data.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -37,8 +41,13 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
     IonInput,
     IonButton,
     IonText,
+    IonButtons,
+    IonIcon,
+    IonCard,
+    IonCardContent,
     CommonModule,
     FormsModule,
+    RouterModule,
     TranslateModule,
   ],
 })
@@ -90,5 +99,9 @@ export class RecuperarPage {
     } catch (e) {
       this.error = this.translate.instant('RECOVER.ERROR_UPDATE');
     }
+  }
+
+  goBack() {
+    this.router.navigate(['/login']);
   }
 }

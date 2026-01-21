@@ -16,11 +16,13 @@ import {
   IonText,
   IonButtons,
   IonIcon,
+  IonCard,
+  IonCardContent,
   PopoverController,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { DataService } from '../data.service';
 import { LanguageService } from '../language.service';
 import { LanguageSelectorComponent } from '../language-selector.component';
@@ -48,8 +50,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     IonText,
     IonButtons,
     IonIcon,
+    IonCard,
+    IonCardContent,
     CommonModule,
     FormsModule,
+    RouterModule,
     TranslateModule,
   ],
 })
@@ -104,6 +109,10 @@ export class RegistroPage {
     }
   }
 
+  goBack() {
+    this.router.navigate(['/login']);
+  }
+
   getCurrentLanguageFlag(): string {
     return this.languageService.getLanguageFlag(
       this.languageService.getCurrentLanguage()
@@ -117,6 +126,7 @@ export class RegistroPage {
       translucent: true,
       showBackdrop: true,
       backdropDismiss: true,
+      componentProps: {},
     });
     return await popover.present();
   }
