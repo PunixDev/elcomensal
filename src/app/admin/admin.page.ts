@@ -379,37 +379,39 @@ export class AdminPage implements OnInit {
   marcarMesaPagada(mesa: string) {
     // Normalizar el nombre de la mesa al guardar en historial
     const mesaNormalizada = String(mesa).trim().toLowerCase();
+    const hoy = new Date().toISOString();
+    const hoyDia = hoy.slice(0, 10);
+
     const pedidosMesa = (this.comandasPorMesa[mesa] || []).map((c) => ({
       ...c,
-      mesa: mesaNormalizada, // Guardar la mesa normalizada
+      mesa: mesaNormalizada,
       total: c.items.reduce((subtotal: number, item: any) => {
         const prod = this.productos.find((p: any) => p.id === item.id);
         return subtotal + (prod ? prod.precio * item.cantidad : 0);
       }, 0),
-      pagadoEn: new Date().toISOString(),
-      fechaDia: c.fecha
-        ? c.fecha.slice(0, 10)
-        : new Date().toISOString().slice(0, 10),
+      pagadoEn: hoy,
+      fechaDia: c.fecha ? c.fecha.slice(0, 10) : hoyDia,
     }));
-    // Guardar en historial cada comanda
-    pedidosMesa.forEach((pedido) => {
-      this.dataService.addHistorial(this.barId, pedido);
-    });
-    // Guardar informe resumen de la mesa
+
+    // Guardar únicamente el informe resumen de la mesa (Ticket Total)
     if (pedidosMesa.length) {
       const informeMesa = {
         mesa: mesaNormalizada,
         pedidos: pedidosMesa,
         total: pedidosMesa.reduce((sum, p) => sum + (p.total || 0), 0),
-        pagadoEn: new Date().toISOString(),
-        fechaDia: pedidosMesa[0].fechaDia,
+        pagadoEn: hoy,
+        fecha: hoy, // CAMPO CRITICO PARA EL ORDERBY DE FIRESTORE
+        fechaDia: hoyDia,
         tipo: 'resumen_mesa',
       };
       this.dataService.addHistorial(this.barId, informeMesa);
     }
+
+    // Elimar las comandas activas de la base de datos
     (this.comandasPorMesa[mesa] || []).forEach((c) => {
       this.dataService.deleteComanda(this.barId, c.id);
     });
+
     // Forzar actualización inmediata de la lista de comandas
     this.comandas = this.comandas.filter((c) => c.mesa !== mesa);
     this.comandasPorMesa[mesa] = [];

@@ -1,136 +1,177 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+  <ion-toolbar class="historial-header">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/admin"></ion-back-button>
+      <ion-back-button defaultHref="/admin" aria-label="Volver al panel"></ion-back-button>
     </ion-buttons>
     <ion-title>
-      <ion-icon
-        name="archive"
-        slot="start"
-        style="margin-right: 8px"
-      ></ion-icon>
-      Historial de Consumo
+      <div style="display: flex; align-items: center">
+        <ion-icon name="archive-outline" style="margin-right: 8px"></ion-icon>
+        Historial
+      </div>
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <ion-card>
+
+<ion-content [fullscreen]="true" class="ion-padding-bottom">
+  <!-- Filtros -->
+  <ion-card class="filter-card">
     <ion-card-header>
-      <ion-card-title>Filtrar por fecha</ion-card-title>
+      <ion-card-title>Configuración de Vista</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-item>
-        <!-- <ion-label position="floating">Fecha</ion-label> -->
+      <ion-item lines="none" class="ion-no-padding">
+        <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
         <ion-datetime
           presentation="date"
           [value]="filtroFecha || ''"
           (ionChange)="setFecha($event)"
           display-format="YYYY-MM-DD"
+          aria-label="Seleccionar fecha para filtrar"
         ></ion-datetime>
       </ion-item>
+      
       <ion-button
         expand="block"
-        color="primary"
+        shape="round"
+        class="ion-margin-top"
         (click)="aplicarFiltrosAsync()"
+        aria-label="Aplicar filtro de fecha"
       >
-        Aplicar filtros
+        <ion-icon name="filter-outline" slot="start"></ion-icon>
+        Actualizar Historial
       </ion-button>
-    </ion-card-content>
-  </ion-card>
 
-  <ion-card *ngIf="mesas.length > 1">
-    <ion-card-content>
-      <ion-label>Filtrar por mesa:</ion-label>
-      <ion-segment
-        [(ngModel)]="filtroMesa"
-        (ionChange)="filtrarSoloVistaMesa()"
-      >
-        <ion-segment-button value="">
-          <ion-label>Todos</ion-label>
-        </ion-segment-button>
-        <ion-segment-button *ngFor="let mesa of mesas" [value]="mesa">
-          <ion-label>{{ mesa }}</ion-label>
-        </ion-segment-button>
-      </ion-segment>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card *ngIf="mesas.length > 0">
-    <ion-card-header>
-      <ion-card-title>Resumen del día</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <div>
-        <strong>Total facturado:</strong> {{ resumenDia.total |
-        currency:'EUR':'symbol':'1.2-2' }}
+      <div *ngIf="mesas.length > 1" class="ion-margin-top">
+        <ion-label color="medium" class="ion-margin-bottom" style="display: block;">
+          <b>Filtrar por mesa:</b>
+        </ion-label>
+        <ion-segment
+          [(ngModel)]="filtroMesa"
+          (ionChange)="filtrarSoloVistaMesa()"
+          scrollable
+        >
+          <ion-segment-button value="" aria-label="Mostrar todas las mesas">
+            <ion-label>Todas</ion-label>
+          </ion-segment-button>
+          <ion-segment-button *ngFor="let mesa of mesas" [value]="mesa" [attr.aria-label]="'Filtrar mesa ' + mesa">
+            <ion-label>{{ mesa }}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
       </div>
-      <div><strong>Mesas atendidas:</strong> {{ resumenDia.mesas }}</div>
     </ion-card-content>
   </ion-card>
 
-  <ng-container *ngFor="let mesa of mesas">
-    <ion-card *ngIf="(!filtroMesa && mesas.length > 0) || filtroMesa === mesa">
-      <ion-card-header color="secondary">
-        <ion-card-title>Mesa: <b>{{ mesa }}</b></ion-card-title>
-        <div style="font-size: 0.9em; color: #000">
-          Total: {{ getTotalMesa(mesa) | currency:'EUR':'symbol':'1.2-2' }}
-        </div>
-      </ion-card-header>
-      <ion-card-content>
-        <ng-container *ngFor="let registro of agrupadoPorMesa[mesa]">
-          <div
-            *ngIf="registro.tipo === 'resumen_mesa'"
-            style="
-              margin-bottom: 10px;
-              border-bottom: 1px solid #eee;
-              padding-bottom: 8px;
-            "
-          >
-            <strong style="color: #0070f3">RESUMEN DE MESA</strong><br />
-            <strong>Pagado en:</strong> {{registro.pagadoEn | date:'short'}}<br />
-            <strong>Total:</strong> {{registro.total |
-            currency:'EUR':'symbol':'1.2-2'}}<br />
-            <strong>Comandas:</strong>
-            <ul>
-              <li *ngFor="let c of registro.pedidos">
-                <span>{{c.fecha | date:'short'}}:</span>
-                <ul>
-                  <li *ngFor="let item of c.items">
-                    {{item.nombre}} x{{item.cantidad}}
-                    <span *ngIf="item.opciones?.length"
-                      >- Opciones: {{item.opciones.join(', ')}}</span
-                    >
+  <!-- Resumen del día -->
+  <ion-card class="summary-card" *ngIf="mesas.length > 0">
+    <ion-card-content>
+      <ion-grid class="ion-no-padding">
+        <ion-row>
+          <ion-col size="6" class="summary-item" style="border-right: 1px solid #eee;">
+            <span class="summary-label">Total Invoiced</span>
+            <span class="summary-value" aria-label="Total facturado hoy">
+              {{ resumenDia.total | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+          </ion-col>
+          <ion-col size="6" class="summary-item">
+            <span class="summary-label">Tables</span>
+            <span class="summary-value" aria-label="Mesas atendidas hoy">
+              {{ resumenDia.mesas }}
+            </span>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Listado de registros -->
+  <div *ngIf="mesas.length > 0">
+    <ion-list-header>
+      <ion-label>Detalle de Consumo</ion-label>
+    </ion-list-header>
+
+    <ion-accordion-group [multiple]="true">
+      <ng-container *ngFor="let mesa of mesas">
+        <ion-accordion 
+          *ngIf="(!filtroMesa && mesas.length > 0) || filtroMesa === mesa" 
+          [value]="mesa" 
+          class="mesa-accordion"
+        >
+          <ion-item slot="header" lines="none">
+            <div class="mesa-header-content">
+              <div class="mesa-title">Mesa {{ mesa }}</div>
+              <ion-badge color="primary" class="total-badge">
+                {{ getTotalMesa(mesa) | currency:'EUR':'symbol':'1.2-2' }}
+              </ion-badge>
+            </div>
+          </ion-item>
+
+          <div slot="content" class="ion-padding">
+            <div *ngFor="let registro of agrupadoPorMesa[mesa]" 
+                 class="registro-item"
+                 [ngClass]="registro.tipo === 'resumen_mesa' ? 'resumen-mesa' : 'comanda-individual'">
+              
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                <ion-text [color]="registro.tipo === 'resumen_mesa' ? 'success' : 'primary'">
+                  <strong style="text-transform: uppercase; font-size: 0.8rem; display: block;">
+                    {{ registro.tipo === 'resumen_mesa' ? 'Ticket de Pago' : 'Registro de Pedido' }}
+                  </strong>
+                  <ion-note style="font-size: 0.8rem; display: block; margin-top: 2px;">
+                    {{ (registro.pagadoEn || registro.fecha) | date:'HH:mm' }}
+                  </ion-note>
+                </ion-text>
+                
+                <ion-button fill="clear" color="dark" size="small" (click)="imprimirTicket(registro)" aria-label="Imprimir este ticket">
+                  <ion-icon name="print-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+
+              <!-- Detalle de Productos -->
+              <ng-container *ngIf="registro.tipo === 'resumen_mesa'">
+                <div *ngFor="let comanda of registro.pedidos" class="ion-margin-bottom">
+                  <div style="font-size: 0.75rem; color: #888; margin-bottom: 4px; border-bottom: 1px dotted #ccc;">
+                    Pedido de las {{ comanda.fecha | date:'HH:mm' }}
+                  </div>
+                  <ul class="item-list">
+                    <li *ngFor="let item of comanda.items">
+                      <span class="item-qty">{{ item.cantidad }}x</span> 
+                      <span class="item-name">{{ item.nombre }}</span>
+                      <div *ngIf="item.opciones?.length" style="font-size: 0.8rem; color: #888; font-style: italic;">
+                        + {{ item.opciones.join(', ') }}
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="registro.tipo !== 'resumen_mesa'">
+                <ul class="item-list">
+                  <li *ngFor="let item of registro.items">
+                    <span class="item-qty">{{ item.cantidad }}x</span> 
+                    <span class="item-name">{{ item.nombre }}</span>
+                    <div *ngIf="item.opciones?.length" style="font-size: 0.8rem; color: #888; font-style: italic;">
+                      + {{ item.opciones.join(', ') }}
+                    </div>
                   </li>
                 </ul>
-              </li>
-            </ul>
-          </div>
-          <div
-            *ngIf="!registro.tipo || registro.tipo !== 'resumen_mesa'"
-            style="margin-bottom: 10px"
-          >
-            <strong>Comanda individual</strong><br />
-            <strong>Fecha:</strong> {{registro.fecha | date:'short'}}<br />
-            <strong>Productos:</strong>
-            <ul>
-              <li *ngFor="let item of registro.items">
-                {{item.nombre}} x{{item.cantidad}}
-                <span *ngIf="item.opciones?.length"
-                  >- Opciones: {{item.opciones.join(', ')}}</span
-                >
-              </li>
-            </ul>
-            <strong>Total:</strong> {{registro.total |
-            currency:'EUR':'symbol':'1.2-2'}}
-          </div>
-        </ng-container>
-      </ion-card-content>
-    </ion-card>
-  </ng-container>
+              </ng-container>
 
-  <ion-card *ngIf="mesas.length === 0">
-    <ion-card-content>
-      <ion-label>No hay registros para los filtros seleccionados.</ion-label>
-    </ion-card-content>
-  </ion-card>
+              <div style="display: flex; justify-content: flex-end; margin-top: 10px; border-top: 1px dashed #ddd; padding-top: 8px;">
+                <ion-text color="dark">
+                  <strong>Total Ticket: {{ registro.total | currency:'EUR':'symbol':'1.2-2' }}</strong>
+                </ion-text>
+              </div>
+            </div>
+          </div>
+        </ion-accordion>
+      </ng-container>
+    </ion-accordion-group>
+  </div>
+
+  <!-- Estado vacío -->
+  <div *ngIf="mesas.length === 0" class="ion-text-center ion-padding" style="margin-top: 100px;">
+    <ion-icon name="search-outline" style="font-size: 4rem; color: #ccc;"></ion-icon>
+    <h3 style="color: #666;">Sin resultados</h3>
+    <p style="color: #999;">No hay registros para este día o filtros.</p>
+  </div>
 </ion-content>
+

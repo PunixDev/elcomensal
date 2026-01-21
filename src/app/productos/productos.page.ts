@@ -62,8 +62,6 @@ import { ImportMenuModalComponent } from '../import-menu-modal/import-menu-modal
     FormsModule,
     CategoryFilterPipe,
     TranslateModule,
-    EditProductModalComponent,
-    ImportMenuModalComponent,
   ],
 })
 export class ProductosPage implements OnInit {

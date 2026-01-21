@@ -1,0 +1,108 @@
+.historial-header {
+  --background: linear-gradient(135deg, #1268be 0%, #0a4a8a 100%);
+  color: white;
+}
+
+.summary-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 16px;
+  border-left: 5px solid #1268be;
+}
+
+.summary-item {
+  text-align: center;
+  padding: 10px;
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1268be;
+  display: block;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.filter-card {
+  border-radius: 16px;
+  margin: 16px;
+  overflow: hidden;
+}
+
+.mesa-accordion {
+  margin: 8px 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.mesa-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-right: 16px;
+}
+
+.mesa-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.registro-item {
+  border-left: 3px solid transparent;
+  margin: 8px 0;
+  padding: 8px 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.resumen-mesa {
+  border-left-color: #2dd36f;
+  background: #f0fff4;
+}
+
+.comanda-individual {
+  border-left-color: #3880ff;
+  background: #f0f7ff;
+}
+
+.item-list {
+  padding-left: 10px;
+  list-style-type: none;
+  font-size: 0.9rem;
+}
+
+.item-name {
+  font-weight: 500;
+}
+
+.item-qty {
+  color: #666;
+  font-weight: bold;
+}
+
+.total-badge {
+  font-size: 0.9rem;
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+ion-segment {
+  background: #f4f4f4;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+ion-datetime {
+  --background: transparent;
+}

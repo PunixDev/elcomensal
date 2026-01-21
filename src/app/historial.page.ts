@@ -21,6 +21,15 @@ import {
   IonButton,
   IonSegment,
   IonSegmentButton,
+  IonAccordion,
+  IonAccordionGroup,
+  IonBadge,
+  IonListHeader,
+  IonNote,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonText
 } from '@ionic/angular/standalone';
 import { DataService } from './data.service';
 import { Observable, firstValueFrom } from 'rxjs';
@@ -30,7 +39,7 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-historial',
   templateUrl: './historial.page.html',
-  styleUrls: [],
+  styleUrls: ['./historial.page.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -55,6 +64,15 @@ import { TranslateModule } from '@ngx-translate/core';
     IonButton,
     IonSegment,
     IonSegmentButton,
+    IonAccordion,
+    IonAccordionGroup,
+    IonBadge,
+    IonListHeader,
+    IonNote,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonText,
     TranslateModule,
   ],
 })
@@ -98,20 +116,23 @@ export class HistorialPage implements OnInit {
     // No filtrar por mesa en la consulta, solo por fecha
     const obs = this.dataService.getHistorialFiltrado(this.barId, fecha);
     const pedidos = await firstValueFrom(obs);
-    let filtrados = pedidos;
-    this.historialFiltrado = filtrados;
+    
+    // Filtrar para dar preferencia a 'resumen_mesa' si existen ambos tipos para la misma mesa
+    // o simplemente mostrar todo lo que venga (aunque ahora solo guardaremos resumen_mesa)
+    this.historialFiltrado = pedidos;
     this.agrupadoPorMesa = {};
-    filtrados.forEach((p) => {
+    
+    pedidos.forEach((p) => {
       const mesaKey = p['mesa'] || 'Sin mesa';
       if (!this.agrupadoPorMesa[mesaKey]) this.agrupadoPorMesa[mesaKey] = [];
       this.agrupadoPorMesa[mesaKey].push(p);
     });
+    
     this.mesas = Object.keys(this.agrupadoPorMesa);
     this.resumenDia = {
       total: this.mesas.reduce((acc, mesa) => acc + this.getTotalMesa(mesa), 0),
       mesas: this.mesas.length,
     };
-    // No modificar filtroMesa aquí, así el filtro visual permanece
   }
 
   filtrarSoloVistaMesa() {
@@ -125,5 +146,78 @@ export class HistorialPage implements OnInit {
       (sum: number, p: any) => sum + (p.total || 0),
       0
     );
+  }
+
+  imprimirTicket(registro: any) {
+    if (!registro) return;
+
+    const fechaTicket = new Date(registro.pagadoEn || registro.fecha).toLocaleString();
+    const mesa = registro.mesa || 'N/A';
+    const total = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(registro.total || 0);
+
+    let itemsHtml = '';
+    
+    if (registro.tipo === 'resumen_mesa' && registro.pedidos) {
+      registro.pedidos.forEach((p: any) => {
+        const horaPedido = new Date(p.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        itemsHtml += `<div style="font-size: 10px; border-bottom: 1px dashed #ccc; margin-top: 5px;">Pedido: ${horaPedido}</div>`;
+        p.items.forEach((item: any) => {
+          itemsHtml += `
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin: 2px 0;">
+              <span>${item.cantidad}x ${item.nombre}</span>
+            </div>
+            ${item.opciones?.length ? `<div style="font-size: 10px; color: #666; margin-left: 10px;">+ ${item.opciones.join(', ')}</div>` : ''}
+          `;
+        });
+      });
+    } else if (registro.items) {
+      registro.items.forEach((item: any) => {
+        itemsHtml += `
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin: 2px 0;">
+            <span>${item.cantidad}x ${item.nombre}</span>
+          </div>
+          ${item.opciones?.length ? `<div style="font-size: 10px; color: #666; margin-left: 10px;">+ ${item.opciones.join(', ')}</div>` : ''}
+        `;
+      });
+    }
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Ticket - Mesa ${mesa}</title>
+            <style>
+              body { font-family: 'Courier New', Courier, monospace; width: 80mm; margin: 0 auto; padding: 10px; }
+              .header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+              .footer { text-align: center; border-top: 1px solid #000; padding-top: 10px; margin-top: 10px; font-size: 12px; }
+              .total { display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-top: 15px; border-top: 1px double #000; padding-top: 5px; }
+              @media print { body { width: 100%; } }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <h2 style="margin: 0;">TICKET</h2>
+              <div style="font-size: 12px; margin-top: 5px;">Mesa: ${mesa.toUpperCase()}</div>
+              <div style="font-size: 10px;">Fecha: ${fechaTicket}</div>
+            </div>
+            <div class="items">
+              ${itemsHtml}
+            </div>
+            <div class="total">
+              <span>TOTAL</span>
+              <span>${total}</span>
+            </div>
+            <div class="footer">
+              <p>¡Gracias por su visita!</p>
+            </div>
+            <script>
+              window.onload = function() { window.print(); window.close(); }
+            </script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
   }
 }
