@@ -17,6 +17,11 @@ import {
   IonText,
   IonButtons,
   IonIcon,
+  IonPopover,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+  IonSpinner,
   PopoverController,
 } from '@ionic/angular/standalone';
 import { Router, RouterModule } from '@angular/router';
@@ -47,6 +52,10 @@ import { Observable } from 'rxjs';
     IonText,
     IonButtons,
     IonIcon,
+    IonCard,
+    IonCardHeader,
+    IonCardContent,
+    IonSpinner,
     CommonModule,
     FormsModule,
     RouterModule,

@@ -10,6 +10,11 @@ import {
   IonButton,
   IonIcon,
   IonButtons,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonBadge,
 } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -30,6 +35,11 @@ import { LanguageService } from '../language.service';
     IonButton,
     IonIcon,
     IonButtons,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonBadge,
     CommonModule,
     TranslateModule,
     RouterLink,

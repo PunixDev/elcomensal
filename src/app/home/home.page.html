@@ -15,9 +15,9 @@
 </ion-header>
 
 <ion-content class="home-hero-bg">
+  <!-- Hero Section -->
   <section class="home-hero-section">
     <div class="home-hero-text">
-      <!-- Banner solicitado: imagen 6 encima del título -->
       <img
         src="assets/6.png"
         [alt]="('HOME_LANDING.ALT.MENU_VIEW' | translate)"
@@ -25,102 +25,104 @@
       />
 
       <h1 class="home-title">{{ 'HOME_LANDING.HERO_TITLE' | translate }}</h1>
-      <h2 class="home-subtitle">
+      <p class="home-subtitle">
         {{ 'HOME_LANDING.HERO_SUBTITLE' | translate }}
-      </h2>
+      </p>
 
       <div class="home-trustbar">
         <div class="trust-item">
           <ion-icon name="shield-checkmark" color="primary"></ion-icon>
-          {{ 'HOME_LANDING.TRUST.SECURE' | translate }}
+          <span>{{ 'HOME_LANDING.TRUST.SECURE' | translate }}</span>
         </div>
         <div class="trust-item">
           <ion-icon name="flash" color="warning"></ion-icon>
-          {{ 'HOME_LANDING.TRUST.SETUP_FAST' | translate }}
+          <span>{{ 'HOME_LANDING.TRUST.SETUP_FAST' | translate }}</span>
         </div>
         <div class="trust-item">
           <ion-icon name="happy" color="success"></ion-icon>
-          {{ 'HOME_LANDING.TRUST.HAPPIER_CLIENTS' | translate }}
+          <span>{{ 'HOME_LANDING.TRUST.HAPPIER_CLIENTS' | translate }}</span>
         </div>
       </div>
 
       <ul class="home-benefits">
         <li>
-          <ion-icon name="qr-code" color="primary"></ion-icon>
+          <ion-icon name="qr-code-outline" color="primary"></ion-icon>
           <span>{{ 'HOME_LANDING.BENEFITS.QR_ORDERS' | translate }}</span>
         </li>
         <li>
-          <ion-icon name="hand-left" color="tertiary"></ion-icon>
+          <ion-icon name="hand-left-outline" color="tertiary"></ion-icon>
           <span>{{ 'HOME_LANDING.BENEFITS.REQUEST_BILL' | translate }}</span>
-        </li>
-        <li>
-          <ion-icon name="receipt" color="warning"></ion-icon>
-          <span>{{ 'HOME_LANDING.BENEFITS.MENU_VISUAL' | translate }}</span>
-        </li>
-        <li>
-          <ion-icon name="stats-chart" color="success"></ion-icon>
-          <span
-            >{{ 'HOME_LANDING.BENEFITS.REALTIME_DASHBOARD' | translate }}</span
-          >
         </li>
         <li>
           <ion-icon name="globe-outline" color="primary"></ion-icon>
           <span>{{ 'HOME_LANDING.BENEFITS.AI_TRANSLATION' | translate }}</span>
         </li>
       </ul>
+
       <div class="home-cta">
         <ion-button color="success" size="large" (click)="goToLogin()">
-          <ion-icon name="log-in" slot="start"></ion-icon>
+          <ion-icon name="rocket-outline" slot="start"></ion-icon>
           {{ 'HOME_LANDING.CTA_PRIMARY' | translate }}
         </ion-button>
       </div>
     </div>
-    <div class="home-hero-images"></div>
   </section>
 
-  <!-- Features -->
+  <!-- Features Grid -->
   <section class="home-section home-section-dark">
     <div class="home-section-content">
-      <h2>{{ 'HOME_LANDING.FEATURES.TITLE' | translate }}</h2>
+      <h2 class="ion-text-center">{{ 'HOME_LANDING.FEATURES.TITLE' | translate }}</h2>
       <div class="features-grid">
-        <div class="feature-card">
-          <ion-icon name="qr-code-outline" class="feature-icon"></ion-icon>
-          <h3>{{ 'HOME_LANDING.FEATURES.QR.TITLE' | translate }}</h3>
-          <p>{{ 'HOME_LANDING.FEATURES.QR.DESC' | translate }}</p>
-        </div>
-        <div class="feature-card">
-          <ion-icon name="hand-left-outline" class="feature-icon"></ion-icon>
-          <h3>{{ 'HOME_LANDING.FEATURES.REQUEST_BILL.TITLE' | translate }}</h3>
-          <p>{{ 'HOME_LANDING.FEATURES.REQUEST_BILL.DESC' | translate }}</p>
-        </div>
-        <div class="feature-card">
-          <ion-icon name="restaurant-outline" class="feature-icon"></ion-icon>
-          <h3>{{ 'HOME_LANDING.FEATURES.MENU.TITLE' | translate }}</h3>
-          <p>{{ 'HOME_LANDING.FEATURES.MENU.DESC' | translate }}</p>
-        </div>
-        <div class="feature-card">
-          <ion-icon name="storefront-outline" class="feature-icon"></ion-icon>
-          <h3>{{ 'HOME_LANDING.FEATURES.FLOOR.TITLE' | translate }}</h3>
-          <p>{{ 'HOME_LANDING.FEATURES.FLOOR.DESC' | translate }}</p>
-        </div>
-        <div class="feature-card">
-          <ion-icon name="cash-outline" class="feature-icon"></ion-icon>
-          <h3>{{ 'HOME_LANDING.FEATURES.REPORTS.TITLE' | translate }}</h3>
-          <p>{{ 'HOME_LANDING.FEATURES.REPORTS.DESC' | translate }}</p>
-        </div>
-        <div class="feature-card">
-          <ion-icon name="globe-outline" class="feature-icon"></ion-icon>
-          <h3>{{ 'HOME_LANDING.FEATURES.AI.TITLE' | translate }}</h3>
-          <p>{{ 'HOME_LANDING.FEATURES.AI.DESC' | translate }}</p>
-        </div>
+        <ion-card class="feature-card">
+          <ion-card-content>
+            <ion-icon name="qr-code-outline" class="feature-icon"></ion-icon>
+            <h3>{{ 'HOME_LANDING.FEATURES.QR.TITLE' | translate }}</h3>
+            <p>{{ 'HOME_LANDING.FEATURES.QR.DESC' | translate }}</p>
+          </ion-card-content>
+        </ion-card>
+        <ion-card class="feature-card">
+          <ion-card-content>
+            <ion-icon name="hand-left-outline" class="feature-icon"></ion-icon>
+            <h3>{{ 'HOME_LANDING.FEATURES.REQUEST_BILL.TITLE' | translate }}</h3>
+            <p>{{ 'HOME_LANDING.FEATURES.REQUEST_BILL.DESC' | translate }}</p>
+          </ion-card-content>
+        </ion-card>
+        <ion-card class="feature-card">
+          <ion-card-content>
+            <ion-icon name="restaurant-outline" class="feature-icon"></ion-icon>
+            <h3>{{ 'HOME_LANDING.FEATURES.MENU.TITLE' | translate }}</h3>
+            <p>{{ 'HOME_LANDING.FEATURES.MENU.DESC' | translate }}</p>
+          </ion-card-content>
+        </ion-card>
+        <ion-card class="feature-card">
+          <ion-card-content>
+            <ion-icon name="storefront-outline" class="feature-icon"></ion-icon>
+            <h3>{{ 'HOME_LANDING.FEATURES.FLOOR.TITLE' | translate }}</h3>
+            <p>{{ 'HOME_LANDING.FEATURES.FLOOR.DESC' | translate }}</p>
+          </ion-card-content>
+        </ion-card>
+        <ion-card class="feature-card">
+          <ion-card-content>
+            <ion-icon name="cash-outline" class="feature-icon"></ion-icon>
+            <h3>{{ 'HOME_LANDING.FEATURES.REPORTS.TITLE' | translate }}</h3>
+            <p>{{ 'HOME_LANDING.FEATURES.REPORTS.DESC' | translate }}</p>
+          </ion-card-content>
+        </ion-card>
+        <ion-card class="feature-card">
+          <ion-card-content>
+            <ion-icon name="globe-outline" class="feature-icon"></ion-icon>
+            <h3>{{ 'HOME_LANDING.FEATURES.AI.TITLE' | translate }}</h3>
+            <p>{{ 'HOME_LANDING.FEATURES.AI.DESC' | translate }}</p>
+          </ion-card-content>
+        </ion-card>
       </div>
     </div>
   </section>
 
-  <!-- How it works -->
+  <!-- Steps Vertical (Modern) -->
   <section class="home-section">
     <div class="home-section-content">
-      <h2>{{ 'HOME_LANDING.STEPS.TITLE' | translate }}</h2>
+      <h2 class="ion-text-center">{{ 'HOME_LANDING.STEPS.TITLE' | translate }}</h2>
       <div class="steps-grid">
         <div class="step-card">
           <div class="step-number">1</div>
@@ -141,114 +143,88 @@
     </div>
   </section>
 
-  <!-- Social proof / Results -->
+  <!-- Impact Results -->
   <section class="home-section home-section-dark">
     <div class="home-section-content">
-      <h2>{{ 'HOME_LANDING.RESULTS.TITLE' | translate }}</h2>
+      <h2 class="ion-text-center">{{ 'HOME_LANDING.RESULTS.TITLE' | translate }}</h2>
       <ul class="home-results">
         <li>
           <ion-icon name="trending-up" color="success"></ion-icon>
-          {{ 'HOME_LANDING.RESULTS.ROTATION' | translate }}
+          <span>{{ 'HOME_LANDING.RESULTS.ROTATION' | translate }}</span>
         </li>
         <li>
           <ion-icon name="thumbs-up" color="primary"></ion-icon>
-          {{ 'HOME_LANDING.RESULTS.SATISFACTION' | translate }}
+          <span>{{ 'HOME_LANDING.RESULTS.SATISFACTION' | translate }}</span>
         </li>
         <li>
           <ion-icon name="alarm" color="tertiary"></ion-icon>
-          {{ 'HOME_LANDING.RESULTS.WAIT' | translate }}
+          <span>{{ 'HOME_LANDING.RESULTS.WAIT' | translate }}</span>
         </li>
         <li>
           <ion-icon name="cash" color="warning"></ion-icon>
-          {{ 'HOME_LANDING.RESULTS.AVGTICKET' | translate }}
+          <span>{{ 'HOME_LANDING.RESULTS.AVGTICKET' | translate }}</span>
         </li>
       </ul>
     </div>
   </section>
 
-  <!-- Testimonials -->
+  <!-- Testimonials Cards -->
   <section class="home-section">
     <div class="home-section-content">
-      <h2>{{ 'HOME_LANDING.TESTIMONIALS.TITLE' | translate }}</h2>
+      <h2 class="ion-text-center">{{ 'HOME_LANDING.TESTIMONIALS.TITLE' | translate }}</h2>
       <div class="testimonials">
-        <div class="testimonial-card">
-          <div class="stars">
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-          </div>
-          <p>{{ 'HOME_LANDING.TESTIMONIALS.1.TEXT' | translate }}</p>
-          <span class="author"
-            >{{ 'HOME_LANDING.TESTIMONIALS.1.AUTHOR' | translate }}</span
-          >
-        </div>
-        <div class="testimonial-card">
-          <div class="stars">
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-          </div>
-          <p>{{ 'HOME_LANDING.TESTIMONIALS.2.TEXT' | translate }}</p>
-          <span class="author"
-            >{{ 'HOME_LANDING.TESTIMONIALS.2.AUTHOR' | translate }}</span
-          >
-        </div>
-        <div class="testimonial-card">
-          <div class="stars">
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-            <ion-icon name="star" color="warning"></ion-icon>
-          </div>
-          <p>{{ 'HOME_LANDING.TESTIMONIALS.3.TEXT' | translate }}</p>
-          <span class="author"
-            >{{ 'HOME_LANDING.TESTIMONIALS.3.AUTHOR' | translate }}</span
-          >
-        </div>
+        <ion-card class="testimonial-card">
+          <ion-card-content>
+            <div class="stars">
+              <ion-icon name="star" color="warning" *ngFor="let i of [1,2,3,4,5]"></ion-icon>
+            </div>
+            <p>{{ 'HOME_LANDING.TESTIMONIALS.1.TEXT' | translate }}</p>
+            <span class="author">{{ 'HOME_LANDING.TESTIMONIALS.1.AUTHOR' | translate }}</span>
+          </ion-card-content>
+        </ion-card>
+        <ion-card class="testimonial-card">
+          <ion-card-content>
+            <div class="stars">
+              <ion-icon name="star" color="warning" *ngFor="let i of [1,2,3,4,5]"></ion-icon>
+            </div>
+            <p>{{ 'HOME_LANDING.TESTIMONIALS.2.TEXT' | translate }}</p>
+            <span class="author">{{ 'HOME_LANDING.TESTIMONIALS.2.AUTHOR' | translate }}</span>
+          </ion-card-content>
+        </ion-card>
+        <ion-card class="testimonial-card">
+          <ion-card-content>
+            <div class="stars">
+              <ion-icon name="star" color="warning" *ngFor="let i of [1,2,3,4,5]"></ion-icon>
+            </div>
+            <p>{{ 'HOME_LANDING.TESTIMONIALS.3.TEXT' | translate }}</p>
+            <span class="author">{{ 'HOME_LANDING.TESTIMONIALS.3.AUTHOR' | translate }}</span>
+          </ion-card-content>
+        </ion-card>
       </div>
     </div>
   </section>
 
-  <!-- Final CTA -->
+  <!-- Final CTA Premium -->
   <section class="home-section home-section-cta">
     <div class="home-section-content">
       <h2>{{ 'HOME_LANDING.FINAL_CTA.TITLE' | translate }}</h2>
-      <ion-button color="primary" size="large" (click)="goToLogin()">
-        <ion-icon name="log-in" slot="start"></ion-icon>
+      <ion-button color="light" size="large" (click)="goToLogin()">
+        <ion-icon name="rocket-outline" slot="start"></ion-icon>
         {{ 'HOME_LANDING.FINAL_CTA.BUTTON' | translate }}
       </ion-button>
-      <div class="cta-note">
-        {{ 'HOME_LANDING.FINAL_CTA.NOTE' | translate }}
-      </div>
+      <div class="cta-note">{{ 'HOME_LANDING.FINAL_CTA.NOTE' | translate }}</div>
     </div>
   </section>
 
-  <!-- Footer Section -->
-  <section class="home-section home-footer">
-    <div class="home-section-content">
-      <div class="footer-links">
-        <ion-button
-          [routerLink]="['/aviso-legal']"
-          fill="clear"
-          size="large"
-          class="footer-button"
-        >
-          Aviso Legal
-        </ion-button>
-        <ion-button
-          [routerLink]="['/sobre-nosotros']"
-          fill="clear"
-          size="large"
-          class="footer-button"
-        >
-          Sobre Nosotros
-        </ion-button>
-      </div>
+  <!-- Friendly Footer -->
+  <footer class="home-footer">
+    <div class="footer-links">
+      <ion-button [routerLink]="['/aviso-legal']" fill="clear" class="footer-button">
+        Aviso Legal
+      </ion-button>
+      <ion-button [routerLink]="['/sobre-nosotros']" fill="clear" class="footer-button">
+        Sobre Nosotros
+      </ion-button>
     </div>
-  </section>
+  </footer>
 </ion-content>
