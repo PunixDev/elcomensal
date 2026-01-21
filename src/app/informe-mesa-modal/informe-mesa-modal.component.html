@@ -30,7 +30,11 @@
         >
           <ion-button color="primary" (click)="imprimirInformeMesa()">
             <ion-icon name="print" slot="start"></ion-icon>
-            Imprimir
+            Imprimir comanda
+          </ion-button>
+          <ion-button color="tertiary" (click)="imprimirTotal()">
+            <ion-icon name="receipt-outline" slot="start"></ion-icon>
+            Imprimir Total
           </ion-button>
           <ion-button color="secondary" (click)="hacerCalculoPorSeparado()">
             <ion-icon name="calculator-outline" slot="start"></ion-icon>
@@ -68,7 +72,7 @@
                 {{ comanda?.observaciones }}
               </div>
             </ion-label>
-            <div style="display: flex; gap: 8px; margin-left: 8px">
+            <div style="display: flex; gap: 8px; margin-left: 8px; align-items: center">
               <ion-button
                 color="warning"
                 size="small"
@@ -80,13 +84,41 @@
                 "
                 >Marcar En preparación</ion-button
               >
-              <ion-button
-                color="success"
-                size="small"
-                (click)="aplicarEstado(comanda, 'preparado')"
+              <div
                 *ngIf="comanda.estado === 'preparando'"
-                >Marcar Preparado</ion-button
+                style="display: flex; gap: 4px; align-items: center"
               >
+                <ion-button
+                  color="success"
+                  size="small"
+                  (click)="aplicarEstado(comanda, 'preparado')"
+                  >Marcar Preparado</ion-button
+                >
+                <ion-button
+                  color="medium"
+                  fill="clear"
+                  size="small"
+                  (click)="aplicarEstado(comanda, '')"
+                  title="Volver a Recibido"
+                >
+                  <ion-icon name="arrow-undo-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+              <div
+                *ngIf="comanda.estado === 'preparado'"
+                style="display: flex; gap: 4px; align-items: center"
+              >
+                <ion-badge color="success">Preparado</ion-badge>
+                <ion-button
+                  color="medium"
+                  fill="clear"
+                  size="small"
+                  (click)="aplicarEstado(comanda, 'preparando')"
+                  title="Volver a En preparación"
+                >
+                  <ion-icon name="arrow-undo-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
             </div>
           </ion-item>
         </ion-list>

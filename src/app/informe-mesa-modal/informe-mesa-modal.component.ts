@@ -16,6 +16,7 @@ import {
   IonItem,
   IonLabel,
   IonIcon,
+  IonBadge,
   ModalController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
@@ -40,6 +41,7 @@ import { TranslateModule } from '@ngx-translate/core';
     IonItem,
     IonLabel,
     IonIcon,
+    IonBadge,
     CommonModule,
     FormsModule,
     TranslateModule,
@@ -121,6 +123,55 @@ export class InformeMesaModalComponent {
     aImprimir.forEach((comanda) => {
       this.aplicarEstado(comanda, 'preparando');
     });
+  }
+
+  imprimirTotal() {
+    if (!this.informeMesa || !this.informeMesa.length) return;
+
+    // Construir contenido para imprimir el total (todas las comandas)
+    let contenido = `<div style="font-family: Arial, sans-serif; max-width: 300px; margin: 0 auto;">`;
+    contenido += `<h2 style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 5px;">MESA ${this.mesaActual}</h2>`;
+    contenido += `<h3 style="text-align: center; margin-top: 5px;">Ticket Resumen</h3>`;
+    
+    this.informeMesa.forEach((comanda: any, idx: number) => {
+      contenido += `<div style="margin-bottom: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">`;
+      contenido += `<div style="font-size: 0.8em; color: #666;">Fecha: ${new Date(comanda.fecha).toLocaleString()}</div>`;
+      contenido += `<ul style="list-style: none; padding: 0; margin: 5px 0;">`;
+      
+      (comanda.items || []).forEach((item: any) => {
+        const precio = this.getPrecioProducto ? this.getPrecioProducto(item.id) : 0;
+        contenido += `<li style="font-size: 1em; display: flex; justify-content: space-between;">`;
+        contenido += `<span><strong>${item.cantidad}x</strong> ${item.nombre}</span>`;
+        contenido += `<span>${(precio * item.cantidad).toFixed(2)}€</span>`;
+        contenido += `</li>`;
+        if (item.opciones && item.opciones.length) {
+          contenido += `<li style="font-size: 0.85em; padding-left: 15px; color: #555;">- ${item.opciones.join(', ')}</li>`;
+        }
+      });
+      
+      contenido += `</ul>`;
+      if (comanda.observaciones) {
+        contenido += `<div style="font-size: 0.85em; background: #f9f9f9; padding: 3px;"><strong>OBS:</strong> ${comanda.observaciones}</div>`;
+      }
+      contenido += `</div>`;
+    });
+    
+    contenido += `<div style="margin-top: 15px; border-top: 2px solid #000; padding-top: 10px; text-align: right; font-size: 1.2em;">`;
+    contenido += `<strong>TOTAL: ${this.informeTotal.toFixed(2)} €</strong>`;
+    contenido += `</div>`;
+    
+    contenido += `<div style="text-align: center; margin-top: 20px; font-weight: bold;">*** GRACIAS POR SU VISITA ***</div>`;
+    contenido += `</div>`;
+
+    const w = window.open('', '_blank');
+    if (!w) return;
+    w.document.write(
+      `<!doctype html><html><head><title>Total - Mesa ${this.mesaActual}</title></head><body>${contenido}</body></html>`
+    );
+    w.document.close();
+    w.focus();
+    w.print();
+    w.close();
   }
 
   async descargarInformeMesa() {
