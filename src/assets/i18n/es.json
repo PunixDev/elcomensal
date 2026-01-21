@@ -29,7 +29,8 @@
     "PREVIOUS": "Anterior",
     "AVAILABLE": "Disponible",
     "PRINT": "Imprimir",
-    "CALCULATE_SEPARATELY": "Calcular por separado"
+    "CALCULATE_SEPARATELY": "Calcular por separado",
+    "THANKS_VISIT": "¡Gracias por su visita!"
   },
   "HEADER": {
     "LANGUAGE": "Idioma",
@@ -296,21 +297,19 @@
     "SUCCESS_GENERATED": "Código QR generado exitosamente"
   },
   "HISTORY": {
-    "TITLE": "Historial de Pedidos",
-    "ORDER_NUMBER": "Número de Pedido",
-    "TABLE": "Mesa",
-    "DATE": "Fecha",
-    "TIME": "Hora",
-    "TOTAL": "Total",
-    "STATUS": "Estado",
-    "ITEMS": "Productos",
-    "CUSTOMER": "Cliente",
-    "PAYMENT_METHOD": "Método de Pago",
-    "FILTER_BY_DATE": "Filtrar por fecha",
-    "FILTER_BY_STATUS": "Filtrar por estado",
-    "EXPORT_DATA": "Exportar Datos",
-    "NO_ORDERS": "No hay pedidos en el historial",
-    "ORDER_DETAILS": "Detalles del Pedido"
+    "ORDER_DETAILS": "Detalles del Pedido",
+    "VIEW_CONFIG": "Configuración de Vista",
+    "UPDATE_HISTORY": "Actualizar Historial",
+    "FILTER_BY_TABLE": "Filtrar por mesa",
+    "TOTAL_INVOICED": "Total Facturado",
+    "TABLES_SERVED": "Mesas",
+    "CONSUMPTION_DETAIL": "Detalle de Consumo",
+    "TICKET_PAYMENT": "Ticket de Pago",
+    "ORDER_RECORD": "Registro de Pedido",
+    "ORDER_AT": "Pedido de las {{time}}",
+    "TOTAL_TICKET": "Total Ticket",
+    "NO_RESULTS": "Sin resultados",
+    "NO_RECORDS_FOUND": "No hay registros para este día o filtros."
   },
   "TABLE_REPORT": {
     "TITLE": "Informe de Mesa",

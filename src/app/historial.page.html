@@ -6,9 +6,14 @@
     <ion-title>
       <div style="display: flex; align-items: center">
         <ion-icon name="archive-outline" style="margin-right: 8px"></ion-icon>
-        Historial
+        {{ 'HISTORY.TITLE' | translate }}
       </div>
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentLanguagePopover($event)">
+        <span style="font-size: 1.5rem">{{ getCurrentLanguageFlag() }}</span>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -16,7 +21,7 @@
   <!-- Filtros -->
   <ion-card class="filter-card">
     <ion-card-header>
-      <ion-card-title>Configuración de Vista</ion-card-title>
+      <ion-card-title>{{ 'HISTORY.VIEW_CONFIG' | translate }}</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-item lines="none" class="ion-no-padding">
@@ -38,12 +43,12 @@
         aria-label="Aplicar filtro de fecha"
       >
         <ion-icon name="filter-outline" slot="start"></ion-icon>
-        Actualizar Historial
+        {{ 'HISTORY.UPDATE_HISTORY' | translate }}
       </ion-button>
 
       <div *ngIf="mesas.length > 1" class="ion-margin-top">
         <ion-label color="medium" class="ion-margin-bottom" style="display: block;">
-          <b>Filtrar por mesa:</b>
+          <b>{{ 'HISTORY.FILTER_BY_TABLE' | translate }}:</b>
         </ion-label>
         <ion-segment
           [(ngModel)]="filtroMesa"
@@ -51,7 +56,7 @@
           scrollable
         >
           <ion-segment-button value="" aria-label="Mostrar todas las mesas">
-            <ion-label>Todas</ion-label>
+            <ion-label>{{ 'COMMON.ALL' | translate }}</ion-label>
           </ion-segment-button>
           <ion-segment-button *ngFor="let mesa of mesas" [value]="mesa" [attr.aria-label]="'Filtrar mesa ' + mesa">
             <ion-label>{{ mesa }}</ion-label>
@@ -67,13 +72,13 @@
       <ion-grid class="ion-no-padding">
         <ion-row>
           <ion-col size="6" class="summary-item" style="border-right: 1px solid #eee;">
-            <span class="summary-label">Total Invoiced</span>
+            <span class="summary-label">{{ 'HISTORY.TOTAL_INVOICED' | translate }}</span>
             <span class="summary-value" aria-label="Total facturado hoy">
               {{ resumenDia.total | currency:'EUR':'symbol':'1.2-2' }}
             </span>
           </ion-col>
           <ion-col size="6" class="summary-item">
-            <span class="summary-label">Tables</span>
+            <span class="summary-label">{{ 'HISTORY.TABLES_SERVED' | translate }}</span>
             <span class="summary-value" aria-label="Mesas atendidas hoy">
               {{ resumenDia.mesas }}
             </span>
@@ -86,7 +91,7 @@
   <!-- Listado de registros -->
   <div *ngIf="mesas.length > 0">
     <ion-list-header>
-      <ion-label>Detalle de Consumo</ion-label>
+      <ion-label>{{ 'HISTORY.CONSUMPTION_DETAIL' | translate }}</ion-label>
     </ion-list-header>
 
     <ion-accordion-group [multiple]="true">
@@ -98,7 +103,7 @@
         >
           <ion-item slot="header" lines="none">
             <div class="mesa-header-content">
-              <div class="mesa-title">Mesa {{ mesa }}</div>
+              <div class="mesa-title">{{ 'HISTORY.TABLE' | translate }} {{ mesa }}</div>
               <ion-badge color="primary" class="total-badge">
                 {{ getTotalMesa(mesa) | currency:'EUR':'symbol':'1.2-2' }}
               </ion-badge>
@@ -113,7 +118,7 @@
               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
                 <ion-text [color]="registro.tipo === 'resumen_mesa' ? 'success' : 'primary'">
                   <strong style="text-transform: uppercase; font-size: 0.8rem; display: block;">
-                    {{ registro.tipo === 'resumen_mesa' ? 'Ticket de Pago' : 'Registro de Pedido' }}
+                    {{ (registro.tipo === 'resumen_mesa' ? 'HISTORY.TICKET_PAYMENT' : 'HISTORY.ORDER_RECORD') | translate }}
                   </strong>
                   <ion-note style="font-size: 0.8rem; display: block; margin-top: 2px;">
                     {{ (registro.pagadoEn || registro.fecha) | date:'HH:mm' }}
@@ -129,7 +134,7 @@
               <ng-container *ngIf="registro.tipo === 'resumen_mesa'">
                 <div *ngFor="let comanda of registro.pedidos" class="ion-margin-bottom">
                   <div style="font-size: 0.75rem; color: #888; margin-bottom: 4px; border-bottom: 1px dotted #ccc;">
-                    Pedido de las {{ comanda.fecha | date:'HH:mm' }}
+                    {{ 'HISTORY.ORDER_AT' | translate:{time: (comanda.fecha | date:'HH:mm')} }}
                   </div>
                   <ul class="item-list">
                     <li *ngFor="let item of comanda.items">
@@ -157,7 +162,7 @@
 
               <div style="display: flex; justify-content: flex-end; margin-top: 10px; border-top: 1px dashed #ddd; padding-top: 8px;">
                 <ion-text color="dark">
-                  <strong>Total Ticket: {{ registro.total | currency:'EUR':'symbol':'1.2-2' }}</strong>
+                  <strong>{{ 'HISTORY.TOTAL_TICKET' | translate }}: {{ registro.total | currency:'EUR':'symbol':'1.2-2' }}</strong>
                 </ion-text>
               </div>
             </div>
@@ -170,8 +175,8 @@
   <!-- Estado vacío -->
   <div *ngIf="mesas.length === 0" class="ion-text-center ion-padding" style="margin-top: 100px;">
     <ion-icon name="search-outline" style="font-size: 4rem; color: #ccc;"></ion-icon>
-    <h3 style="color: #666;">Sin resultados</h3>
-    <p style="color: #999;">No hay registros para este día o filtros.</p>
+    <h3 style="color: #666;">{{ 'HISTORY.NO_RESULTS' | translate }}</h3>
+    <p style="color: #999;">{{ 'HISTORY.NO_RECORDS_FOUND' | translate }}</p>
   </div>
 </ion-content>
 

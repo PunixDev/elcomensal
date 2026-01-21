@@ -29,7 +29,8 @@
     "PREVIOUS": "Vorherige",
     "AVAILABLE": "Verfügbar",
     "PRINT": "Drucken",
-    "CALCULATE_SEPARATELY": "Separat berechnen"
+    "CALCULATE_SEPARATELY": "Separat berechnen",
+    "THANKS_VISIT": "Vielen Dank für Ihren Besuch!"
   },
   "HEADER": {
     "LANGUAGE": "Sprache",
@@ -269,10 +270,6 @@
     "ORDER_HISTORY": "Bestellverlauf",
     "STATUS_PREPARED": "Zubereitet",
     "STATUS_PREPARING": "In Zubereitung",
-    "EDIT_ORDER": "Bestellung bearbeiten",
-    "OBSERVATIONS": "Anmerkungen",
-    "SEND_MODIFICATION": "Änderung senden",
-    "CANCEL": "Abbrechen",
     "STATUS_RECEIVED": "Empfangen",
     "TOTAL_PAID": "Gesamt bezahlt",
     "REQUEST_PAYMENT": "Zahlung anfordern",
@@ -339,5 +336,41 @@
     "TOTAL_PAID": "Gesamt bezahlt",
     "REQUEST_PAYMENT": "Zahlung anfordern",
     "IMAGE_EXPANDED": "Vergrößertes Bild"
+  },
+  "CART": {
+    "TOTAL": "Gesamt"
+  },
+  "HISTORY": {
+    "TITLE": "Bestellverlauf",
+    "ORDER_NUMBER": "Bestellnummer",
+    "TABLE": "Tisch",
+    "DATE": "Datum",
+    "TIME": "Uhrzeit",
+    "TOTAL": "Gesamt",
+    "STATUS": "Status",
+    "ITEMS": "Artikel",
+    "CUSTOMER": "Kunde",
+    "PAYMENT_METHOD": "Zahlungsmethode",
+    "FILTER_BY_DATE": "Nach Datum filtern",
+    "FILTER_BY_STATUS": "Nach Status filtern",
+    "EXPORT_DATA": "Daten exportieren",
+    "NO_ORDERS": "Keine Bestellungen im Verlauf",
+    "ORDER_DETAILS": "Bestelldetails",
+    "VIEW_CONFIG": "Ansichtskonfiguration",
+    "UPDATE_HISTORY": "Verlauf aktualisieren",
+    "FILTER_BY_TABLE": "Nach Tisch filtern",
+    "TOTAL_INVOICED": "Gesamt fakturiert",
+    "TABLES_SERVED": "Tische",
+    "CONSUMPTION_DETAIL": "Verbrauchsdetail",
+    "TICKET_PAYMENT": "Zahlungsbeleg",
+    "ORDER_RECORD": "Bestellprotokoll",
+    "ORDER_AT": "Bestellung von {{time}}",
+    "TOTAL_TICKET": "Gesamtbeleg",
+    "NO_RESULTS": "Keine Ergebnisse",
+    "NO_RECORDS_FOUND": "Keine Datensätze für diesen Tag oder Filter."
+  },
+  "TABLE_REPORT": {
+    "TITLE": "Tischbericht",
+    "POPULAR_ITEMS": "Beliebte Artikel"
   }
 }

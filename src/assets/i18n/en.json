@@ -29,7 +29,8 @@
     "PREVIOUS": "Previous",
     "AVAILABLE": "Available",
     "PRINT": "Print",
-    "CALCULATE_SEPARATELY": "Calculate separately"
+    "CALCULATE_SEPARATELY": "Calculate separately",
+    "THANKS_VISIT": "Thank you for your visit!"
   },
   "HEADER": {
     "LANGUAGE": "Language",
@@ -310,7 +311,19 @@
     "FILTER_BY_STATUS": "Filter by status",
     "EXPORT_DATA": "Export Data",
     "NO_ORDERS": "No orders in history",
-    "ORDER_DETAILS": "Order Details"
+    "ORDER_DETAILS": "Order Details",
+    "VIEW_CONFIG": "View Configuration",
+    "UPDATE_HISTORY": "Update History",
+    "FILTER_BY_TABLE": "Filter by table",
+    "TOTAL_INVOICED": "Total Invoiced",
+    "TABLES_SERVED": "Tables",
+    "CONSUMPTION_DETAIL": "Consumption Detail",
+    "TICKET_PAYMENT": "Ticket Payment",
+    "ORDER_RECORD": "Order Record",
+    "ORDER_AT": "Order at {{time}}",
+    "TOTAL_TICKET": "Total Ticket",
+    "NO_RESULTS": "No results",
+    "NO_RECORDS_FOUND": "No records for this day or filters."
   },
   "TABLE_REPORT": {
     "TITLE": "Table Report",

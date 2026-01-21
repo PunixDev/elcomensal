@@ -29,7 +29,8 @@
     "PREVIOUS": "Précédent",
     "AVAILABLE": "Disponible",
     "PRINT": "Imprimer",
-    "CALCULATE_SEPARATELY": "Calculer séparément"
+    "CALCULATE_SEPARATELY": "Calculer séparément",
+    "THANKS_VISIT": "Merci pour votre visite !"
   },
   "HEADER": {
     "LANGUAGE": "Langue",
@@ -327,5 +328,38 @@
   },
   "CART": {
     "TOTAL": "Total"
+  },
+  "HISTORY": {
+    "TITLE": "Historique des Commandes",
+    "ORDER_NUMBER": "Numéro de Commande",
+    "TABLE": "Table",
+    "DATE": "Date",
+    "TIME": "Heure",
+    "TOTAL": "Total",
+    "STATUS": "Statut",
+    "ITEMS": "Articles",
+    "CUSTOMER": "Client",
+    "PAYMENT_METHOD": "Mode de Paiement",
+    "FILTER_BY_DATE": "Filtrer par date",
+    "FILTER_BY_STATUS": "Filtrer par statut",
+    "EXPORT_DATA": "Exporter les Données",
+    "NO_ORDERS": "Aucune commande dans l'historique",
+    "ORDER_DETAILS": "Détails de la Commande",
+    "VIEW_CONFIG": "Configuration de la Vue",
+    "UPDATE_HISTORY": "Mettre à jour l'Historique",
+    "FILTER_BY_TABLE": "Filtrer par table",
+    "TOTAL_INVOICED": "Total Facturé",
+    "TABLES_SERVED": "Tables",
+    "CONSUMPTION_DETAIL": "Détail de la Consommation",
+    "TICKET_PAYMENT": "Ticket de Paiement",
+    "ORDER_RECORD": "Registre des Commandes",
+    "ORDER_AT": "Commande de {{time}}",
+    "TOTAL_TICKET": "Total Ticket",
+    "NO_RESULTS": "Aucun résultat",
+    "NO_RECORDS_FOUND": "Aucun enregistrement pour ce jour ou ces filtres."
+  },
+  "TABLE_REPORT": {
+    "TITLE": "Rapport Table",
+    "POPULAR_ITEMS": "Articles populaires"
   }
 }

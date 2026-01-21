@@ -29,7 +29,8 @@
     "PREVIOUS": "Precedente",
     "AVAILABLE": "Disponibile",
     "PRINT": "Stampa",
-    "CALCULATE_SEPARATELY": "Calcolare separatamente"
+    "CALCULATE_SEPARATELY": "Calcolare separatamente",
+    "THANKS_VISIT": "Grazie per la visita!"
   },
   "HEADER": {
     "LANGUAGE": "Lingua",
@@ -302,7 +303,19 @@
     "FILTER_BY_STATUS": "Filtra per stato",
     "EXPORT_DATA": "Esporta Dati",
     "NO_ORDERS": "Nessun ordine nella cronologia",
-    "ORDER_DETAILS": "Dettagli Ordine"
+    "ORDER_DETAILS": "Dettagli Ordine",
+    "VIEW_CONFIG": "Configurazione Vista",
+    "UPDATE_HISTORY": "Aggiorna Cronologia",
+    "FILTER_BY_TABLE": "Filtra per tavolo",
+    "TOTAL_INVOICED": "Totale Fatturato",
+    "TABLES_SERVED": "Tavoli",
+    "CONSUMPTION_DETAIL": "Dettaglio Consumo",
+    "TICKET_PAYMENT": "Ticket di Pagamento",
+    "ORDER_RECORD": "Registro Ordini",
+    "ORDER_AT": "Ordine delle {{time}}",
+    "TOTAL_TICKET": "Totale Ticket",
+    "NO_RESULTS": "Nessun risultato",
+    "NO_RECORDS_FOUND": "Nessun record per questo giorno o filtri."
   },
   "TABLE_REPORT": {
     "TITLE": "Report Tavolo",

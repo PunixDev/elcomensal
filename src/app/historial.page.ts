@@ -31,7 +31,10 @@ import {
 import { DataService } from './data.service';
 import { Observable, firstValueFrom } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageSelectorComponent } from './language-selector.component';
+import { LanguageService } from './language.service';
+import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-historial',
@@ -68,7 +71,9 @@ import { TranslateModule } from '@ngx-translate/core';
     IonCol,
     IonText,
     TranslateModule,
+    LanguageSelectorComponent,
   ],
+  providers: [PopoverController],
 })
 export class HistorialPage implements OnInit {
   historial$: Observable<any[]>;
@@ -80,7 +85,12 @@ export class HistorialPage implements OnInit {
   mesas: string[] = [];
   resumenDia: { total: number; mesas: number } = { total: 0, mesas: 0 };
 
-  constructor(private dataService: DataService) {
+  constructor(
+    private dataService: DataService,
+    private languageService: LanguageService,
+    private popoverController: PopoverController,
+    private translateService: TranslateService
+  ) {
     this.barId = this.dataService.getBarId();
     this.historial$ = this.dataService.getHistorial(this.barId);
   }
@@ -191,9 +201,9 @@ export class HistorialPage implements OnInit {
           </head>
           <body>
             <div class="header">
-              <h2 style="margin: 0;">TICKET</h2>
-              <div style="font-size: 12px; margin-top: 5px;">Mesa: ${mesa.toUpperCase()}</div>
-              <div style="font-size: 10px;">Fecha: ${fechaTicket}</div>
+              <h2 style="margin: 0;">${this.translateService.instant('HISTORY.TICKET_PAYMENT')}</h2>
+              <div style="font-size: 12px; margin-top: 5px;">${this.translateService.instant('HISTORY.TABLE')}: ${mesa.toUpperCase()}</div>
+              <div style="font-size: 10px;">${this.translateService.instant('HISTORY.DATE')}: ${fechaTicket}</div>
             </div>
             <div class="items">
               ${itemsHtml}
@@ -203,7 +213,7 @@ export class HistorialPage implements OnInit {
               <span>${total}</span>
             </div>
             <div class="footer">
-              <p>¡Gracias por su visita!</p>
+              <p>${this.translateService.instant('COMMON.THANKS_VISIT')}</p>
             </div>
             <script>
               window.onload = function() { window.print(); window.close(); }
@@ -213,5 +223,22 @@ export class HistorialPage implements OnInit {
       `);
       printWindow.document.close();
     }
+  }
+
+  getCurrentLanguageFlag(): string {
+    return this.languageService.getLanguageFlag(
+      this.languageService.getCurrentLanguage()
+    );
+  }
+
+  async presentLanguagePopover(event: any) {
+    const popover = await this.popoverController.create({
+      component: LanguageSelectorComponent,
+      event: event,
+      translucent: true,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    return await popover.present();
   }
 }
