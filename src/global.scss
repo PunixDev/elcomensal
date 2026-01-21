@@ -57,7 +57,8 @@
   --glass-border: rgba(255, 255, 255, 0.3);
 }
 
-.carta-content {
+.carta-content,
+.informe-content {
   background: var(--app-bg);
   font-family: "Inter", "Roboto", sans-serif;
   --padding-bottom: 120px !important;
@@ -383,6 +384,137 @@
   border-top: 1px solid #fef3c7;
   box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
   border-radius: 24px 24px 0 0;
+}
+
+/* --- Modern Informe Mesa Styles --- */
+.modern-header-title {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesa-badge {
+  background: var(--accent-color);
+  color: white;
+  padding: 2px 10px;
+  border-radius: 8px;
+  font-size: 0.8em;
+  font-weight: 900;
+}
+
+.back-btn-modern {
+  --color: var(--text-main);
+  --background: #f1f5f9;
+  --border-radius: 12px;
+  margin-right: 8px;
+  height: 40px;
+  width: 40px;
+}
+
+.section-header-modern {
+  padding: 1.5rem 1rem 0.5rem;
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+}
+
+.producto-info {
+  padding: 1.25rem;
+  flex: 1;
+}
+
+.producto-header h4 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.opciones-texto {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.producto-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.precio-badge, .disponibles-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.precio-badge {
+  background: var(--accent-soft);
+  color: var(--accent-color);
+}
+
+.disponibles-badge {
+  background: #f1f5f9;
+  color: var(--text-muted);
+}
+
+.resumen-controls-modern {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1.25rem 1.25rem;
+  background: #fafbfc;
+  border-top: 1px solid rgba(0,0,0,0.03);
+}
+
+.qty-btn {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  height: 36px;
+  width: 36px;
+  margin: 0;
+  font-weight: bold;
+  &.remove { --color: var(--danger-color); }
+  &.add { --color: var(--success-color); }
+  &:disabled { opacity: 0.3; }
+}
+
+.qty-number {
+  font-size: 1.1rem;
+  font-weight: 800;
+  min-width: 24px;
+  text-align: center;
+  color: var(--text-main);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+  ion-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.2;
+  }
+  p { font-weight: 500; }
+}
+
+.pedido-bar-btn.secondary {
+  --background: #f1f5f9;
+  --color: var(--text-main);
+  --box-shadow: none;
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 /* Modal Styling Improvements */

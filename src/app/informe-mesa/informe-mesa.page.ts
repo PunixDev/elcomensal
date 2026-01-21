@@ -7,15 +7,8 @@ import {
   IonTitle,
   IonToolbar,
   IonButton,
-  IonList,
-  IonItem,
-  IonLabel,
   IonButtons,
   IonIcon,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
 } from '@ionic/angular/standalone';
 import { DataService } from '../data.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -32,15 +25,8 @@ import { TranslateModule } from '@ngx-translate/core';
     IonTitle,
     IonToolbar,
     IonButton,
-    IonList,
-    IonItem,
-    IonLabel,
     IonButtons,
     IonIcon,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
     TranslateModule,
   ],
 })
@@ -205,5 +191,9 @@ export class InformeMesaPage implements OnInit {
 
   volver() {
     this.router.navigate(['/admin']);
+  }
+
+  isAnythingSelected(): boolean {
+    return Object.values(this.seleccionados).some(qty => qty > 0);
   }
 }

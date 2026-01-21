@@ -26,7 +26,10 @@
     "CONTINUE": "Continua",
     "FINISH": "Termina",
     "NEXT": "Successivo",
-    "PREVIOUS": "Precedente"
+    "PREVIOUS": "Precedente",
+    "AVAILABLE": "Disponibile",
+    "PRINT": "Stampa",
+    "CALCULATE_SEPARATELY": "Calcolare separatamente"
   },
   "HEADER": {
     "LANGUAGE": "Lingua",
@@ -374,5 +377,8 @@
       "SATURDAY": "Sab",
       "SUNDAY": "Dom"
     }
+  },
+  "CART": {
+    "TOTAL": "Totale"
   }
 }

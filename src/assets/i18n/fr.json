@@ -26,7 +26,10 @@
     "CONTINUE": "Continuer",
     "FINISH": "Terminer",
     "NEXT": "Suivant",
-    "PREVIOUS": "Précédent"
+    "PREVIOUS": "Précédent",
+    "AVAILABLE": "Disponible",
+    "PRINT": "Imprimer",
+    "CALCULATE_SEPARATELY": "Calculer séparément"
   },
   "HEADER": {
     "LANGUAGE": "Langue",
@@ -321,5 +324,8 @@
     "NO_CATEGORIES": "Aucune catégorie disponible",
     "CATEGORY_SAVED": "Catégorie enregistrée avec succès",
     "CATEGORY_DELETED": "Catégorie supprimée avec succès"
+  },
+  "CART": {
+    "TOTAL": "Total"
   }
 }

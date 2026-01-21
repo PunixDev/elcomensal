@@ -26,7 +26,10 @@
     "CONTINUE": "Continuar",
     "FINISH": "Finalizar",
     "NEXT": "Siguiente",
-    "PREVIOUS": "Anterior"
+    "PREVIOUS": "Anterior",
+    "AVAILABLE": "Disponible",
+    "PRINT": "Imprimir",
+    "CALCULATE_SEPARATELY": "Calcular por separado"
   },
   "HEADER": {
     "LANGUAGE": "Idioma",
@@ -391,5 +394,8 @@
     "UPLOAD_INSTRUCTION": "Haz clic o arrastra una imagen aquí",
     "URL_LABEL": "URL del Menú (PDF o Web)",
     "PROCESS_BUTTON": "Procesar con IA"
+  },
+  "CART": {
+    "TOTAL": "Total"
   }
 }

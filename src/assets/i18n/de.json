@@ -26,7 +26,10 @@
     "CONTINUE": "Weiter",
     "FINISH": "Beenden",
     "NEXT": "Nächste",
-    "PREVIOUS": "Vorherige"
+    "PREVIOUS": "Vorherige",
+    "AVAILABLE": "Verfügbar",
+    "PRINT": "Drucken",
+    "CALCULATE_SEPARATELY": "Separat berechnen"
   },
   "HEADER": {
     "LANGUAGE": "Sprache",
