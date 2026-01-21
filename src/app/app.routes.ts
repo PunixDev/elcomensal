@@ -20,6 +20,11 @@ export const routes: Routes = [
       import('./admin/estadisticas.page').then((m) => m.EstadisticasPage),
   },
   {
+    path: 'admin/analytics',
+    loadComponent: () =>
+      import('./admin/analytics/analytics.page').then((m) => m.AnalyticsPage),
+  },
+  {
     path: 'suscripcion',
     loadComponent: () =>
       import('./suscripcion/suscripcion.page').then((m) => m.SuscripcionPage),

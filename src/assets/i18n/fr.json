@@ -372,5 +372,24 @@
   "TABLE_REPORT": {
     "TITLE": "Rapport Table",
     "POPULAR_ITEMS": "Articles populaires"
+  },
+  "ANALYTICS": {
+    "TITLE": "Tableau de bord et analyses",
+    "FILTERS": {
+      "ALL": "Tout le temps",
+      "MONTH": "Ce mois-ci",
+      "WEEK": "Cette semaine"
+    },
+    "SUMMARY": {
+      "REVENUE": "Revenu Total",
+      "ORDERS": "Commandes Totales",
+      "AVG_TICKET": "Ticket Moyen",
+      "TOP_HOUR": "Heure de Pointe"
+    },
+    "CHARTS": {
+      "SALES_CATEGORY": "Ventes par Catégorie",
+      "TOP_PRODUCTS": "Meilleurs Produits",
+      "NO_DATA": "Pas de données disponibles"
+    }
   }
 }

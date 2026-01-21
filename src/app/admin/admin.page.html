@@ -42,12 +42,10 @@
         <ion-icon name="archive" slot="start" aria-hidden="true"></ion-icon>
         {{ 'NAVIGATION.HISTORY' | translate }}
       </ion-item>
-      <!--
-      <ion-item (click)="goToEstadisticas()">
+      <ion-item (click)="goToAnalytics()">
         <ion-icon name="bar-chart" slot="start" aria-hidden="true"></ion-icon>
-        {{ 'ADMIN.VIEW_STATISTICS' | translate }}
+        Analíticas
       </ion-item>
-      -->
       <ion-item
         *ngIf="!isSubscribed"
         (click)="goToSuscripcion()"

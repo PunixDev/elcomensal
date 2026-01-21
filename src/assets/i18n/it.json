@@ -404,5 +404,24 @@
   },
   "CART": {
     "TOTAL": "Totale"
+  },
+  "ANALYTICS": {
+    "TITLE": "Dashboard e Analisi",
+    "FILTERS": {
+      "ALL": "Tutto il tempo",
+      "MONTH": "Questo Mese",
+      "WEEK": "Questa Settimana"
+    },
+    "SUMMARY": {
+      "REVENUE": "Entrate Totali",
+      "ORDERS": "Ordini Totali",
+      "AVG_TICKET": "Scontrino Medio",
+      "TOP_HOUR": "Ora di Punta"
+    },
+    "CHARTS": {
+      "SALES_CATEGORY": "Vendite per Categoria",
+      "TOP_PRODUCTS": "Prodotti Migliori",
+      "NO_DATA": "Nessun dato disponibile"
+    }
   }
 }

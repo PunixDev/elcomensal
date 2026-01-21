@@ -383,5 +383,24 @@
   "TABLE_REPORT": {
     "TITLE": "Tischbericht",
     "POPULAR_ITEMS": "Beliebte Artikel"
+  },
+  "ANALYTICS": {
+    "TITLE": "Dashboard und Analytik",
+    "FILTERS": {
+      "ALL": "Alle Zeit",
+      "MONTH": "Diesen Monat",
+      "WEEK": "Diese Woche"
+    },
+    "SUMMARY": {
+      "REVENUE": "Gesamtumsatz",
+      "ORDERS": "Gesamtbestellungen",
+      "AVG_TICKET": "Durchschn. Ticket",
+      "TOP_HOUR": "Stoßzeit"
+    },
+    "CHARTS": {
+      "SALES_CATEGORY": "Umsatz nach Kategorie",
+      "TOP_PRODUCTS": "Top Produkte",
+      "NO_DATA": "Keine Daten verfügbar"
+    }
   }
 }
