@@ -35,7 +35,7 @@ import { DataService } from '../data.service';
 import { LanguageService } from '../language.service';
 import { LanguageSelectorComponent } from '../language-selector.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-admin',
@@ -559,57 +559,54 @@ export class AdminPage implements OnInit {
     );
   }
 
-  verInformeMesa(mesa: string) {
-    this.productos$.subscribe((productos) => {
-      const comandas = this.comandasPorMesa[mesa] || [];
-      // Ordenar las comandas: primero las que son accionables
-      // - prioridad 0: estado 'preparando' (muestran botón 'Preparado')
-      // - prioridad 1: estados distintos de 'preparado' y 'pago_pendiente' (muestran botón 'En preparación')
-      // - prioridad 2: resto (por ejemplo 'preparado' o 'pago_pendiente')
-      const rank = (c: any) => {
-        if (!c || typeof c !== 'object') return 3;
-        if (c.estado === 'preparando') return 0;
-        if (c.estado !== 'preparado' && c.estado !== 'pago_pendiente') return 1;
-        return 2;
-      };
-      this.informeMesa = [...comandas].sort((a: any, b: any) => {
-        const ra = rank(a);
-        const rb = rank(b);
-        if (ra !== rb) return ra - rb;
-        const ta = a && a.fecha ? new Date(a.fecha).getTime() : 0;
-        const tb = b && b.fecha ? new Date(b.fecha).getTime() : 0;
-        return tb - ta; // más recientes primero
-      });
-      this.informeTotal = comandas.reduce((total, comanda) => {
-        return (
-          total +
-          comanda.items.reduce((subtotal: number, item: any) => {
-            const prod = productos.find((p: any) => p.id === item.id);
-            return subtotal + (prod ? prod.precio * item.cantidad : 0);
-          }, 0)
-        );
-      }, 0);
-      console.log('Total de la mesa', mesa, ':', this.informeTotal);
-      this.mesaActual = mesa; // Guardamos la mesa actual para imprimir/descargar
-      (async () => {
-        const modal = await this.modalController.create({
-          component: InformeMesaModalComponent,
-          componentProps: {
-            informeMesa: this.informeMesa,
-            informeTotal: this.informeTotal,
-            mesaActual: mesa,
-            productos: this.productos,
-            actualizarEstadoComanda: (comanda: any, estado: string) =>
-              this.actualizarEstadoComanda(comanda, estado),
-            confirmarMarcarMesaPagada: (m: string) =>
-              this.confirmarMarcarMesaPagada(m),
-            getPrecioProducto: (id: string) => this.getPrecioProducto(id),
-            goToInformeMesa: (m: string) => this.goToInformeMesa(m),
-          },
-        });
-        await modal.present();
-      })();
+  async verInformeMesa(mesa: string) {
+    const productos = await firstValueFrom(this.productos$);
+    const comandas = this.comandasPorMesa[mesa] || [];
+    // Ordenar las comandas: primero las que son accionables
+    // - prioridad 0: estado 'preparando' (muestran botón 'Preparado')
+    // - prioridad 1: estados distintos de 'preparado' y 'pago_pendiente' (muestran botón 'En preparación')
+    // - prioridad 2: resto (por ejemplo 'preparado' o 'pago_pendiente')
+    const rank = (c: any) => {
+      if (!c || typeof c !== 'object') return 3;
+      if (c.estado === 'preparando') return 0;
+      if (c.estado !== 'preparado' && c.estado !== 'pago_pendiente') return 1;
+      return 2;
+    };
+    this.informeMesa = [...comandas].sort((a: any, b: any) => {
+      const ra = rank(a);
+      const rb = rank(b);
+      if (ra !== rb) return ra - rb;
+      const ta = a && a.fecha ? new Date(a.fecha).getTime() : 0;
+      const tb = b && b.fecha ? new Date(b.fecha).getTime() : 0;
+      return tb - ta; // más recientes primero
     });
+    this.informeTotal = comandas.reduce((total, comanda) => {
+      return (
+        total +
+        comanda.items.reduce((subtotal: number, item: any) => {
+          const prod = productos.find((p: any) => p.id === item.id);
+          return subtotal + (prod ? prod.precio * item.cantidad : 0);
+        }, 0)
+      );
+    }, 0);
+    console.log('Total de la mesa', mesa, ':', this.informeTotal);
+    this.mesaActual = mesa; // Guardamos la mesa actual para imprimir/descargar
+    const modal = await this.modalController.create({
+      component: InformeMesaModalComponent,
+      componentProps: {
+        informeMesa: this.informeMesa,
+        informeTotal: this.informeTotal,
+        mesaActual: mesa,
+        productos: this.productos,
+        actualizarEstadoComanda: (comanda: any, estado: string) =>
+          this.actualizarEstadoComanda(comanda, estado),
+        confirmarMarcarMesaPagada: (m: string) =>
+          this.confirmarMarcarMesaPagada(m),
+        getPrecioProducto: (id: string) => this.getPrecioProducto(id),
+        goToInformeMesa: (m: string) => this.goToInformeMesa(m),
+      },
+    });
+    await modal.present();
   }
 
   cerrarInformeMesa() {
@@ -623,31 +620,29 @@ export class AdminPage implements OnInit {
     return prod ? prod.precio : 0;
   }
 
-  agregarUsuario() {
+  async agregarUsuario() {
     if (!this.nuevoUsuario || !this.nuevaPassword) return;
-    this.usuarios$.subscribe((usuarios) => {
-      if (usuarios.find((u: any) => u.usuario === this.nuevoUsuario)) {
-        alert('El usuario ya existe');
-        return;
-      }
-      this.dataService.addUsuario(this.barId, {
-        usuario: this.nuevoUsuario,
-        password: this.nuevaPassword,
-      });
-      this.nuevoUsuario = '';
-      this.nuevaPassword = '';
+    const usuarios = await firstValueFrom(this.usuarios$);
+    if (usuarios.find((u: any) => u.usuario === this.nuevoUsuario)) {
+      alert('El usuario ya existe');
+      return;
+    }
+    this.dataService.addUsuario(this.barId, {
+      usuario: this.nuevoUsuario,
+      password: this.nuevaPassword,
     });
+    this.nuevoUsuario = '';
+    this.nuevaPassword = '';
   }
 
-  eliminarUsuario(usuarioId: string) {
+  async eliminarUsuario(usuarioId: string) {
     if (!usuarioId) return;
     // No eliminar admin por seguridad
-    this.usuarios$.subscribe((usuarios) => {
-      const user = usuarios.find((u: any) => u.id === usuarioId);
-      if (user && user.usuario !== 'admin') {
-        this.dataService.deleteComanda(this.barId, usuarioId); // Cambia a deleteUsuario si implementas ese método
-      }
-    });
+    const usuarios = await firstValueFrom(this.usuarios$);
+    const user = usuarios.find((u: any) => u.id === usuarioId);
+    if (user && user.usuario !== 'admin') {
+      this.dataService.deleteComanda(this.barId, usuarioId); // Cambia a deleteUsuario si implementas ese método
+    }
   }
 
   logout() {
