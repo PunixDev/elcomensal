@@ -291,63 +291,66 @@
               <ion-row>
                 <ion-col
                   size="12"
-                  size-sm="4"
-                  size-md="3"
+                  size-sm="6"
+                  size-md="4"
+                  size-lg="3"
+                  size-xl="2"
                   *ngFor="let mesa of mesasOrdenadas"
                 >
-                  <ion-card class="mesa-card">
+                  <ion-card class="mesa-card" [class.has-call]="mesaTieneLlamada(mesa)">
+                    <!-- Banner de llamada si activa -->
+                    <div *ngIf="mesaTieneLlamada(mesa)" class="waiter-call-banner" (click)="atenderLlamada(mesa.key, $event)">
+                      <ion-icon name="notifications-outline"></ion-icon>
+                      <span>LLAMADA ACTIVA</span>
+                    </div>
+
                     <ion-card-header>
-                      <ion-card-title>
-                        Mesa {{mesa.key}}
-                        <small class="time-ago"
-                          >{{ getTimeAgo(getLatestFecha(mesa)) }}</small
+                      <div class="mesa-header-top">
+                        <div class="mesa-number">Mesa {{mesa.key}}</div>
+                        <div class="time-ago">{{ getTimeAgo(getLatestFecha(mesa)) }}</div>
+                      </div>
+                      <div class="mesa-status-row">
+                        <ion-badge [color]="badgeColor(mesa)">{{ badgeLabel(mesa) }}</ion-badge>
+                        <!-- Botón Pagado rápido para limpiar mesa -->
+                        <ion-button 
+                          size="small" 
+                          color="warning" 
+                          (click)="confirmarMarcarMesaPagada(mesa.key)"
+                          class="btn-quick-paid"
                         >
-                        <ion-icon
-                          *ngIf="mesaTieneLlamada(mesa)"
-                          name="notifications"
-                          color="danger"
-                          style="margin-left: 0.5em; animation: beat 1s infinite alternate; cursor:pointer;"
-                          (click)="atenderLlamada(mesa.key, $event)"
-                          title="Atender llamada"
-                        ></ion-icon>
-                      </ion-card-title>
-                      <div style="display: flex; align-items: center; gap: 8px">
-                        <ion-badge [color]="badgeColor(mesa)"
-                          >{{ badgeLabel(mesa) }}</ion-badge
-                        >
-                        <ion-button
-                          fill="clear"
-                          size="small"
-                          (click)="verInformeMesa(mesa.key)"
-                          aria-label="Ver mesa"
-                        >
-                          <ion-icon name="eye"></ion-icon>
+                          <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+                          Pagado
                         </ion-button>
                       </div>
                     </ion-card-header>
+
                     <ion-card-content>
-                      <div class="card-row">
-                        <div>
-                          <div class="total">
-                            Total: {{ getTotalMesa(mesa.value) |
-                            currency:'EUR':'symbol':'1.2-2' }}
-                          </div>
-                        </div>
+                      <div class="mesa-total-row">
+                        <span class="mesa-total-label">Total acumulado</span>
+                        <span class="mesa-total-amount">{{ getTotalMesa(mesa.value) | currency:'EUR':'symbol':'1.2-2' }}</span>
                       </div>
-                      <div class="card-actions">
+
+                      <div class="mesa-actions" [class.dual-actions]="badgeColor(mesa) === 'danger'">
                         <ion-button
-                          fill="outline"
-                          size="small"
-                          color="tertiary"
-                          (click)="goToInformeMesa(mesa.key)"
-                          >{{ 'ADMIN.VIEW_REPORT' | translate }}</ion-button
+                          class="btn-main"
+                          expand="block"
+                          color="primary"
+                          (click)="verInformeMesa(mesa.key)"
                         >
+                          <ion-icon name="restaurant-outline" slot="start"></ion-icon>
+                          GESTIONAR
+                        </ion-button>
+                        
                         <ion-button
-                          size="small"
-                          color="warning"
+                          *ngIf="badgeColor(mesa) === 'danger'"
+                          class="btn-main"
+                          expand="block"
+                          color="success"
                           (click)="confirmarMarcarMesaPagada(mesa.key)"
-                          >{{ 'ADMIN.PAID' | translate }}</ion-button
                         >
+                          <ion-icon name="card-outline" slot="start"></ion-icon>
+                          COBRAR
+                        </ion-button>
                       </div>
 
                       <div

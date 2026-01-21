@@ -58,6 +58,7 @@ export class InformeMesaModalComponent {
     | null = null;
   @Input() confirmarMarcarMesaPagada: ((mesa: string) => void) | null = null;
   @Input() getPrecioProducto: ((id: string) => number) | null = null;
+  @Input() goToInformeMesa: ((mesa: string) => void) | null = null;
 
   constructor(private modalController: ModalController) {}
 
@@ -210,5 +211,12 @@ export class InformeMesaModalComponent {
   marcarMesaPagada() {
     if (this.confirmarMarcarMesaPagada)
       this.confirmarMarcarMesaPagada(this.mesaActual);
+  }
+
+  hacerCalculoPorSeparado() {
+    if (this.goToInformeMesa) {
+      this.cerrar();
+      this.goToInformeMesa(this.mesaActual);
+    }
   }
 }

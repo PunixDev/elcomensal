@@ -26,81 +26,192 @@
 
 .mesa-card {
   --ion-card-background: #ffffff;
-  border: 1px solid #e6e6e6;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 8px;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.has-call {
+    border: 2px solid var(--ion-color-danger);
+    animation: pulse-border 2s infinite;
+  }
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(var(--ion-color-danger-rgb), 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(var(--ion-color-danger-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--ion-color-danger-rgb), 0); }
 }
 
 .mesa-card ion-card-header {
+  padding: 12px;
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mesa-header-top {
+  display: flex;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.mesa-number {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1a1a1a;
 }
 
 .mesa-card .time-ago {
-  margin-left: 0.5rem;
-  color: #666;
+  color: #8c8c8c;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.mesa-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  
+  ion-badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+}
+
+.mesa-card ion-card-content {
+  padding: 12px;
+}
+
+.mesa-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.mesa-total-label {
+  color: #8c8c8c;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mesa-total-amount {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+}
+
+.mesa-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+
+  &.dual-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.btn-main {
+  --border-radius: 8px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  margin: 0;
+  font-weight: 600;
+  height: 40px;
   font-size: 0.85rem;
 }
 
-.mesa-card .total {
-  font-weight: 600;
-  margin-bottom: 0.4rem;
+.btn-quick-paid {
+  --border-radius: 6px;
+  --box-shadow: 0 1px 2px rgba(var(--ion-color-warning-rgb), 0.2);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.65rem;
+  margin: 0;
+  height: 28px;
 }
 
-.mesa-card .items-preview small {
-  display: inline-block;
-  margin-right: 0.35rem;
-  color: #444;
-}
-
-.mesa-card .card-actions {
+.waiter-call-banner {
+  background: var(--ion-color-danger);
+  color: white;
+  padding: 8px;
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-}
-
-@media (max-width: 599px) {
-  .mesa-card {
-    margin-bottom: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  
+  ion-icon {
+    animation: ring 0.5s infinite;
   }
 }
 
-@media (min-width: 600px) and (max-width: 991px) {
-  .mesa-card {
-    margin-bottom: 0.75rem;
-  }
+@keyframes ring {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(15deg); }
+  50% { transform: rotate(0); }
+  75% { transform: rotate(-15deg); }
+  100% { transform: rotate(0); }
 }
 
 @media (min-width: 992px) {
   .mesa-card {
-    margin-bottom: 1rem;
+    margin: 6px;
+  }
+  
+  .mesa-card ion-card-header {
+    padding: 8px 10px;
+  }
+  
+  .mesa-card ion-card-content {
+    padding: 8px 10px;
+  }
+  
+  .mesa-number {
+    font-size: 1rem;
+  }
+  
+  .mesa-total-amount {
+    font-size: 1.1rem;
+  }
+  
+  .btn-main {
+    height: 36px;
+    font-size: 0.8rem;
+    --border-radius: 6px;
+  }
+  
+  .btn-quick-paid {
+    height: 24px;
+    font-size: 0.6rem;
+    --padding-start: 4px;
+    --padding-end: 4px;
+  }
+  
+  .mesa-total-row {
+    margin-bottom: 8px;
   }
 }
 
-/* Botones más compactos en pantallas pequeñas para evitar que se oculten */
 @media (max-width: 599px) {
-  .mesa-card .card-actions ion-button,
-  .mesa-card ion-card-header ion-button {
-    --padding-top: 0.12rem;
-    --padding-bottom: 0.12rem;
-    --padding-start: 0.28rem;
-    --padding-end: 0.28rem;
-    font-size: 0.75rem;
-    min-width: 2.2rem;
-    height: auto;
-  }
-
-  .mesa-card .card-actions ion-button ion-icon,
-  .mesa-card ion-card-header ion-button ion-icon {
-    font-size: 1rem;
-    width: 1rem;
-    height: 1rem;
-  }
-
-  /* Si hay texto dentro del botón, reducir margen entre icono y texto */
-  .mesa-card .card-actions ion-button::part(native),
-  .mesa-card ion-card-header ion-button::part(native) {
-    gap: 0.25rem;
+  .mesa-card {
+    margin: 4px;
   }
 }
 

@@ -585,6 +585,7 @@ export class AdminPage implements OnInit {
             confirmarMarcarMesaPagada: (m: string) =>
               this.confirmarMarcarMesaPagada(m),
             getPrecioProducto: (id: string) => this.getPrecioProducto(id),
+            goToInformeMesa: (m: string) => this.goToInformeMesa(m),
           },
         });
         await modal.present();
