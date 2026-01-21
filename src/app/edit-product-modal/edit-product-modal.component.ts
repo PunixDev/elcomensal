@@ -61,6 +61,7 @@ export class EditProductModalComponent {
   editAlergenos = '';
   editOpciones: string[] = [];
   editOpcionTemp = '';
+  editAgotado = false;
   barId: string;
   backendUrl: string;
   isLoading = false;
@@ -86,6 +87,7 @@ export class EditProductModalComponent {
     this.editOpciones = this.producto.opciones
       ? [...this.producto.opciones]
       : [];
+    this.editAgotado = this.producto.agotado || false;
   }
 
   private compressImage(file: File): Promise<string> {
@@ -180,17 +182,20 @@ export class EditProductModalComponent {
           alergenosChanged ||
           opcionesChanged;
 
+        const agotadoChanged = this.editAgotado !== (this.producto.agotado || false);
+
         if (!translatableChanged) {
           // No hay cambios en campos traducibles: actualizar solo campos editados y preservar traducciones
           const producto: Producto = {
             id: this.producto.id,
             nombre: this.editNombre.trim(),
             categoria: this.editCategoria,
-            precio: this.editPrecio,
+            precio: this.editPrecio!,
             imagen: this.editImagen || null,
             descripcion: this.editDescripcion,
             alergenos: this.editAlergenos,
             opciones: [...this.editOpciones],
+            agotado: this.editAgotado,
           };
           await this.dataService.updateProducto(this.barId, producto);
           this.modalController.dismiss(producto, 'confirm');
@@ -233,8 +238,9 @@ export class EditProductModalComponent {
               ...result.data,
               id: this.producto.id,
               categoria: this.editCategoria,
-              precio: this.editPrecio,
+              precio: this.editPrecio!,
               imagen: this.editImagen || null,
+              agotado: this.editAgotado,
             };
             await this.dataService.updateProducto(
               this.barId,

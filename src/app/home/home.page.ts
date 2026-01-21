@@ -32,7 +32,6 @@ import { LanguageService } from '../language.service';
     IonButtons,
     CommonModule,
     TranslateModule,
-    LanguageSelectorComponent,
     RouterLink,
   ],
   providers: [PopoverController],

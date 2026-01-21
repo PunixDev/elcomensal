@@ -16,7 +16,6 @@ import {
   IonCardTitle,
   IonCardContent,
   IonButtons,
-  IonMenuButton,
 } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -46,11 +45,9 @@ import { LanguageSelectorComponent } from './language-selector.component';
     IonCardTitle,
     IonCardContent,
     IonButtons,
-    IonMenuButton,
     CommonModule,
     FormsModule,
     TranslateModule,
-    LanguageSelectorComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [PopoverController],

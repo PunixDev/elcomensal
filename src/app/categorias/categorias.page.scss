@@ -1,92 +1,219 @@
-.form-categoria-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 2em 0 1em 0;
-  background: #f8f6f4;
+// Variables de diseño local
+$primary-color: var(--ion-color-primary, #1268be);
+$success-color: var(--ion-color-success, #2dd36f);
+$bg-light: #f4f7fa;
+$shadow-soft: 0 8px 16px rgba(0, 0, 0, 0.05);
+$shadow-medium: 0 12px 24px rgba($primary-color, 0.1);
+
+ion-content {
+  --background: #{$bg-light};
 }
 
-.form-card {
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(226, 114, 91, 0.1);
-  padding: 2em 1.5em 1.5em 1.5em;
-  max-width: 480px;
-  width: 100%;
-  margin-bottom: 2em;
-  border: 1px solid #f0e0da;
+// Columna pegajosa para el formulario en pantallas grandes
+.sticky-col {
+  @media (min-width: 992px) {
+    position: sticky;
+    top: 10px;
+    height: fit-content;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    scrollbar-width: none; // Firefox
+    &::-webkit-scrollbar { display: none; } // Chrome/Safari
+  }
 }
 
-.form-title {
-  color: #e2725b;
-  font-size: 1.3em;
-  font-weight: 700;
-  margin-bottom: 1.2em;
-  display: flex;
-  align-items: center;
+// Estilos del Formulario
+.form-card-new {
+  margin: 16px 0;
+  border-radius: 20px;
+  box-shadow: $shadow-medium;
+  border: 1px solid rgba($primary-color, 0.05);
+
+  ion-card-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: $primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
 }
 
-.form-fields {
+.form-fields-grid {
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  gap: 12px;
 }
 
-.form-item {
+.form-item-new {
+  --border-radius: 12px;
+  --padding-start: 12px;
+  --highlight-height: 0;
+  margin-bottom: 4px;
+  
+  ion-label {
+    font-weight: 600;
+    margin-bottom: 8px !important;
+    color: #444;
+  }
+
+  ion-input {
+    font-size: 1rem;
+  }
+
+  &.compact {
+    margin-bottom: 0;
+    --min-height: 48px;
+  }
+}
+
+.btn-submit-new {
+  margin-top: 20px;
+  --border-radius: 12px;
+  font-weight: 700;
+  height: 48px;
+  letter-spacing: 0.5px;
+}
+
+// Estilos de la Lista
+.list-container {
+  padding: 8px;
+}
+
+.search-header {
+  margin: 16px 8px 24px;
+  
+  .title-list {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 12px;
+  }
+}
+
+.custom-searchbar {
+  --border-radius: 14px;
+  --box-shadow: #{$shadow-soft};
+  padding: 0;
+}
+
+// Tarjetas de Categoría
+.categories-grid-container {
+  animation: fadeIn 0.4s ease;
+}
+
+.category-card {
+  margin: 8px;
+  border-radius: 16px;
+  box-shadow: $shadow-soft;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.08);
+  }
+}
+
+.category-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.category-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.category-icon {
+  font-size: 1.5rem;
+  background: rgba($primary-color, 0.1);
+  padding: 8px;
   border-radius: 12px;
-  background: #fce8d5;
-  margin-bottom: 0.2em;
-  --background: #fce8d5;
-  --color: #e2725b;
-  box-shadow: 0 1px 4px rgba(226, 114, 91, 0.04);
 }
 
-.btn-agregar {
-  margin-top: 1.5em;
-  font-weight: 600;
-  font-size: 1.1em;
-  border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(226, 114, 91, 0.13);
+.category-name-text {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #222;
 }
 
-@media (max-width: 600px) {
-  .form-card {
-    padding: 1.2em 0.5em 1em 0.5em;
+.category-order-input {
+  width: 70px;
+  text-align: right;
+  
+  ion-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .compact-input {
+    --padding-start: 4px;
+    --padding-end: 4px;
+    text-align: center;
+    background: #f0f0f0;
+    border-radius: 8px;
+    font-weight: 700;
   }
 }
 
-/* Estilos para separar columnas con líneas verticales */
-.tabla-categorias-header .header-row ion-col,
-.fila-categoria .categoria-row ion-col {
-  padding: 8px 12px;
-}
+.card-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
 
-/* Centrar sólo el contenido de las cabeceras dentro de cada columna */
-.tabla-categorias-header .header-row ion-col {
-  text-align: center;
-}
-
-.tabla-categorias-header .header-row ion-col:not(:first-child),
-.fila-categoria .categoria-row ion-col:not(:first-child) {
-  border-left: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.fila-categoria ion-item {
-  --background: transparent;
-}
-
-/* Ajustes para que el icono no quede muy pegado */
-.col-icon ion-icon {
-  font-size: 1.2rem;
-}
-
-@media (max-width: 480px) {
-  .tabla-categorias-header .header-row ion-col,
-  .fila-categoria .categoria-row ion-col {
-    padding: 6px 8px;
+  .action-buttons-end {
+    display: flex;
+    gap: 8px;
   }
-  .tabla-categorias-header .header-row ion-col:nth-child(3),
-  .fila-categoria .categoria-row ion-col:nth-child(3) {
-    text-align: left;
+}
+
+// Modo Edición
+.edit-mode-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+
+  .compact {
+    flex: 1;
+  }
+
+  .edit-actions {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 4px;
+    
+    ion-button {
+      --border-radius: 10px;
+      margin: 0;
+      width: 38px;
+      height: 38px;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 576px) {
+  .search-header {
+    margin: 8px 0 16px;
+  }
+  
+  .category-card {
+    margin: 4px 0;
   }
 }

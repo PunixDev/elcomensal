@@ -13,8 +13,6 @@ import {
   IonToolbar,
   IonButton,
   IonIcon,
-  IonCard,
-  IonCardContent,
   IonLabel,
   IonItem,
   IonSegment,
@@ -47,8 +45,7 @@ import { LanguageService } from './language.service';
     IonToolbar,
     IonButton,
     IonIcon,
-    IonCard,
-    IonCardContent,
+    IonIcon,
     FormsModule,
     IonSegment,
     IonSegmentButton,
@@ -58,7 +55,7 @@ import { LanguageService } from './language.service';
     IonLabel,
     CommonModule,
     TranslateModule,
-    LanguageSelectorComponent,
+    TranslateModule,
     IonFab,
     IonFabButton,
     IonBadge,
@@ -273,7 +270,7 @@ export class CartaPage implements OnInit {
   }
 
   agregarProducto(producto: Producto) {
-    if (this.pagoSolicitado) return;
+    if (this.pagoSolicitado || producto.agotado) return;
     let opcionSeleccionada = '';
     let key = producto.id;
     if (producto.opciones && producto.opciones.length > 0) {

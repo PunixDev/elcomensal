@@ -23,255 +23,234 @@
 <ion-content [fullscreen]="true">
   <div *ngIf="isAdding" class="loading-overlay">
     <ion-spinner name="crescent"></ion-spinner>
+    <p>{{ 'PRODUCTS.SAVING' | translate }}...</p>
   </div>
-  <div class="form-producto-wrapper">
-    <form (ngSubmit)="agregarProducto()" autocomplete="off">
-      <div class="form-card">
-        <h2 class="form-title">
-          <ion-icon
-            name="add-circle"
-            style="vertical-align: middle; margin-right: 8px"
-          ></ion-icon>
-          {{ 'PRODUCTS.ADD_PRODUCT' | translate }}
-        </h2>
-        <div class="form-fields">
-          <ion-item
-            class="form-item"
-            [color]="!nuevoNombre && intentadoAgregar ? 'danger' : ''"
-          >
-            <ion-icon name="pizza" slot="start"></ion-icon>
-            <ion-input
-              [placeholder]="'PRODUCTS.NAME' | translate"
-              [(ngModel)]="nuevoNombre"
-              name="nombre"
-              required
-            ></ion-input>
-          </ion-item>
-          <ion-item class="form-item">
-            <ion-icon name="document-text" slot="start"></ion-icon>
-            <ion-textarea
-              [placeholder]="'PRODUCTS.DESCRIPTION' | translate"
-              [(ngModel)]="nuevaDescripcion"
-              name="descripcion"
-            ></ion-textarea>
-          </ion-item>
-          <ion-item class="form-item">
-            <ion-icon name="leaf" slot="start"></ion-icon>
-            <ion-textarea
-              [placeholder]="'PRODUCTS.ALLERGENS' | translate"
-              [(ngModel)]="nuevosAlergenos"
-              name="alergenos"
-            ></ion-textarea>
-          </ion-item>
-          <ion-item class="form-item">
-            <ion-icon name="options" slot="start"></ion-icon>
-            <ion-input
-              [placeholder]="'PRODUCTS.NEW_OPTION' | translate"
-              [(ngModel)]="opcionTemp"
-              name="opcionTemp"
-            ></ion-input>
-            <ion-button fill="clear" color="primary" (click)="agregarOpcion()">
-              <ion-icon name="add-circle" slot="icon-only"></ion-icon>
-            </ion-button>
-          </ion-item>
-          <ion-list *ngIf="nuevasOpciones.length" class="opciones-list">
-            <ion-item
-              *ngFor="let op of nuevasOpciones; let i = index"
-              class="opcion-item"
-            >
-              <ion-icon name="checkmark-circle" slot="start"></ion-icon>
-              <ion-label>{{op}}</ion-label>
+
+  <ion-grid fixed>
+    <ion-row class="ion-justify-content-center">
+      <!-- Columna del Formulario (Añadir Producto) -->
+      <ion-col size="12" size-lg="4" class="sticky-col">
+        <ion-card class="form-card-new">
+          <ion-card-header>
+            <ion-card-title class="ion-text-center">
+              <ion-icon name="add-circle" color="primary"></ion-icon>
+              {{ 'PRODUCTS.ADD_PRODUCT' | translate }}
+            </ion-card-title>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <form (ngSubmit)="agregarProducto()" autocomplete="off">
+              <div class="form-fields-grid">
+                <ion-item fill="outline" mode="md" class="form-item-new" [color]="!nuevoNombre && intentadoAgregar ? 'danger' : ''">
+                  <ion-label position="stacked">{{ 'PRODUCTS.NAME' | translate }} *</ion-label>
+                  <ion-input
+                    [(ngModel)]="nuevoNombre"
+                    name="nombre"
+                    required
+                    aria-required="true"
+                    type="text"
+                  ></ion-input>
+                  <ion-icon name="pizza-outline" slot="end"></ion-icon>
+                </ion-item>
+
+                <ion-item fill="outline" mode="md" class="form-item-new">
+                  <ion-label position="stacked">{{ 'PRODUCTS.DESCRIPTION' | translate }}</ion-label>
+                  <ion-textarea
+                    [(ngModel)]="nuevaDescripcion"
+                    name="descripcion"
+                    rows="2"
+                    [autoGrow]="true"
+                  ></ion-textarea>
+                  <ion-icon name="document-text-outline" slot="end"></ion-icon>
+                </ion-item>
+
+                <ion-item fill="outline" mode="md" class="form-item-new">
+                  <ion-label position="stacked">{{ 'PRODUCTS.ALLERGENS' | translate }}</ion-label>
+                  <ion-textarea
+                    [(ngModel)]="nuevosAlergenos"
+                    name="alergenos"
+                    rows="1"
+                  ></ion-textarea>
+                  <ion-icon name="leaf-outline" slot="end"></ion-icon>
+                </ion-item>
+
+                <div class="opciones-container">
+                  <ion-item fill="outline" mode="md" class="form-item-new">
+                    <ion-label position="stacked">{{ 'PRODUCTS.NEW_OPTION' | translate }}</ion-label>
+                    <ion-input
+                      [(ngModel)]="opcionTemp"
+                      name="opcionTemp"
+                    ></ion-input>
+                    <ion-button fill="clear" slot="end" (click)="agregarOpcion()" [disabled]="!opcionTemp.trim()">
+                      <ion-icon name="add-circle" slot="icon-only"></ion-icon>
+                    </ion-button>
+                  </ion-item>
+                  
+                  <div class="chip-list" *ngIf="nuevasOpciones.length">
+                    <ion-chip *ngFor="let op of nuevasOpciones; let i = index" color="primary" outline>
+                      <ion-label>{{op}}</ion-label>
+                      <ion-icon name="close-circle" (click)="eliminarOpcion(i)"></ion-icon>
+                    </ion-chip>
+                  </div>
+                </div>
+
+                <div class="image-upload-box">
+                  <label class="upload-label" id="img-label">
+                    <ion-icon name="cloud-upload-outline" size="large"></ion-icon>
+                    <span>{{ 'PRODUCTS.SELECT_IMAGE' | translate }}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      (change)="onImageSelected($event)"
+                      class="hidden-input"
+                      aria-labelledby="img-label"
+                    />
+                  </label>
+                  <div *ngIf="nuevaImagen" class="preview-mini">
+                    <img [src]="nuevaImagen" alt="Vista previa" />
+                    <ion-button fill="clear" color="danger" (click)="nuevaImagen = null">
+                      <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                    </ion-button>
+                  </div>
+                </div>
+
+                <ion-item fill="outline" mode="md" class="form-item-new" [color]="!nuevoPrecio && intentadoAgregar ? 'danger' : ''">
+                  <ion-label position="stacked">{{ 'PRODUCTS.PRICE' | translate }} (€) *</ion-label>
+                  <ion-input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    [(ngModel)]="nuevoPrecio"
+                    name="precio"
+                    required
+                  ></ion-input>
+                  <ion-icon name="cash-outline" slot="end"></ion-icon>
+                </ion-item>
+
+                <ion-item fill="outline" mode="md" class="form-item-new" [color]="!nuevaCategoria && intentadoAgregar ? 'danger' : ''">
+                  <ion-label position="stacked">{{ 'PRODUCTS.CATEGORY' | translate }} *</ion-label>
+                  <ion-select
+                    required
+                    [(ngModel)]="nuevaCategoria"
+                    name="categoria"
+                    interface="popover"
+                  >
+                    <ion-select-option
+                      *ngFor="let cat of categorias$ | async"
+                      [value]="cat.id"
+                      >{{ getNombreCategoria(cat) }}</ion-select-option
+                    >
+                  </ion-select>
+                  <ion-icon name="albums-outline" slot="end"></ion-icon>
+                </ion-item>
+              </div>
+
               <ion-button
-                fill="clear"
-                color="danger"
-                slot="end"
-                (click)="eliminarOpcion(i)"
+                expand="block"
+                color="success"
+                type="submit"
+                class="btn-submit-new"
+                [disabled]="isAdding"
               >
-                <ion-icon name="trash-sharp"></ion-icon>
+                <ion-icon *ngIf="!isAdding" name="checkmark-done" slot="start"></ion-icon>
+                <ion-spinner *ngIf="isAdding" name="crescent" slot="start"></ion-spinner>
+                {{ (isAdding ? 'PRODUCTS.SAVING' : 'PRODUCTS.ADD_PRODUCT') | translate }}
               </ion-button>
-            </ion-item>
-          </ion-list>
-          <ion-item class="form-item">
-            <ion-icon name="image" slot="start"></ion-icon>
-            <label class="custom-file-label">
-              <ion-icon
-                name="cloud-upload"
-                style="margin-right: 6px"
-              ></ion-icon>
-              <span>{{ 'PRODUCTS.SELECT_IMAGE' | translate }}</span>
-              <input
-                type="file"
-                accept="image/*"
-                (change)="onImageSelected($event)"
-                class="custom-file-input"
-              />
-            </label>
-          </ion-item>
-          <div *ngIf="nuevaImagen" class="preview-img-wrapper">
-            <img [src]="nuevaImagen" alt="Vista previa" class="preview-img" />
+            </form>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <!-- Columna de la Lista de Productos -->
+      <ion-col size="12" size-lg="8">
+        <div class="list-container">
+          <div class="search-header">
+            <h2 class="title-list">{{ 'PRODUCTS.TITLE' | translate }}</h2>
+            <ion-searchbar 
+              [placeholder]="'Busca un producto...'" 
+              mode="ios" 
+              class="custom-searchbar"
+              (ionInput)="searchTerm = $event.detail.value || ''"
+            ></ion-searchbar>
           </div>
-          <ion-item
-            class="form-item"
-            [color]="!nuevoPrecio && intentadoAgregar ? 'danger' : ''"
-          >
-            <ion-icon name="cash" slot="start"></ion-icon>
-            <ion-input
-              type="number"
-              min="0"
-              step="0.01"
-              [placeholder]="'PRODUCTS.PRICE' | translate"
-              [(ngModel)]="nuevoPrecio"
-              name="precio"
-              required
-            ></ion-input>
-          </ion-item>
-          <ion-item
-            class="form-item"
-            [color]="!nuevaCategoria && intentadoAgregar ? 'danger' : ''"
-          >
-            <ion-icon name="albums" slot="start"></ion-icon>
-            <ion-select
-              required
-              [placeholder]="'PRODUCTS.CATEGORY' | translate"
-              [(ngModel)]="nuevaCategoria"
-              name="categoria"
-            >
-              <ion-select-option
-                *ngFor="let cat of categorias$ | async"
-                [value]="cat.id"
-                >{{ getNombreCategoria(cat) }}</ion-select-option
-              >
-            </ion-select>
-          </ion-item>
-        </div>
-        <ion-button
-          expand="block"
-          color="success"
-          type="submit"
-          class="btn-agregar"
-          [disabled]="isAdding"
-        >
-          <ion-icon *ngIf="!isAdding" name="add" slot="start"></ion-icon>
-          <ion-spinner
-            *ngIf="isAdding"
-            name="crescent"
-            slot="start"
-          ></ion-spinner>
-          <span *ngIf="!isAdding"
-            >{{ 'PRODUCTS.ADD_PRODUCT' | translate }}</span
-          >
-          <span *ngIf="isAdding">{{ 'PRODUCTS.SAVING' | translate }}</span>
-        </ion-button>
-      </div>
-    </form>
-  </div>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <ion-list>
-          <ng-container *ngFor="let cat of categoriasConOpen">
+
+          <div *ngFor="let cat of categoriasConOpen" class="category-section">
             <ion-item
               button
-              detail
               lines="none"
+              class="category-header-item"
               (click)="cat._open = !cat._open"
+              detail="false"
             >
               <ion-icon
-                name="chevron-down"
+                [name]="cat._open ? 'chevron-down-circle' : 'chevron-forward-circle'"
+                color="primary"
                 slot="start"
-                *ngIf="!cat._open"
               ></ion-icon>
-              <ion-icon
-                name="chevron-up"
-                slot="start"
-                *ngIf="cat._open"
-              ></ion-icon>
-              <ion-label
-                ><strong>{{ getNombreCategoria(cat) }}</strong></ion-label
-              >
+              <ion-label>
+                <h2 class="category-name">{{ getNombreCategoria(cat) }}</h2>
+              </ion-label>
+              <ion-badge slot="end" color="light">{{ ((productos$ | async) | categoryFilter:cat.id).length }}</ion-badge>
             </ion-item>
-            <div *ngIf="cat._open">
-              <ng-container
-                *ngFor="let producto of (productos$ | async) | categoryFilter:cat.id"
-              >
-                <ion-item>
-                  <ion-avatar slot="start" *ngIf="producto.imagen">
-                    <img [src]="producto.imagen" alt="Imagen producto" />
-                  </ion-avatar>
-                  <ion-label>
-                    <h3>
-                      <ion-icon
-                        name="restaurant"
-                        style="vertical-align: middle"
-                      ></ion-icon>
-                      {{ producto.nombre }}
-                      <span
-                        style="
-                          color: var(--ion-color-success);
-                          font-weight: bold;
-                          margin-left: 10px;
-                        "
-                      >
-                        {{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}
-                      </span>
-                    </h3>
-                    <div
-                      style="font-size: 0.95em; color: #666; margin-top: 2px"
-                    >
-                      {{ producto.categoria }}
+
+            <div *ngIf="cat._open" class="products-grid-container">
+              <ion-row>
+                <ion-col size="12" size-md="6" size-xl="4" 
+                  *ngFor="let producto of (productos$ | async) | categoryFilter:cat.id | searchFilter:searchTerm"
+                >
+                  <ion-card class="product-card" [class.is-out-of-stock]="producto.agotado">
+                    <div class="product-header-img">
+                      <img *ngIf="producto.imagen" [src]="producto.imagen" [alt]="producto.nombre" />
+                      <div *ngIf="!producto.imagen" class="no-img-placeholder">
+                        <ion-icon name="fast-food-outline"></ion-icon>
+                      </div>
+                      <ion-badge *ngIf="producto.agotado" color="danger" class="agotado-badge">AGOTADO</ion-badge>
                     </div>
-                    <p *ngIf="producto.descripcion">
-                      <ion-icon
-                        name="document-text"
-                        style="vertical-align: middle"
-                      ></ion-icon>
-                      <strong>{{ 'PRODUCTS.DESCRIPTION' | translate }}:</strong>
-                      {{producto.descripcion}}
-                    </p>
-                    <p *ngIf="producto.alergenos">
-                      <strong>{{ 'PRODUCTS.ALLERGENS' | translate }}:</strong>
-                      {{producto.alergenos}}
-                    </p>
-                    <div *ngIf="producto.opciones && producto.opciones.length">
-                      <ion-icon
-                        name="options"
-                        style="vertical-align: middle"
-                      ></ion-icon>
-                      <strong>{{ 'PRODUCTS.OPTIONS' | translate }}:</strong>
-                      <ul>
-                        <li *ngFor="let op of producto.opciones">
-                          <ion-icon
-                            name="checkmark-circle"
-                            style="vertical-align: middle"
-                          ></ion-icon>
-                          {{op}}
-                        </li>
-                      </ul>
-                    </div>
-                  </ion-label>
-                  <ion-button
-                    fill="clear"
-                    color="primary"
-                    slot="end"
-                    (click)="iniciarEdicion(producto)"
-                  >
-                    <ion-icon name="create"></ion-icon>
-                    Editar
-                  </ion-button>
-                  <ion-button
-                    fill="clear"
-                    color="danger"
-                    slot="end"
-                    (click)="eliminarProducto(producto.id)"
-                  >
-                    <ion-icon name="trash-sharp"></ion-icon>
-                    Eliminar
-                  </ion-button>
-                </ion-item>
-              </ng-container>
+
+                    <ion-card-header>
+                      <div class="card-title-flex">
+                        <ion-card-title>{{ producto.nombre }}</ion-card-title>
+                        <span class="product-price">{{ producto.precio | currency:'EUR':'symbol':'1.2-2' }}</span>
+                      </div>
+                    </ion-card-header>
+
+                    <ion-card-content>
+                      <p class="description-text" *ngIf="producto.descripcion">
+                        {{ producto.descripcion }}
+                      </p>
+                      
+                      <div *ngIf="producto.alergenos" class="info-row">
+                        <ion-icon name="warning-outline" color="warning"></ion-icon>
+                        <small>{{ producto.alergenos }}</small>
+                      </div>
+
+                      <div class="card-actions-row">
+                        <ion-button
+                          fill="clear"
+                          [color]="producto.agotado ? 'danger' : 'medium'"
+                          size="small"
+                          (click)="togglerAgotado(producto)"
+                          [title]="producto.agotado ? 'Marcar como disponible' : 'Marcar como agotado'"
+                        >
+                          <ion-icon slot="icon-only" [name]="producto.agotado ? 'eye-off' : 'eye'"></ion-icon>
+                        </ion-button>
+                        
+                        <div class="action-buttons-end">
+                          <ion-button fill="clear" color="primary" size="small" (click)="iniciarEdicion(producto)">
+                            <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                          </ion-button>
+                          <ion-button fill="clear" color="danger" size="small" (click)="eliminarProducto(producto.id)">
+                            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                          </ion-button>
+                        </div>
+                      </div>
+                    </ion-card-content>
+                  </ion-card>
+                </ion-col>
+              </ion-row>
             </div>
-          </ng-container>
-        </ion-list>
+          </div>
+        </div>
       </ion-col>
     </ion-row>
   </ion-grid>

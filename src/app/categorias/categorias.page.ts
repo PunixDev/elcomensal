@@ -17,11 +17,18 @@ import {
   IonButtons,
   IonBackButton,
   IonIcon,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonBadge,
+  IonSearchbar,
 } from '@ionic/angular/standalone';
 import { DataService, Categoria } from '../data.service';
 import { Observable, Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from '../language.service';
+import { CategorySearchFilterPipe } from './categorySearchFilter.pipe';
 
 @Component({
   selector: 'app-categorias',
@@ -44,9 +51,16 @@ import { LanguageService } from '../language.service';
     IonButtons,
     IonBackButton,
     IonIcon,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonBadge,
+    IonSearchbar,
     CommonModule,
     FormsModule,
     TranslateModule,
+    CategorySearchFilterPipe,
   ],
 })
 export class CategoriasPage implements OnInit {
@@ -59,6 +73,7 @@ export class CategoriasPage implements OnInit {
   barId: string;
   mensajeExito = '';
   backendUrl: string;
+  searchTerm = '';
 
   constructor(
     private dataService: DataService,

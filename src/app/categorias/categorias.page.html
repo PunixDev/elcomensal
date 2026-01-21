@@ -11,162 +11,130 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div class="form-categoria-wrapper">
-    <form (ngSubmit)="agregarCategoria()" autocomplete="off">
-      <div class="form-card">
-        <h2 class="form-title">
-          <ion-icon
-            name="add-circle"
-            style="vertical-align: middle; margin-right: 8px"
-          ></ion-icon>
-          {{ 'CATEGORIES.ADD_CATEGORY' | translate }}
-        </h2>
-        <div class="form-fields">
-          <ion-item class="form-item">
-            <ion-icon name="pricetag" slot="start"></ion-icon>
-            <ion-input
-              [placeholder]="'CATEGORIES.NAME' | translate"
-              [(ngModel)]="nuevaCategoria"
-              name="nombreCategoria"
-              required
-            ></ion-input>
-          </ion-item>
+  <ion-grid fixed>
+    <ion-row class="ion-justify-content-center">
+      <!-- Columna del Formulario (Añadir Categoría) -->
+      <ion-col size="12" size-lg="4" class="sticky-col">
+        <ion-card class="form-card-new">
+          <ion-card-header>
+            <ion-card-title class="ion-text-center">
+              <ion-icon name="add-circle" color="primary"></ion-icon>
+              {{ 'CATEGORIES.ADD_CATEGORY' | translate }}
+            </ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <form (ngSubmit)="agregarCategoria()" autocomplete="off">
+              <div class="form-fields-grid">
+                <ion-item fill="outline" mode="md" class="form-item-new">
+                  <ion-label position="stacked">{{ 'CATEGORIES.NAME' | translate }} *</ion-label>
+                  <ion-input
+                    [(ngModel)]="nuevaCategoria"
+                    name="nombreCategoria"
+                    required
+                    aria-required="true"
+                    type="text"
+                  ></ion-input>
+                  <ion-icon name="pricetag-outline" slot="end"></ion-icon>
+                </ion-item>
+              </div>
+
+              <ion-button
+                expand="block"
+                color="success"
+                type="submit"
+                class="btn-submit-new"
+                [disabled]="!nuevaCategoria.trim()"
+              >
+                <ion-icon name="checkmark-done" slot="start"></ion-icon>
+                {{ 'CATEGORIES.ADD_CATEGORY' | translate }}
+              </ion-button>
+            </form>
+
+            <div *ngIf="mensajeExito" class="mensaje-exito-new ion-text-center ion-padding-top">
+              <ion-badge color="success">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                {{ 'CATEGORIES.CATEGORY_SAVED' | translate }}
+              </ion-badge>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <!-- Columna de la Lista de Categorías -->
+      <ion-col size="12" size-lg="8">
+        <div class="list-container">
+          <div class="search-header">
+            <h2 class="title-list">{{ 'CATEGORIES.TITLE' | translate }}</h2>
+            <ion-searchbar 
+              [placeholder]="'Busca una categoría...'" 
+              mode="ios" 
+              class="custom-searchbar"
+              [(ngModel)]="searchTerm"
+            ></ion-searchbar>
+          </div>
+
+          <div class="categories-grid-container">
+            <ion-row>
+              <ion-col size="12" size-md="6" 
+                *ngFor="let categoria of (categorias$ | async) | categorySearchFilter:searchTerm"
+              >
+                <ion-card class="category-card">
+                  <ion-card-content>
+                    <div *ngIf="editando !== categoria.id; else editBlock" class="category-info-row">
+                      <div class="category-main">
+                        <ion-icon name="pricetag" color="primary" class="category-icon"></ion-icon>
+                        <div class="category-details">
+                          <h3 class="category-name-text">{{ getNombreCategoria(categoria) }}</h3>
+                        </div>
+                      </div>
+                      <div class="category-order-input">
+                        <ion-label position="stacked">{{ 'CATEGORIES.ORDER' | translate }}</ion-label>
+                        <ion-input
+                          type="number"
+                          [(ngModel)]="ordenes[categoria.id]"
+                          (ionBlur)="guardarOrden(categoria.id)"
+                          class="compact-input"
+                        ></ion-input>
+                      </div>
+                    </div>
+
+                    <div *ngIf="editando !== categoria.id" class="card-actions-row">
+                      <div class="action-buttons-end">
+                        <ion-button fill="clear" color="primary" size="small" (click)="iniciarEdicion(categoria)">
+                          <ion-icon name="create-outline" slot="start"></ion-icon>
+                          {{ 'COMMON.EDIT' | translate }}
+                        </ion-button>
+                        <ion-button fill="clear" color="danger" size="small" (click)="eliminarCategoria(categoria.id)">
+                          <ion-icon name="trash-outline" slot="start"></ion-icon>
+                          {{ 'COMMON.DELETE' | translate }}
+                        </ion-button>
+                      </div>
+                    </div>
+
+                    <!-- Bloque de Edición -->
+                    <ng-template #editBlock>
+                      <div class="edit-mode-container">
+                        <ion-item fill="outline" mode="md" class="form-item-new compact">
+                          <ion-label position="stacked">{{ 'CATEGORIES.NAME' | translate }}</ion-label>
+                          <ion-input [(ngModel)]="editNombre" (keyup.enter)="guardarEdicion(categoria.id)"></ion-input>
+                        </ion-item>
+                        <div class="edit-actions">
+                          <ion-button fill="solid" color="success" size="small" (click)="guardarEdicion(categoria.id)">
+                            <ion-icon name="checkmark-outline" slot="icon-only"></ion-icon>
+                          </ion-button>
+                          <ion-button fill="solid" color="medium" size="small" (click)="cancelarEdicion()">
+                            <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+                          </ion-button>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ion-card-content>
+                </ion-card>
+              </ion-col>
+            </ion-row>
+          </div>
         </div>
-        <ion-button
-          expand="block"
-          color="success"
-          type="submit"
-          class="btn-agregar"
-        >
-          <ion-icon name="add" slot="start"></ion-icon>
-          {{ 'CATEGORIES.ADD_CATEGORY' | translate }}
-        </ion-button>
-      </div>
-    </form>
-  </div>
-  <div *ngIf="mensajeExito" class="mensaje-exito">
-    <ion-icon
-      name="checkmark-circle"
-      color="success"
-      style="vertical-align: middle; margin-right: 6px"
-    ></ion-icon>
-    {{ 'CATEGORIES.CATEGORY_SAVED' | translate }}
-  </div>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <ion-grid class="tabla-categorias-header" style="margin-bottom: 6px">
-          <ion-row
-            class="header-row"
-            style="font-weight: 600; padding: 8px 0; align-items: center"
-          >
-            <ion-col size="1" class="col-icon"
-              ><ion-icon name="pricetag"></ion-icon
-            ></ion-col>
-            <ion-col size="6" class="col-nombre"
-              >{{ 'CATEGORIES.NAME' | translate }}</ion-col
-            >
-            <ion-col size="2" class="col-orden"
-              >{{ 'CATEGORIES.ORDER' | translate }}</ion-col
-            >
-            <ion-col size="3" class="col-acciones"
-              >{{ 'CATEGORIES.ACTIONS' | translate }}</ion-col
-            >
-          </ion-row>
-        </ion-grid>
-        <ion-list>
-          <ion-item *ngFor="let categoria of categorias$ | async">
-            <ion-grid class="fila-categoria">
-              <ion-row class="categoria-row" style="align-items: center">
-                <ion-col size="1" class="col-icon">
-                  <ng-container
-                    *ngIf="editando !== categoria.id; else editBlock"
-                  >
-                    <ion-icon name="pricetag"></ion-icon>
-                  </ng-container>
-                </ion-col>
-                <ion-col size="6" class="col-nombre">
-                  <ng-container
-                    *ngIf="editando !== categoria.id; else editBlock"
-                  >
-                    <ion-label>{{ getNombreCategoria(categoria) }}</ion-label>
-                  </ng-container>
-                </ion-col>
-                <ion-col size="2" class="col-orden" style="text-align: right">
-                  <ng-container
-                    *ngIf="editando !== categoria.id; else editBlock"
-                  >
-                    <ion-input
-                      type="number"
-                      style="width: 80px; margin-left: 8px"
-                      [(ngModel)]="ordenes[categoria.id]"
-                      name="orden-{{categoria.id}}"
-                      (ionBlur)="guardarOrden(categoria.id)"
-                    ></ion-input>
-                  </ng-container>
-                </ion-col>
-                <ion-col
-                  size="3"
-                  class="col-acciones"
-                  style="text-align: right"
-                >
-                  <ng-container
-                    *ngIf="editando !== categoria.id; else editBlock"
-                  >
-                    <ion-button
-                      fill="clear"
-                      color="primary"
-                      (click)="iniciarEdicion(categoria)"
-                    >
-                      <ion-icon name="create"></ion-icon>
-                      {{ 'COMMON.EDIT' | translate }}
-                    </ion-button>
-                    <ion-button
-                      fill="clear"
-                      color="danger"
-                      (click)="eliminarCategoria(categoria.id)"
-                    >
-                      <ion-icon
-                        name="trash-sharp"
-                        aria-hidden="true"
-                      ></ion-icon>
-                      {{ 'COMMON.DELETE' | translate }}
-                    </ion-button>
-                  </ng-container>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-            <ng-template #editBlock>
-              <ion-grid>
-                <ion-row style="align-items: center">
-                  <ion-col size="1"></ion-col>
-                  <ion-col size="6">
-                    <ion-input [(ngModel)]="editNombre"></ion-input>
-                  </ion-col>
-                  <ion-col size="2"></ion-col>
-                  <ion-col size="3" style="text-align: right">
-                    <ion-button
-                      fill="clear"
-                      color="success"
-                      (click)="guardarEdicion(categoria.id)"
-                    >
-                      <ion-icon name="checkmark"></ion-icon>
-                      {{ 'COMMON.SAVE' | translate }}
-                    </ion-button>
-                    <ion-button
-                      fill="clear"
-                      color="medium"
-                      (click)="cancelarEdicion()"
-                    >
-                      <ion-icon name="close"></ion-icon>
-                      {{ 'COMMON.CANCEL' | translate }}
-                    </ion-button>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ng-template>
-          </ion-item>
-        </ion-list>
       </ion-col>
     </ion-row>
   </ion-grid>

@@ -67,6 +67,11 @@
       ></ion-input>
     </ion-item>
     <ion-item>
+      <ion-icon name="alert-circle" slot="start" color="danger"></ion-icon>
+      <ion-label>Agotado</ion-label>
+      <ion-toggle [(ngModel)]="editAgotado" name="editAgotado" color="danger"></ion-toggle>
+    </ion-item>
+    <ion-item>
       <ion-icon name="image" slot="start"></ion-icon>
       <label class="custom-file-label">
         <ion-icon name="cloud-upload" style="margin-right: 6px"></ion-icon>

@@ -17,17 +17,24 @@ import {
   IonLabel,
   IonSelect,
   IonSelectOption,
-  IonAvatar,
   IonButtons,
   IonBackButton,
   IonTextarea,
   IonIcon,
   IonItemDivider,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonBadge,
+  IonChip,
+  IonSearchbar,
 } from '@ionic/angular/standalone';
 import { ModalController } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria } from '../data.service';
 import { Observable } from 'rxjs';
 import { CategoryFilterPipe } from './categoryFilter.pipe';
+import { SearchFilterPipe } from './searchFilter.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { EditProductModalComponent } from '../edit-product-modal/edit-product-modal.component';
 import { ImportMenuModalComponent } from '../import-menu-modal/import-menu-modal.component';
@@ -53,14 +60,21 @@ import { ImportMenuModalComponent } from '../import-menu-modal/import-menu-modal
     IonLabel,
     IonSelect,
     IonSelectOption,
-    IonAvatar,
     IonButtons,
     IonBackButton,
     IonTextarea,
     IonIcon,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonBadge,
+    IonChip,
+    IonSearchbar,
     CommonModule,
     FormsModule,
     CategoryFilterPipe,
+    SearchFilterPipe,
     TranslateModule,
   ],
 })
@@ -81,6 +95,7 @@ export class ProductosPage implements OnInit {
   categoriasConOpen: { nombre: string; id: string; _open: boolean }[] = [];
   backendUrl: string;
   isAdding = false;
+  searchTerm = '';
 
   constructor(
     private dataService: DataService,
@@ -264,5 +279,13 @@ export class ProductosPage implements OnInit {
   getNombreCategoria(cat: Categoria | undefined): string {
     if (!cat) return '';
     return typeof cat.nombre === 'string' ? cat.nombre : '';
+  }
+
+  async togglerAgotado(producto: Producto) {
+    const nuevoEstado = !producto.agotado;
+    await this.dataService.updateProducto(this.barId, {
+      ...producto,
+      agotado: nuevoEstado,
+    });
   }
 }

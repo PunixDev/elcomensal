@@ -50,6 +50,7 @@ export interface Producto {
   descripcionIt?: string;
   alergenosIt?: string;
   opcionesIt?: string[];
+  agotado?: boolean;
 }
 
 export interface BarRegistro {
