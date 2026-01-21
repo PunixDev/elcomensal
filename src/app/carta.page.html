@@ -175,10 +175,30 @@
             <div class="producto-info">
               <div class="producto-header">
                 <span class="producto-nombre">{{ getNombre(prod) }}</span>
-                <span class="producto-precio">
-                  {{ prod.precio | currency:'EUR':'symbol':'1.2-2' }}
-                </span>
+                 <!-- Promotion Badge -->
+                 <div *ngIf="getBestPromotion(prod.id) as promo" style="margin-left: 8px; display: inline-flex;">
+                    <ion-badge color="danger" *ngIf="isPromotionActive(promo)">
+                        {{ promo.type === '2x1' ? '2x1' : (promo.type === 'discount_percent' ? '-' + promo.value + '%' : 'OFERTA') }}
+                    </ion-badge>
+                 </div>
               </div>
+              
+              <div class="producto-price-container" style="display: flex; align-items: center; gap: 8px;">
+                 <!-- Original Price (Strikethrough if active promo) -->
+                 <span [style.text-decoration]="isPromotionActive(getBestPromotion(prod.id)!) && getBestPromotion(prod.id)!.type === 'discount_percent' ? 'line-through' : 'none'"
+                       [style.color]="isPromotionActive(getBestPromotion(prod.id)!) && getBestPromotion(prod.id)!.type === 'discount_percent' ? 'var(--text-muted)' : 'var(--text-main)'"
+                       [style.font-size]="isPromotionActive(getBestPromotion(prod.id)!) && getBestPromotion(prod.id)!.type === 'discount_percent' ? '0.9em' : '1.1em'"
+                       class="producto-precio">
+                   {{ prod.precio | currency:'EUR':'symbol':'1.2-2' }}
+                 </span>
+                 
+                 <!-- Discounted Price -->
+                 <span *ngIf="isPromotionActive(getBestPromotion(prod.id)!) && getBestPromotion(prod.id)!.type === 'discount_percent'"
+                       class="producto-precio" style="color: var(--ion-color-danger); font-weight: 800;">
+                    {{ getEffectiveItemPriceForOrder(prod, 1) | currency:'EUR':'symbol':'1.2-2' }}
+                 </span>
+              </div>
+              
               <p class="producto-desc">{{ getDescripcion(prod) }}</p>
 
               <div *ngIf="getAlergenos(prod)" class="producto-alergenos">

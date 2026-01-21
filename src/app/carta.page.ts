@@ -23,7 +23,7 @@ import {
   IonFabButton,
   IonBadge,
 } from '@ionic/angular/standalone';
-import { DataService, Producto, Categoria } from './data.service';
+import { DataService, Producto, Categoria, Promotion } from './data.service';
 import { FormsModule } from '@angular/forms';
 import { Observable, firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -70,6 +70,8 @@ export class CartaPage implements OnInit {
   comandas$: Observable<any[]> = undefined!;
   productos: Producto[] = [];
   categorias: Categoria[] = [];
+  promotions: Promotion[] = [];
+  promotions$: Observable<Promotion[]> = undefined!;
   historialComandasMesa: any[] = [];
   // Cambia la clave de seleccionados a id+opcion para distinguir productos con opción
   seleccionados: {
@@ -151,6 +153,11 @@ export class CartaPage implements OnInit {
         this.categorias$ = this.dataService.getCategorias(this.barId);
         this.productos$ = this.dataService.getProductos(this.barId);
         this.comandas$ = this.dataService.getComandas(this.barId);
+        this.promotions$ = this.dataService.getPromotions(this.barId);
+        this.promotions$.subscribe(promos => {
+            this.promotions = promos;
+            console.log('[DEBUG] Promotions:', this.promotions);
+        });
         // Cargar datos adicionales del restaurante (incluyendo plan/subscription)
         this.cargarDatosRestaurante();
         this.categorias$.subscribe((cats) => {
@@ -428,6 +435,7 @@ export class CartaPage implements OnInit {
                 ),
               ]
             : [],
+          precio: this.getEffectiveItemPriceForOrder(prod, this.seleccionados[key].cantidad),
         };
       }),
       estado: 'pendiente',
@@ -589,24 +597,86 @@ export class CartaPage implements OnInit {
     );
   }
 
-  getTotalPedido(): number {
-    return this.seleccionadosKeys().reduce((total, id) => {
-      const precio = this.getPrecioProducto(id);
-      const cantidad = this.seleccionados[id].cantidad;
-      return total + precio * cantidad;
-    }, 0);
+
+
+  isPromotionActive(promo: Promotion | null | undefined): boolean {
+    if (!promo || !promo.active) return false;
+    const now = new Date();
+    const day = now.getDay(); // 0 (Sun) - 6 (Sat)
+    if (!promo.days.includes(day)) return false;
+
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    
+    const [startH, startM] = promo.startTime.split(':').map(Number);
+    const startMinutes = startH * 60 + startM;
+    
+    const [endH, endM] = promo.endTime.split(':').map(Number);
+    const endMinutes = endH * 60 + endM;
+
+    // Handle overnight ranges (e.g. 22:00 - 02:00)
+    if (endMinutes < startMinutes) {
+       return currentMinutes >= startMinutes || currentMinutes <= endMinutes;
+    }
+    return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
   }
 
-  getTotalHistorialMesa(): number {
-    return this.historialComandasMesa.reduce((total, comanda) => {
-      return (
-        total +
-        comanda.items.reduce((subtotal: number, item: any) => {
-          const prod = this.productos.find((p) => p.id === item.id);
-          return subtotal + (prod ? prod.precio * item.cantidad : 0);
-        }, 0)
+  getBestPromotion(productId: string): Promotion | null {
+      // Filter active promotions that apply to this product (or all if products empty)
+      const activePromos = this.promotions.filter(p => 
+          this.isPromotionActive(p) && 
+          (p.productIds.length === 0 || p.productIds.includes(productId))
       );
-    }, 0);
+      
+      if (!activePromos.length) return null;
+      
+      // For now, simpler logic: take the first one (or priority?)
+      // TODO: logic to pick "best" value if multiple apply
+      return activePromos[0];
+  }
+
+  getDiscountedPrice(productId: string, originalPrice: number): number {
+      const promo = this.getBestPromotion(productId);
+      if (!promo) return originalPrice;
+
+      if (promo.type === 'discount_percent' && promo.value) {
+          return originalPrice * (1 - promo.value / 100);
+      }
+      // For 2x1, individual price is same, discount applies on total or quantity logic
+      // But we might want to show "2x1" badge. 
+      // If 2x1, we effectively halve the price for even quantities in total calculation, 
+      // but unit price displayed is usually same? Or 50%? 
+      // Convention: 2x1 usually means you strictly need 2.
+      return originalPrice;
+  }
+
+  // Calculate total considering 2x1 Logic
+  calculateTotalWithPromotions(): number {
+      return this.seleccionadosKeys().reduce((total, key) => {
+          const item = this.seleccionados[key];
+          const product = this.productos.find(p => p.id === item.id);
+          if(!product) return total;
+           
+          const promo = this.getBestPromotion(product.id);
+          const price = product.precio;
+          
+          if (promo && promo.type === '2x1') {
+              // Pairs are price * 1, remainders are price * 1
+              // Actually 2x1 means Buy 2 Pay 1.
+              // So q=1 -> pay 1. q=2 -> pay 1. q=3 -> pay 2. q=4 -> pay 2.
+              // Formula: Math.ceil(qty / 2) * price
+              const chargeableQty = Math.ceil(item.cantidad / 2);
+              return total + (chargeableQty * price);
+          } else if (promo && promo.type === 'discount_percent') {
+              return total + (this.getDiscountedPrice(product.id, price) * item.cantidad);
+          }
+          
+          return total + (price * item.cantidad);
+      }, 0);
+  }
+
+  getTotalPedido(): number {
+    // Override to use new calculation
+    return this.calculateTotalWithPromotions();
   }
 
   abrirResumenPedido() {
@@ -754,6 +824,46 @@ export class CartaPage implements OnInit {
         : lists['orig'];
 
     return target && target[idx] ? target[idx] : lists['orig'][idx] || opcion;
+  }
+
+  getEffectiveItemPriceForOrder(prod: Producto | undefined, qty: number): number {
+      if (!prod) return 0;
+      const promo = this.getBestPromotion(prod.id);
+      if (promo && promo.type === '2x1') {
+           // For 2x1, we need to average the price per unit for the order record?
+           // OR store total price? 
+           // If we store unit price, it's tricky.
+           // Easiest is to store the actual charged price per unit averaged? 
+           // e.g. 2 items, price 10. Total 10. unit price 5.
+           // 1 item, price 10. Total 10. unit price 10.
+           const chargeable = Math.ceil(qty / 2);
+           const total = chargeable * prod.precio;
+           return total / qty; 
+      }
+      if (promo && promo.type === 'discount_percent') {
+          return this.getDiscountedPrice(prod.id, prod.precio);
+      }
+      return prod.precio;
+  }
+
+  getTotalHistorialMesa(): number {
+    return this.historialComandasMesa.reduce((total, comanda) => {
+        // If comanda has pre-calculated total store, use it? No, items usually have price snapshot?
+        // Admin usually saves snapshot. But if not, we try to look up or use snapshot.
+        // Current logic was looking up current price. 
+        // Better: use item.precio if available (snapshot), else current price.
+      return (
+        total +
+        comanda.items.reduce((subtotal: number, item: any) => {
+          // If item.precio exists, use it (historical price). Else find current.
+          if (item.precio !== undefined) {
+              return subtotal + (item.precio * item.cantidad);
+          }
+          const prod = this.productos.find((p) => p.id === item.id);
+          return subtotal + (prod ? prod.precio * item.cantidad : 0);
+        }, 0)
+      );
+    }, 0);
   }
 
   // Helpers para mostrar items de comanda en el idioma actual de la carta (UI)

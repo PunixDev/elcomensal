@@ -24,6 +24,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./admin/analytics/analytics.page').then((m) => m.AnalyticsPage),
   },
+
+  {
+    path: 'admin/promotions',
+    loadComponent: () => import('./admin/promotions/promotions.page').then((m) => m.PromotionsPage),
+  },
   {
     path: 'suscripcion',
     loadComponent: () =>

@@ -63,6 +63,18 @@ export interface BarRegistro {
   defaultLanguage?: string;
 }
 
+export interface Promotion {
+  id: string;
+  name: string;
+  type: '2x1' | 'discount_percent' | 'discount_fixed';
+  value?: number; // e.g. 20 for 20% or 5 for 5€
+  days: number[]; // 0-6 (Sun-Sat)
+  startTime: string; // "18:00"
+  endTime: string; // "20:00"
+  productIds: string[]; // Specific products or empty for ALL
+  active: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DataService {
   // Obtiene la imagen de cabecera en bares/{barId}/cabecera/imagen
@@ -329,5 +341,25 @@ export class DataService {
         { merge: true }
       );
     }
+  }
+  // --- PROMOTIONS ---
+  getPromotions(barId: string): Observable<Promotion[]> {
+    const ref = collection(this.firestore, `bares/${barId}/promotions`);
+    return collectionData(ref, { idField: 'id' }) as Observable<Promotion[]>;
+  }
+
+  addPromotion(barId: string, promotion: Omit<Promotion, 'id'>) {
+    const ref = collection(this.firestore, `bares/${barId}/promotions`);
+    return addDoc(ref, promotion);
+  }
+
+  updatePromotion(barId: string, promotion: Promotion) {
+    const ref = doc(this.firestore, `bares/${barId}/promotions/${promotion.id}`);
+    return setDoc(ref, promotion, { merge: true });
+  }
+
+  deletePromotion(barId: string, id: string) {
+    const ref = doc(this.firestore, `bares/${barId}/promotions/${id}`);
+    return deleteDoc(ref);
   }
 }

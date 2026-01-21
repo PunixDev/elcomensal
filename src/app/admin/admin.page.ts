@@ -670,6 +670,10 @@ export class AdminPage implements OnInit {
     this.router.navigate(['/admin/analytics']);
   }
 
+  goToPromotions() {
+    this.router.navigate(['/admin/promotions']);
+  }
+
   goToEstadisticas() {
     this.router.navigate(['/admin/estadisticas']);
   }
