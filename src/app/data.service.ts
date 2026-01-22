@@ -8,12 +8,14 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
+  getDoc,
   docData,
   query,
   where,
   orderBy,
 } from '@angular/fire/firestore';
 import { Observable, firstValueFrom } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
 export interface Categoria {
   id: string;
@@ -78,28 +80,47 @@ export interface Promotion {
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
+  // Cache sencillo para Observables compartidos para evitar múltiples escuchas
+  private cache: { [key: string]: Observable<any> } = {};
+
+  constructor(private firestore: Firestore) {}
+
+  private getCachedObservable<T>(key: string, observableQuery: Observable<T>): Observable<T> {
+    if (!this.cache[key]) {
+      // refCount: true hace que cuando no haya suscriptores se desconecte de Firestore
+      // bufferSize: 1 recuerda el último valor para nuevos suscriptores inmediatos
+      this.cache[key] = observableQuery.pipe(
+        shareReplay({ bufferSize: 1, refCount: true })
+      );
+    }
+    return this.cache[key];
+  }
+
   // Obtiene la imagen de cabecera en bares/{barId}/cabecera/imagen
   getCabeceraImagen(barId: string) {
+    const key = `cabecera-${barId}`;
     const ref = doc(this.firestore, `bares/${barId}/cabecera/imagen`);
-    return docData(ref);
+    return this.getCachedObservable(key, docData(ref));
   }
-  // Obtiene el trialStart del bar
-  getTrialStart(barId: string) {
+
+  // Obtiene el trialStart del bar - OPTIMIZADO: Lectura única (no real-time)
+  async getTrialStart(barId: string) {
     const ref = doc(this.firestore, `bares/${barId}`);
-    return docData(ref);
+    return getDoc(ref).then(snap => snap.data());
   }
+
   // Guarda la imagen de cabecera en bares/{barId}/cabecera
   async guardarCabeceraImagen(barId: string, imagenBase64: string) {
     const ref = doc(this.firestore, `bares/${barId}/cabecera/imagen`);
     await setDoc(ref, { imagen: imagenBase64 });
   }
-  constructor(private firestore: Firestore) {}
 
   // --- CATEGORÍAS ---
   getCategorias(barId: string): Observable<Categoria[]> {
+    const key = `categorias-${barId}`;
     const ref = collection(this.firestore, `bares/${barId}/categorias`);
     const q = query(ref, orderBy('orden', 'asc'));
-    return collectionData(q, { idField: 'id' }) as Observable<Categoria[]>;
+    return this.getCachedObservable(key, collectionData(q, { idField: 'id' })) as Observable<Categoria[]>;
   }
 
   async addCategoria(barId: string, categoria: Omit<Categoria, 'id'>) {
@@ -134,8 +155,9 @@ export class DataService {
 
   // --- PRODUCTOS ---
   getProductos(barId: string): Observable<Producto[]> {
+    const key = `productos-${barId}`;
     const ref = collection(this.firestore, `bares/${barId}/productos`);
-    return collectionData(ref, { idField: 'id' }) as Observable<Producto[]>;
+    return this.getCachedObservable(key, collectionData(ref, { idField: 'id' })) as Observable<Producto[]>;
   }
 
   addProducto(barId: string, producto: Omit<Producto, 'id'>) {
@@ -156,8 +178,9 @@ export class DataService {
 
   // --- COMANDAS ---
   getComandas(barId: string): Observable<any[]> {
+    const key = `comandas-${barId}`;
     const ref = collection(this.firestore, `bares/${barId}/comandas`);
-    return collectionData(ref, { idField: 'id' }) as Observable<any[]>;
+    return this.getCachedObservable(key, collectionData(ref, { idField: 'id' })) as Observable<any[]>;
   }
 
   addComanda(barId: string, comanda: any) {
@@ -181,8 +204,9 @@ export class DataService {
 
   // --- USUARIOS (para login y administración) ---
   getUsuarios(barId: string): Observable<any[]> {
+    const key = `usuarios-${barId}`;
     const ref = collection(this.firestore, `bares/${barId}/usuarios`);
-    return collectionData(ref, { idField: 'id' }) as Observable<any[]>;
+    return this.getCachedObservable(key, collectionData(ref, { idField: 'id' })) as Observable<any[]>;
   }
 
   addUsuario(barId: string, usuario: { usuario: string; password: string }) {
@@ -308,12 +332,16 @@ export class DataService {
 
   // Devuelve el historial de pedidos
   getHistorial(barId: string) {
+    const key = `historial-${barId}`;
     const ref = collection(this.firestore, `bares/${barId}/historial`);
     const q = query(ref, orderBy('fecha', 'desc'));
-    return collectionData(q, { idField: 'id' });
+    return this.getCachedObservable(key, collectionData(q, { idField: 'id' }));
   }
 
   // Devuelve el historial de pedidos filtrado por fecha y mesa
+  // NOTE: This usually changes filters a lot, so maybe caching is less effective
+  // but if frequently called with same filters, it could be useful.
+  // For now, simpler to NOT cache parameterized queries or use a complex key.
   getHistorialFiltrado(barId: string, fecha: string, mesa?: string) {
     const ref = collection(this.firestore, `bares/${barId}/historial`);
     let filtros = [where('fechaDia', '==', fecha)];
@@ -345,8 +373,9 @@ export class DataService {
   }
   // --- PROMOTIONS ---
   getPromotions(barId: string): Observable<Promotion[]> {
+    const key = `promotions-${barId}`;
     const ref = collection(this.firestore, `bares/${barId}/promotions`);
-    return collectionData(ref, { idField: 'id' }) as Observable<Promotion[]>;
+    return this.getCachedObservable(key, collectionData(ref, { idField: 'id' })) as Observable<Promotion[]>;
   }
 
   addPromotion(barId: string, promotion: Omit<Promotion, 'id'>) {

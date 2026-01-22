@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -35,7 +35,7 @@ import { DataService } from '../data.service';
 import { LanguageService } from '../language.service';
 import { LanguageSelectorComponent } from '../language-selector.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { Observable, firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-admin',
@@ -70,7 +70,7 @@ import { Observable, firstValueFrom } from 'rxjs';
     TranslateModule,
   ],
 })
-export class AdminPage implements OnInit {
+export class AdminPage implements OnInit, OnDestroy {
   modalNombreBarAbierto: boolean = false;
   backendUrl!: string;
   customerId!: string;
@@ -157,6 +157,9 @@ export class AdminPage implements OnInit {
   toggleMenu() {
     this.menuController.toggle();
   }
+
+  // Subscription cleanup
+  private subs: Subscription[] = [];
 
   ngOnInit() {
     this.backendUrl =
@@ -253,11 +256,13 @@ export class AdminPage implements OnInit {
     }
     this.usuarioLogado = localStorage.getItem('usuario') || '';
     // Cargar imagen de cabecera
-    this.dataService.getCabeceraImagen(this.barId).subscribe((data: any) => {
-      this.cabeceraImagen = data?.imagen || null;
-    });
-    // Cargar trialStart desde DB
-    this.dataService.getTrialStart(this.barId).subscribe((data: any) => {
+    this.subs.push(
+      this.dataService.getCabeceraImagen(this.barId).subscribe((data: any) => {
+        this.cabeceraImagen = data?.imagen || null;
+      })
+    );
+    // Cargar trialStart desde DB - AHORA ES PROMESA (ONE-TIME FETCH)
+    this.dataService.getTrialStart(this.barId).then((data: any) => {
       let trialStart = data?.trialStart;
       if (!trialStart) {
         // Si no existe, establecerlo ahora
@@ -274,23 +279,33 @@ export class AdminPage implements OnInit {
         this.remainingTrialDays = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
       }
     });
-    this.comandas$.subscribe((todas) => {
-      this.comandas = todas;
-      this.comandasPorMesa = {};
-      todas.forEach((c) => {
-        if (!this.comandasPorMesa[c.mesa]) this.comandasPorMesa[c.mesa] = [];
-        this.comandasPorMesa[c.mesa].push(c);
-      });
-      this.recomputeMesasOrdenadas();
-    });
-    this.productos$.subscribe((productos) => {
-      this.productos = productos;
-    });
+
+    // Gestionar suscripciones manualmente para evitar leaks
+    this.subs.push(
+      this.comandas$.subscribe((todas) => {
+        this.comandas = todas;
+        this.comandasPorMesa = {};
+        todas.forEach((c) => {
+          if (!this.comandasPorMesa[c.mesa]) this.comandasPorMesa[c.mesa] = [];
+          this.comandasPorMesa[c.mesa].push(c);
+        });
+        this.recomputeMesasOrdenadas();
+      })
+    );
+    this.subs.push(
+      this.productos$.subscribe((productos) => {
+        this.productos = productos;
+      })
+    );
 
     // Auto-plegar la tarjeta superior 5 segundos después de cargar la página
     setTimeout(() => {
       this.cardExpanded = false;
     }, 5000);
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach((s) => s.unsubscribe());
   }
 
   toggleTopCard() {

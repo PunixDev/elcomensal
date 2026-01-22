@@ -92,7 +92,8 @@ export class LoginPage implements OnInit {
         localStorage.setItem('usuario', result.barId); // Guardar barId real
         localStorage.setItem('correo', result.usuario.correo);
         // Obtener y guardar trialStart
-        this.dataService.getTrialStart(result.barId).subscribe((data: any) => {
+        // Obtener y guardar trialStart
+        this.dataService.getTrialStart(result.barId).then((data: any) => {
           const trialStart = data?.trialStart || new Date().toISOString();
           localStorage.setItem('trialStart', trialStart);
         });

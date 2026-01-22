@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -31,7 +31,7 @@ import {
 } from '@ionic/angular/standalone';
 import { ModalController } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria } from '../data.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { CategoryFilterPipe } from './categoryFilter.pipe';
 import { SearchFilterPipe } from './searchFilter.pipe';
 import { TranslateModule } from '@ngx-translate/core';
@@ -76,7 +76,7 @@ import { ImportMenuModalComponent } from '../import-menu-modal/import-menu-modal
     TranslateModule,
   ],
 })
-export class ProductosPage implements OnInit {
+export class ProductosPage implements OnInit, OnDestroy {
   productos$: Observable<Producto[]>;
   categorias$: Observable<Categoria[]>;
   nuevoNombre = '';
@@ -94,6 +94,7 @@ export class ProductosPage implements OnInit {
   backendUrl: string;
   isAdding = false;
   searchTerm = '';
+  private subs: Subscription[] = [];
 
   constructor(
     private dataService: DataService,
@@ -102,13 +103,18 @@ export class ProductosPage implements OnInit {
     this.barId = this.dataService.getBarId();
     this.productos$ = this.dataService.getProductos(this.barId);
     this.categorias$ = this.dataService.getCategorias(this.barId);
-    this.categorias$.subscribe((cats) => {
-      this.categorias = cats;
-      this.categoriasConOpen = cats.map((cat) => ({
-        ...cat,
-        _open: false,
-      }));
-    });
+    
+    // Manage subscription
+    this.subs.push(
+      this.categorias$.subscribe((cats) => {
+        this.categorias = cats;
+        this.categoriasConOpen = cats.map((cat) => ({
+          ...cat,
+          _open: false,
+        }));
+      })
+    );
+
     this.backendUrl =
       window.location.hostname === 'localhost'
         ? 'http://localhost:3000'
@@ -116,6 +122,10 @@ export class ProductosPage implements OnInit {
   }
 
   ngOnInit() {}
+
+  ngOnDestroy() {
+    this.subs.forEach(s => s.unsubscribe());
+  }
 
   async agregarProducto() {
     this.intentadoAgregar = true;

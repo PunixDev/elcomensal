@@ -3,7 +3,7 @@
 // ...existing code...
 // ...existing code...
 // ...existing code...
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -25,7 +25,7 @@ import {
 } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria, Promotion } from './data.service';
 import { FormsModule } from '@angular/forms';
-import { Observable, firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { doc, getDoc } from '@angular/fire/firestore';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -62,7 +62,7 @@ import { LanguageService } from './language.service';
   ],
   providers: [PopoverController],
 })
-export class CartaPage implements OnInit {
+export class CartaPage implements OnInit, OnDestroy {
   cabeceraImagen: string | null = null;
   mesa: string = '';
   categorias$: Observable<Categoria[]> = undefined!;
@@ -99,6 +99,10 @@ export class CartaPage implements OnInit {
   // Nombre del producto de la suscripción (para controlar si mostrar selector)
   subscriptionProductName: string | null = null;
 
+  // Subscription cleanup
+  private routeSubs: Subscription[] = [];
+  private dataSubs: Subscription[] = [];
+
   constructor(
     private dataService: DataService,
     private route: ActivatedRoute,
@@ -115,9 +119,9 @@ export class CartaPage implements OnInit {
       'subscriptionProductName'
     );
     // Usar barId de la ruta si existe (path param), si no, query param, si no, localStorage
-    this.route.paramMap.subscribe(async (params) => {
+    const routeSub = this.route.paramMap.subscribe(async (params) => {
       const barIdFromPath = params.get('barId');
-      this.route.queryParams.subscribe(async (qparams) => {
+      const querySub = this.route.queryParams.subscribe(async (qparams) => {
         this.mesa = qparams['mesa'] || '';
         if (barIdFromPath) {
           this.barId = barIdFromPath;
@@ -142,60 +146,88 @@ export class CartaPage implements OnInit {
           );
           return;
         }
+
+        // Limpiar suscripciones de datos anteriores si cambia el barId o params
+        this.clearDataSubs();
+
         // Si el barId viene de la URL (usuario no logueado), fuerza la carga desde Firestore
         console.log('[DEBUG] Llamada a Firestore con barId:', this.barId);
         // Recuperar imagen de cabecera
-        this.dataService
-          .getCabeceraImagen(this.barId)
-          .subscribe((data: any) => {
-            this.cabeceraImagen = data?.imagen || null;
-          });
+        this.dataSubs.push(
+          this.dataService
+            .getCabeceraImagen(this.barId)
+            .subscribe((data: any) => {
+              this.cabeceraImagen = data?.imagen || null;
+            })
+        );
         this.categorias$ = this.dataService.getCategorias(this.barId);
         this.productos$ = this.dataService.getProductos(this.barId);
         this.comandas$ = this.dataService.getComandas(this.barId);
         this.promotions$ = this.dataService.getPromotions(this.barId);
-        this.promotions$.subscribe(promos => {
+
+        this.dataSubs.push(
+          this.promotions$.subscribe((promos) => {
             this.promotions = promos;
             console.log('[DEBUG] Promotions:', this.promotions);
-        });
+          })
+        );
         // Cargar datos adicionales del restaurante (incluyendo plan/subscription)
         this.cargarDatosRestaurante();
-        this.categorias$.subscribe((cats) => {
-          console.log('[DEBUG] Respuesta Firestore categorias:', cats);
-          // Filtrar categorías que no estén ocultas
-          this.categorias = (cats || []).filter(c => !c.oculta);
-        });
-        this.productos$.subscribe((prods) => {
-          console.log('[DEBUG] Respuesta Firestore productos:', prods);
-        });
-        this.comandas$.subscribe((comandas) => {
-          console.log('[DEBUG] Respuesta Firestore comandas:', comandas);
-          const antesPago = this.pagoSolicitado;
-          this.historialComandasMesa = comandas
-            .filter((c: any) => c.mesa == this.mesa)
-            // Filtramos las llamadas al camarero para que no salgan en el historial del cliente
-            .filter((c: any) => !c.items.some((i: any) => i.id === 'call_waiter'))
-            .sort(
-              (a: any, b: any) =>
-                new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+
+        this.dataSubs.push(
+          this.categorias$.subscribe((cats) => {
+            console.log('[DEBUG] Respuesta Firestore categorias:', cats);
+            // Filtrar categorías que no estén ocultas
+            this.categorias = (cats || []).filter((c) => !c.oculta);
+          })
+        );
+        this.dataSubs.push(
+          this.productos$.subscribe((prods) => {
+            console.log('[DEBUG] Respuesta Firestore productos:', prods);
+            this.productos = prods;
+          })
+        );
+        this.dataSubs.push(
+          this.comandas$.subscribe((comandas) => {
+            console.log('[DEBUG] Respuesta Firestore comandas:', comandas);
+            const antesPago = this.pagoSolicitado;
+            this.historialComandasMesa = comandas
+              .filter((c: any) => c.mesa == this.mesa)
+              // Filtramos las llamadas al camarero para que no salgan en el historial del cliente
+              .filter(
+                (c: any) => !c.items.some((i: any) => i.id === 'call_waiter')
+              )
+              .sort(
+                (a: any, b: any) =>
+                  new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+              );
+            this.comandaMesa = this.historialComandasMesa[0] || null;
+            this.pagoSolicitado = this.historialComandasMesa.some(
+              (c: any) => c.estado === 'pago_pendiente'
             );
-          this.comandaMesa = this.historialComandasMesa[0] || null;
-          this.pagoSolicitado = this.historialComandasMesa.some(
-            (c: any) => c.estado === 'pago_pendiente'
-          );
-          // Si ya no hay comandas para la mesa, limpiar la vista local
-          if (this.historialComandasMesa.length === 0) {
-            this.comandaMesa = null;
-            this.pagoSolicitado = false;
-            this.seleccionados = {};
-            this.opcionSeleccionTemp = {};
-          }
-        });
-        this.productos$.subscribe((prods) => {
-          this.productos = prods;
-        });
+            // Si ya no hay comandas para la mesa, limpiar la vista local
+            if (this.historialComandasMesa.length === 0) {
+              this.comandaMesa = null;
+              this.pagoSolicitado = false;
+              this.seleccionados = {};
+              this.opcionSeleccionTemp = {};
+            }
+          })
+        );
       });
+      this.routeSubs.push(querySub);
     });
+    this.routeSubs.push(routeSub);
+  }
+
+  private clearDataSubs() {
+    this.dataSubs.forEach((s) => s.unsubscribe());
+    this.dataSubs = [];
+  }
+
+  ngOnDestroy() {
+    this.clearDataSubs();
+    this.routeSubs.forEach((s) => s.unsubscribe());
   }
 
   async cargarDatosRestaurante() {
