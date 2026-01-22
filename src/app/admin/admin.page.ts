@@ -350,6 +350,7 @@ export class AdminPage implements OnInit {
           text: 'Confirmar',
           handler: () => {
             this.marcarMesaPagada(mesa);
+            this.modalController.dismiss();
           },
         },
       ],
