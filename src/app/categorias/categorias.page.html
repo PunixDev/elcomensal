@@ -100,6 +100,15 @@
                     </div>
 
                     <div *ngIf="editando !== categoria.id" class="card-actions-row">
+                      <ion-button
+                        fill="clear"
+                        [color]="categoria.oculta ? 'danger' : 'medium'"
+                        size="small"
+                        (click)="toggleOculta(categoria)"
+                        [title]="categoria.oculta ? 'Mostrar categoría' : 'Ocultar categoría'"
+                      >
+                        <ion-icon slot="icon-only" [name]="categoria.oculta ? 'eye-off' : 'eye'"></ion-icon>
+                      </ion-button>
                       <div class="action-buttons-end">
                         <ion-button fill="clear" color="primary" size="small" (click)="iniciarEdicion(categoria)">
                           <ion-icon name="create-outline" slot="start"></ion-icon>

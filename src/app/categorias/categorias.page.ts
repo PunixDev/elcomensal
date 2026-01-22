@@ -246,4 +246,12 @@ export class CategoriasPage implements OnInit {
     if (lang === 'it') return cat.nombreIt || cat.nombre;
     return cat.nombre;
   }
+
+  async toggleOculta(categoria: Categoria) {
+    const nuevoEstado = !categoria.oculta;
+    await this.dataService.updateCategoria(this.barId, {
+      ...categoria,
+      oculta: nuevoEstado,
+    });
+  }
 }

@@ -162,6 +162,8 @@ export class CartaPage implements OnInit {
         this.cargarDatosRestaurante();
         this.categorias$.subscribe((cats) => {
           console.log('[DEBUG] Respuesta Firestore categorias:', cats);
+          // Filtrar categorías que no estén ocultas
+          this.categorias = (cats || []).filter(c => !c.oculta);
         });
         this.productos$.subscribe((prods) => {
           console.log('[DEBUG] Respuesta Firestore productos:', prods);
@@ -188,9 +190,6 @@ export class CartaPage implements OnInit {
             this.seleccionados = {};
             this.opcionSeleccionTemp = {};
           }
-        });
-        this.categorias$.subscribe((cats) => {
-          this.categorias = cats;
         });
         this.productos$.subscribe((prods) => {
           this.productos = prods;

@@ -23,6 +23,7 @@ export interface Categoria {
   nombreDe?: string;
   nombreIt?: string;
   orden?: number;
+  oculta?: boolean;
 }
 
 export interface Producto {
