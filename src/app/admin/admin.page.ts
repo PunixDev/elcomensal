@@ -726,15 +726,9 @@ export class AdminPage implements OnInit, OnDestroy {
   }
 
   imprimirInformeMesa() {
-    // Imprime solo el contenido del informe
-    const printContents = document.getElementById('informe-mesa')?.innerHTML;
-    if (printContents) {
-      const originalContents = document.body.innerHTML;
-      document.body.innerHTML = printContents;
-      window.print();
-      document.body.innerHTML = originalContents;
-      location.reload(); // Recarga para restaurar el estado
-    }
+    // Esta función es delegada ahora al componente InformeMesaModalComponent.
+    // Si se necesitara imprimir desde aquí, se recomienda usar el método de ventana temporal.
+    console.warn('imprimirInformeMesa en admin.page.ts está obsoleta. Use el modal.');
   }
 
   goToSuscripcion() {
