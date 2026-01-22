@@ -152,6 +152,14 @@
               <ion-button
                 fill="clear"
                 size="small"
+                (click)="irAMesa($event)"
+                title="{{ 'ADMIN.GO_TO_TABLE' | translate }}"
+              >
+                <ion-icon name="open-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-button
+                fill="clear"
+                size="small"
                 (click)="toggleTopCard()"
                 [attr.aria-expanded]="cardExpanded"
               >

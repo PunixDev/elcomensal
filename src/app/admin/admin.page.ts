@@ -308,6 +308,37 @@ export class AdminPage implements OnInit, OnDestroy {
     this.subs.forEach((s) => s.unsubscribe());
   }
 
+  async irAMesa(event: Event) {
+    event.stopPropagation();
+    const alert = await this.alertController.create({
+      header: 'Ir a Mesa',
+      message: 'Introduce el número de mesa:',
+      inputs: [
+        {
+          name: 'mesa',
+          type: 'text',
+          placeholder: 'Nº Mesa',
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Ir',
+          handler: (data) => {
+            if (data.mesa) {
+              const url = `${window.location.origin}/carta/${this.barId}?mesa=${data.mesa}`;
+              window.open(url, '_blank');
+            }
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
   toggleTopCard() {
     this.cardExpanded = !this.cardExpanded;
   }

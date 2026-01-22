@@ -207,7 +207,11 @@
     "NO_SUBSCRIPTION": "Sin suscripción",
     "WELCOME_PANEL": "Bienvenido al panel de administración",
     "SELECT_OPTION": "Selecciona una opción del menú para gestionar el restaurante.",
-    "NO_PENDING_ORDERS": "No hay comandas pendientes."
+    "NO_PENDING_ORDERS": "No hay comandas pendientes.",
+    "GO_TO_TABLE": "Ir a Mesa",
+    "ENTER_TABLE_NUMBER": "Introduce el número de mesa",
+    "TABLE_NUMBER": "Nº Mesa",
+    "GO": "Ir"
   },
   "PRODUCTS": {
     "TITLE": "Gestión de Productos",
