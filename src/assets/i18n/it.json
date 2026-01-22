@@ -8,6 +8,7 @@
     "ADD": "Aggiungi",
     "CLOSE": "Chiudi",
     "CONFIRM": "Conferma",
+    "SEND": "Invia",
     "SEARCH": "Cerca",
     "FILTER": "Filtra",
     "CLEAR": "Pulisci",
@@ -276,7 +277,11 @@
     "REQUEST_PAYMENT": "Richiedi pagamento",
     "IMAGE_EXPANDED": "Immagine ingrandita",
     "DOWNLOAD_REPORT": "Scarica il rapporto",
-    "OUT_OF_STOCK": "Esaurito"
+    "OUT_OF_STOCK": "Esaurito",
+    "CONFIRM_ORDER": "Conferma Ordine",
+    "REVIEW_ORDER_TEXT": "Si prega di rivedere gli articoli e le quantità prima di inviare.",
+    "OBSERVATIONS": "Osservazioni",
+    "OBSERVATIONS_PLACEHOLDER": "Es. Niente cipolla, ben cotta..."
   },
   "QR_GENERATOR": {
     "TITLE": "Generatore Codici QR",

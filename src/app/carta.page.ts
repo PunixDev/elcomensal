@@ -22,6 +22,7 @@ import {
   IonFab,
   IonFabButton,
   IonBadge,
+  ModalController // Added to imports
 } from '@ionic/angular/standalone';
 import { DataService, Producto, Categoria, Promotion } from './data.service';
 import { FormsModule } from '@angular/forms';
@@ -29,6 +30,7 @@ import { Observable, firstValueFrom, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { doc, getDoc } from '@angular/fire/firestore';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ConfirmPedidoModalComponent } from './confirm-pedido-modal/confirm-pedido-modal.component';
 import { LanguageSelectorComponent } from './language-selector.component';
 import { PopoverController, AlertController, ToastController } from '@ionic/angular';
 import { LanguageService } from './language.service';
@@ -109,6 +111,7 @@ export class CartaPage implements OnInit, OnDestroy {
     private popoverController: PopoverController,
     private languageService: LanguageService,
     private alertController: AlertController,
+    private modalController: ModalController, // Added
     private translateService: TranslateService,
     private toastController: ToastController
   ) {}
@@ -386,50 +389,48 @@ export class CartaPage implements OnInit, OnDestroy {
   }
 
   async enviarPedido() {
-    // Construir lista de productos para mostrar en la confirmación
-    const itemsText = this.seleccionadosKeys()
-      .map((key) => {
-        const nombre = this.getNombreProducto(key) || '';
-        const cantidad = this.seleccionados[key]?.cantidad || 0;
-        return `- ${nombre} x${cantidad}`;
-      })
-      .join('\n');
-
-    const headerText = itemsText
-      ? 'Productos a enviar:\n' + itemsText + '\n'
-      : '';
-    const introText =
-      'Por favor, revisa los artículos y las cantidades antes de enviar.';
-    // Usar un único salto de línea entre secciones para reducir espacio extra
-    const message =
-      headerText +
-      (introText ? introText + '\n' : '') +
-      '¿Quieres añadir observaciones?';
-
-    const alert = await this.alertController.create({
-      header: 'Confirmar pedido',
-      message: message,
-      inputs: [
-        {
-          name: 'observaciones',
-          type: 'textarea',
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-        },
-        {
-          text: 'Enviar',
-          handler: (data) => {
-            this.procesarEnvioPedido(data.observaciones);
-          },
-        },
-      ],
+    // Preparar items para el modal
+    const itemsParaModal = this.seleccionadosKeys().map((key) => {
+      const prod = this.productos.find((p) => p.id === this.seleccionados[key].id);
+      const cantidad = this.seleccionados[key].cantidad;
+      let opcion = '';
+      let nombre = prod?.nombre || '';
+      
+      if (this.seleccionados[key].opcion) {
+        // Traducir opción si es necesario
+        opcion = this.traducirOpcionParaEnvio(prod, this.seleccionados[key].opcion);
+      }
+      
+      // Nombre traducido para mostrar en el modal (UI) - Usar getNombre para UI actual
+      const nombreUI = this.getNombreProducto(key);
+      const precioUnitario = this.getEffectiveItemPriceForOrder(prod, cantidad);
+      
+      return {
+        nombre: nombreUI,
+        cantidad: cantidad,
+        precio: precioUnitario, // Precio unitario efectivo (con descuento si aplica)
+        opciones: opcion ? [opcion] : [] // array de opciones strings
+      };
     });
 
-    await alert.present();
+    const totalCalculado = this.getTotalPedido();
+
+    const modal = await this.modalController.create({
+      component: ConfirmPedidoModalComponent,
+      componentProps: {
+        items: itemsParaModal,
+        total: totalCalculado
+      },
+      cssClass: 'confirm-order-modal' // Opcional, por si queremos estilos específicos
+    });
+
+    await modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm' && data && data.confirm) {
+      this.procesarEnvioPedido(data.observaciones);
+    }
   }
 
   procesarEnvioPedido(observaciones: string) {

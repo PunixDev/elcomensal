@@ -8,6 +8,7 @@
     "ADD": "Add",
     "CLOSE": "Close",
     "CONFIRM": "Confirm",
+    "SEND": "Send",
     "SEARCH": "Search",
     "FILTER": "Filter",
     "CLEAR": "Clear",
@@ -284,7 +285,10 @@
     "DOWNLOAD_REPORT": "Download report",
     "CALL_WAITER": "Call waiter",
     "WAITER_CALLED": "Waiter called",
-    "OUT_OF_STOCK": "Out of stock"
+    "OUT_OF_STOCK": "Out of stock",
+    "CONFIRM_ORDER": "Confirm Order",
+    "REVIEW_ORDER_TEXT": "Please review items and quantities before sending.",
+    "OBSERVATIONS_PLACEHOLDER": "Ex. No onion, well done..."
   },
   "QR_GENERATOR": {
     "TITLE": "QR Code Generator",

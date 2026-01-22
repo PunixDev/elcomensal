@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ 'MENU.CONFIRM_ORDER' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancelar()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="confirmation-container">
+    <div class="intro-text">
+      <p>{{ 'MENU.REVIEW_ORDER_TEXT' | translate }}</p>
+    </div>
+
+    <ion-list lines="none" class="order-list">
+      <ion-item *ngFor="let item of items" class="order-item">
+        <ion-label class="ion-text-wrap">
+          <div class="item-header">
+            <span class="item-name">{{ item.nombre }}</span>
+            <span class="item-quantity">x{{ item.cantidad }}</span>
+          </div>
+          <p *ngIf="item.opciones && item.opciones.length > 0" class="item-options">
+            + {{ item.opciones.join(', ') }}
+          </p>
+        </ion-label>
+        <span slot="end" class="item-price">{{ (item.precio * item.cantidad) | currency:'EUR':'symbol':'1.2-2' }}</span>
+      </ion-item>
+    </ion-list>
+
+    <div class="total-container">
+      <h3>TOTAL: {{ total | currency:'EUR':'symbol':'1.2-2' }}</h3>
+    </div>
+
+    <div class="observations-section">
+      <ion-item lines="none" class="obs-item">
+        <ion-label position="stacked">{{ 'MENU.OBSERVATIONS' | translate }}</ion-label>
+        <ion-textarea
+          [(ngModel)]="observaciones"
+          rows="3"
+          placeholder="{{ 'MENU.OBSERVATIONS_PLACEHOLDER' | translate }}"
+          class="custom-textarea"
+        ></ion-textarea>
+      </ion-item>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-row>
+      <ion-col size="6">
+        <ion-button expand="block" fill="outline" color="medium" (click)="cancelar()">
+          {{ 'COMMON.CANCEL' | translate }}
+        </ion-button>
+      </ion-col>
+      <ion-col size="6">
+        <ion-button expand="block" color="success" (click)="confirmar()">
+          {{ 'COMMON.SEND' | translate }}
+          <ion-icon name="send-outline" slot="end"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

@@ -8,6 +8,7 @@
     "ADD": "Ajouter",
     "CLOSE": "Fermer",
     "CONFIRM": "Confirmer",
+    "SEND": "Envoyer",
     "SEARCH": "Rechercher",
     "FILTER": "Filtrer",
     "CLEAR": "Effacer",
@@ -308,7 +309,11 @@
     "REQUEST_PAYMENT": "Demander le paiement",
     "IMAGE_EXPANDED": "Image agrandie",
     "DOWNLOAD_REPORT": "Télécharger le rapport",
-    "OUT_OF_STOCK": "Épuisé"
+    "OUT_OF_STOCK": "Épuisé",
+    "CONFIRM_ORDER": "Confirmer la commande",
+    "REVIEW_ORDER_TEXT": "Veuillez vérifier les articles et les quantités avant d'envoyer.",
+    "OBSERVATIONS": "Observations",
+    "OBSERVATIONS_PLACEHOLDER": "Ex. Sans oignon, bien cuit..."
   },
   "CATEGORIES": {
     "TITLE": "Gestion des Catégories",

@@ -8,6 +8,7 @@
     "ADD": "Hinzufügen",
     "CLOSE": "Schließen",
     "CONFIRM": "Bestätigen",
+    "SEND": "Senden",
     "SEARCH": "Suchen",
     "FILTER": "Filtern",
     "CLEAR": "Löschen",
@@ -305,7 +306,11 @@
     "REQUEST_PAYMENT": "Zahlung anfordern",
     "IMAGE_EXPANDED": "Vergrößertes Bild",
     "DOWNLOAD_REPORT": "Bericht herunterladen",
-    "OUT_OF_STOCK": "Ausverkauft"
+    "OUT_OF_STOCK": "Ausverkauft",
+    "CONFIRM_ORDER": "Bestellung bestätigen",
+    "REVIEW_ORDER_TEXT": "Bitte überprüfen Sie Artikel und Mengen vor dem Senden.",
+    "OBSERVATIONS": "Bemerkungen",
+    "OBSERVATIONS_PLACEHOLDER": "z.B. Keine Zwiebeln, gut durch..."
   },
   "CATEGORIES": {
     "TITLE": "Kategorienverwaltung",
