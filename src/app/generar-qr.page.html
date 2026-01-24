@@ -20,65 +20,104 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-grid>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="header-container">
+    <h1 class="main-title">{{ 'QR_GENERATOR.TITLE' | translate }}</h1>
+    <p class="subtitle">{{ 'QR_GENERATOR.SELECT_MODE' | translate }}</p>
+  </div>
+
+  <ion-grid fixed>
     <ion-row class="ion-justify-content-center">
-      <ion-col size="12" size-md="6" size-lg="4">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title
-              >{{ 'QR_GENERATOR.TITLE' | translate }}</ion-card-title
-            >
-          </ion-card-header>
+      <ion-col size="12" size-md="8" size-lg="6">
+        <!-- Selector de Modo -->
+        <ion-segment [(ngModel)]="selectedMode" mode="ios" class="custom-segment">
+          <ion-segment-button value="single">
+            <ion-label>{{ 'QR_GENERATOR.SINGLE' | translate }}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="multiple">
+            <ion-label>{{ 'QR_GENERATOR.MULTIPLE' | translate }}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="range">
+            <ion-label>{{ 'QR_GENERATOR.RANGE' | translate }}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
+        <ion-card class="form-card">
           <ion-card-content>
-            <ion-input
-              [label]="'QR_GENERATOR.TABLE_NUMBER' | translate"
-              [(ngModel)]="mesa"
-              [placeholder]="'QR_GENERATOR.TABLE_LABEL' | translate"
-              type="text"
-            ></ion-input>
-            <ion-button
-              expand="block"
-              color="primary"
-              (click)="generarQR()"
-              style="margin-top: 1em"
-            >
-              <ion-icon name="qr-code" slot="start"></ion-icon>
-              {{ 'QR_GENERATOR.GENERATE_QR' | translate }}
-            </ion-button>
-            <div *ngIf="qrUrl" style="margin-top: 2em; text-align: center">
-              <img
-                [src]="qrUrl"
-                alt="{{ 'QR_GENERATOR.QR_ALT' | translate }}"
-                style="background: #fff; padding: 8px; border-radius: 8px"
-              />
-              <div
-                style="
-                  margin-top: 1em;
-                  font-size: 0.9em;
-                  color: var(--ion-color-medium);
-                "
-              >
-                {{ 'QR_GENERATOR.URL_LABEL' | translate }}:
-                <a [href]="qrUrl" target="_blank">{{qrUrl}}</a>
-              </div>
-              <ion-button
-                expand="block"
-                color="success"
-                (click)="descargarQR()"
-              >
-                {{ 'QR_GENERATOR.DOWNLOAD_QR' | translate }}
-              </ion-button>
-              <ion-button
-                expand="block"
-                color="secondary"
-                (click)="imprimirQR()"
-              >
-                {{ 'QR_GENERATOR.PRINT_QR' | translate }}
-              </ion-button>
+            <!-- Formulario Single -->
+            <div *ngIf="selectedMode === 'single'" class="fade-in">
+              <ion-item lines="none" class="custom-item">
+                <ion-label position="stacked">{{ 'QR_GENERATOR.TABLE_NUMBER' | translate }}</ion-label>
+                <ion-input [(ngModel)]="mesa" [placeholder]="'QR_GENERATOR.TABLE_LABEL' | translate" type="text" class="custom-input"></ion-input>
+              </ion-item>
             </div>
+
+            <!-- Formulario Multiple -->
+            <div *ngIf="selectedMode === 'multiple'" class="fade-in">
+              <ion-item lines="none" class="custom-item">
+                <ion-label position="stacked">{{ 'QR_GENERATOR.MULTIPLE' | translate }}</ion-label>
+                <ion-input [(ngModel)]="multipleMesas" [placeholder]="'QR_GENERATOR.TABLES_PLACEHOLDER' | translate" type="text" class="custom-input"></ion-input>
+              </ion-item>
+              <p class="help-text">{{ 'QR_GENERATOR.TABLE_NAMES_HELP' | translate }}</p>
+            </div>
+
+            <!-- Formulario Range -->
+            <div *ngIf="selectedMode === 'range'" class="fade-in">
+              <ion-row>
+                <ion-col size="6">
+                  <ion-item lines="none" class="custom-item">
+                    <ion-label position="stacked">{{ 'QR_GENERATOR.START_NUMBER' | translate }}</ion-label>
+                    <ion-input [(ngModel)]="rangeStart" type="number" class="custom-input"></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="6">
+                  <ion-item lines="none" class="custom-item">
+                    <ion-label position="stacked">{{ 'QR_GENERATOR.END_NUMBER' | translate }}</ion-label>
+                    <ion-input [(ngModel)]="rangeEnd" type="number" class="custom-input"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <p *ngIf="rangeStart > rangeEnd" class="error-text">{{ 'QR_GENERATOR.RANGE_INVALID' | translate }}</p>
+            </div>
+
+            <ion-button expand="block" (click)="generarQR()" class="generate-button" [disabled]="selectedMode === 'range' && rangeStart > rangeEnd">
+              <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+              {{ 'QR_GENERATOR.GENERATE_MULTIPLE' | translate }}
+            </ion-button>
           </ion-card-content>
         </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <!-- Resultados -->
+    <ion-row *ngIf="generatedQrs.length > 0" class="ion-margin-top fade-in">
+      <ion-col size="12">
+        <div class="results-header">
+          <h2>{{ 'QR_GENERATOR.PREVIEW' | translate }} ({{ generatedQrs.length }})</h2>
+          <ion-button fill="clear" (click)="imprimirTodos()" color="secondary">
+            <ion-icon name="print-outline" slot="start"></ion-icon>
+            {{ 'QR_GENERATOR.PRINT_ALL' | translate }}
+          </ion-button>
+        </div>
+
+        <div class="qr-grid">
+          <div *ngFor="let qr of generatedQrs" class="qr-item-card">
+            <div class="qr-image-container">
+              <img [src]="qr.url" [alt]="'Mesa ' + qr.name">
+            </div>
+            <div class="qr-info">
+              <h3>Mesa {{ qr.name }}</h3>
+              <div class="qr-actions">
+                <ion-button fill="clear" size="small" (click)="descargarQR(qr)">
+                  <ion-icon name="download-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" (click)="imprimirQR(qr)">
+                  <ion-icon name="print-outline"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </div>
+        </div>
       </ion-col>
     </ion-row>
   </ion-grid>

@@ -302,7 +302,20 @@
     "PRINT_QR": "Imprimir QR",
     "QR_DESCRIPTION": "Escanea este código para acceder a la carta digital",
     "TABLE_LABEL": "Mesa",
-    "SUCCESS_GENERATED": "Código QR generado exitosamente"
+    "SUCCESS_GENERATED": "Códigos QR generados exitosamente",
+    "SINGLE": "Individual",
+    "MULTIPLE": "Varios",
+    "RANGE": "Rango",
+    "START_NUMBER": "Desde el número",
+    "END_NUMBER": "Hasta el número",
+    "TABLE_NAMES_HELP": "Separa los nombres/números por comas (ej: 1, 2, terraza, barra)",
+    "GENERATE_MULTIPLE": "Generar Códigos QR",
+    "PREVIEW": "Vista Previa",
+    "DOWNLOAD_ALL": "Descargar Todos",
+    "PRINT_ALL": "Imprimir Todos",
+    "SELECT_MODE": "Selecciona el modo de generación",
+    "TABLES_PLACEHOLDER": "Ej: 1, 2, Terraza, Barra",
+    "RANGE_INVALID": "El número final debe ser mayor que el inicial"
   },
   "HISTORY": {
     "TITLE": "Historial de Pedidos",

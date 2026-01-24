@@ -298,7 +298,20 @@
     "PRINT_QR": "Print QR",
     "QR_DESCRIPTION": "Scan this code to access the digital menu",
     "TABLE_LABEL": "Table",
-    "SUCCESS_GENERATED": "QR Code generated successfully"
+    "SUCCESS_GENERATED": "QR Codes generated successfully",
+    "SINGLE": "Single",
+    "MULTIPLE": "Multiple",
+    "RANGE": "Range",
+    "START_NUMBER": "From number",
+    "END_NUMBER": "To number",
+    "TABLE_NAMES_HELP": "Separate names/numbers by commas (ex: 1, 2, terrace, bar)",
+    "GENERATE_MULTIPLE": "Generate QR Codes",
+    "PREVIEW": "Preview",
+    "DOWNLOAD_ALL": "Download All",
+    "PRINT_ALL": "Print All",
+    "SELECT_MODE": "Select generation mode",
+    "TABLES_PLACEHOLDER": "Ex: 1, 2, Terrace, Bar",
+    "RANGE_INVALID": "The end number must be greater than the start number"
   },
   "HISTORY": {
     "TITLE": "Order History",

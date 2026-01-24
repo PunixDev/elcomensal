@@ -1,32 +1,200 @@
-/* Estilos básicos para la página de generación de QR */
-ion-card-content {
+/* Estilos modernos para la generación de QR */
+:host {
+  --primary-color: #1268be;
+  --secondary-color: #4a90e2;
+  --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.header-container {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+
+  .main-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: #666;
+  }
+}
+
+.custom-segment {
+  background: rgba(var(--ion-color-light-rgb), 0.8) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  ion-segment-button {
+    --indicator-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --indicator-color: #fff;
+    --indicator-height: 100%;
+    --color: #666;
+    --color-checked: var(--primary-color);
+    font-weight: 600;
+  }
+}
+
+.form-card {
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  overflow: visible;
+
+  ion-card-content {
+    padding: 1.5rem;
+  }
+}
+
+.custom-item {
+  --background: #f8f9fa;
+  --border-radius: 12px;
+  --padding-start: 12px;
+  margin-bottom: 1rem;
+
+  ion-label {
+    font-weight: 700 !important;
+    color: var(--primary-color) !important;
+    margin-bottom: 8px !important;
+    font-size: 0.9rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.custom-input {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.help-text {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
+}
+
+.error-text {
+  color: var(--ion-color-danger);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.generate-button {
+  --border-radius: 12px;
+  --box-shadow: 0 8px 20px rgba(18, 104, 190, 0.3);
+  height: 52px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  --background: var(--primary-color);
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #333;
+  }
+}
+
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.5rem;
+}
+
+.qr-item-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-img[alt="QR Mesa"] {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .qr-image-container {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #f8f9fa;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.8rem;
+    padding: 8px;
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+  }
+
+  .qr-info {
+    text-align: center;
+    width: 100%;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .qr-actions {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+
+      ion-button {
+        --color: var(--primary-color);
+        margin: 0;
+      }
+    }
+  }
 }
 
-/* Asegurando que el botón de retroceso sea visible en todos los dispositivos */
-ion-header ion-toolbar ion-buttons,
-ion-toolbar ion-buttons[slot="start"] {
-  display: flex !important;
-  min-width: 48px;
-  max-width: 56px;
-  align-items: center;
-  visibility: visible !important;
-  z-index: 10;
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
 }
-ion-toolbar ion-button {
-  display: flex !important;
-  align-items: center;
-  min-width: 44px;
-  min-height: 44px;
-  color: var(--ion-color-light, #fff) !important;
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-ion-toolbar ion-icon[name="arrow-back"] {
-  font-size: 24px !important;
-  color: var(--ion-color-light, #fff) !important;
-  z-index: 11;
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .qr-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .header-container .main-title {
+    font-size: 1.8rem;
+  }
 }
