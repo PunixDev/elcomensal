@@ -295,7 +295,9 @@
     "DINERS": "Número de Comensales",
     "DINERS_PLACEHOLDER": "Introduce el número de personas",
     "SELECT_ITEMS_TO_CALCULATE": "Selecciona los artículos para calcular el subtotal.",
-    "SELECTED_TOTAL": "Total seleccionado"
+    "SELECTED_TOTAL": "Total seleccionado",
+    "CONFIRM_PAYMENT_REQUEST": "¿Desea solicitar el pago?",
+    "CONFIRM": "Confirmar"
   },
   "QR_GENERATOR": {
     "TITLE": "Generador de Códigos QR",

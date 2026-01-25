@@ -301,10 +301,24 @@ export class CartaPage implements OnInit, OnDestroy {
     });
   }
 
-  confirmarSolicitarPago() {
-    if (confirm('¿Desea solicitar el pago?')) {
-      this.solicitarPago();
-    }
+  async confirmarSolicitarPago() {
+    const alert = await this.alertController.create({
+      header: this.translateService.instant('MENU.REQUEST_PAYMENT'),
+      message: this.translateService.instant('MENU.CONFIRM_PAYMENT_REQUEST'),
+      buttons: [
+        {
+          text: this.translateService.instant('MENU.CANCEL'),
+          role: 'cancel'
+        },
+        {
+          text: this.translateService.instant('MENU.CONFIRM'),
+          handler: () => {
+            this.solicitarPago();
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   cerrarResumenPago() {
