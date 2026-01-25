@@ -464,6 +464,66 @@ export class AdminPage implements OnInit, OnDestroy {
     }
   }
 
+  // Nueva función para guardar cambios en los items (cantidades, eliminaciones)
+  guardarComandaModificada(comanda: any) {
+    if (!comanda || !comanda.id) return;
+    
+    // Si la comanda está filtrada (por comandero), "comanda.items" puede tener solo un subset.
+    // PERO, en este caso, estamos visualizando la comanda "modificada" en el modal.
+    // Si 'filtroComanderoId' está activo, 'comanda.items' en el modal SOLO tiene los items de ese comandero.
+    // Si guardamos eso directamente, borraremos los items de otros comanderos.
+    // ¡CUIDADO!
+    
+    const original = this.comandas.find(c => c.id === comanda.id);
+    if (!original) {
+        // Fallback: guardar lo que nos llega (peligroso si estaba filtrado, pero inevitable si no tenemos original)
+        this.dataService.updateComanda(this.barId, comanda);
+        return;
+    }
+
+    if (this.filtroComanderoId !== 'todos') {
+        // MERGE LOGIC:
+        // Los items en 'comanda.items' son los que se ven en el modal (y se han modificado).
+        // Los items que NO están en 'comanda.items' (porque fueron filtrados) deben conservarse del original.
+        // Pero espera... si el modal recibe una COPIA filtrada, ¿cómo sabemos si un item se eliminó porque el usuario lo borró o porque estaba filtrado?
+        // Ah, 'verInformeMesa' crea una copia filtrada:
+        // comandas = comandas.map(c => { ... items: filteredItems ... })
+        
+        // Si el usuario modifica esa copia, solo modifica los items visibles.
+        // Entonces, para guardar:
+        // 1. Tomar los items "intactos" del original (los que no son visibles en este filtro).
+        // 2. Tomar los items "modificados" del modal (los que son visibles).
+        // Nota: Si el usuario borró un item en el modal, ya no estará en comanda.items.
+        
+        // Identificar items que deberían ser visibles en este filtro:
+        const itemsNoVisibles = original.items.filter((i: any) => 
+             i.id === 'call_waiter' || !this.isItemVisible(i.id)
+        );
+        
+        // Los items en el objeto modificado 'comanda' son los visibles (y quizás modificados).
+        const itemsVisiblesYModificados = comanda.items; // Estos ya están filtrados y editados en el modal.
+        
+        const itemsFinales = [...itemsNoVisibles, ...itemsVisiblesYModificados];
+        
+        const updated = {
+            ...original,
+            items: itemsFinales,
+            // Estado y otros campos deberían venir de 'comanda' si se modificaron, o mantenerse.
+            // En este caso solo modificamos items en el modal con +/-.
+        };
+        this.dataService.updateComanda(this.barId, updated);
+        
+    } else {
+        // Si no hay filtro, el modal tiene TODOS los items. Podemos confiar en comanda.items (salvo que sea paranoico).
+        // Mejor hacer merge seguro de propiedades.
+        const updated = {
+            ...original,
+            items: comanda.items 
+        };
+        this.dataService.updateComanda(this.barId, updated);
+    }
+  }
+
   marcarMesaPagada(mesa: string) {
     // Normalizar el nombre de la mesa al guardar en historial
     const mesaNormalizada = String(mesa).trim().toLowerCase();
@@ -752,6 +812,7 @@ export class AdminPage implements OnInit, OnDestroy {
         confirmarMarcarMesaPagada: (m: string) =>
           this.confirmarMarcarMesaPagada(m),
         getPrecioProducto: (id: string) => this.getPrecioProducto(id),
+        updateComanda: (comanda: any) => this.guardarComandaModificada(comanda),
         goToInformeMesa: (m: string) => this.goToInformeMesa(m),
       },
     });

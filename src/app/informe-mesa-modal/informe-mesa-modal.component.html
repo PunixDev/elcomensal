@@ -42,9 +42,22 @@
           </ion-badge>
         </div>
 
-        <div *ngFor="let item of comanda?.items" class="resumen-item">
-          <div style="display: flex; flex-direction: column; gap: 4px">
-            <span class="item-name">{{ item?.nombre }} <small>x{{ item?.cantidad }}</small></span>
+        <div *ngFor="let item of comanda?.items; let i = index" class="resumen-item">
+          <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="item-name">{{ item?.nombre }}</span>
+              <!-- Controles de cantidad solo si no es solo lectura (filtro todos) -->
+              <div *ngIf="filtroComanderoId === 'todos'" class="qty-controls" style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 8px; padding: 2px;">
+                <ion-button fill="clear" size="small" color="danger" (click)="decrementarCantidad(comanda, i)" style="height: 24px; min-height: 0;">
+                  <ion-icon name="remove" size="small" slot="icon-only"></ion-icon>
+                </ion-button>
+                <span style="font-weight: 800; min-width: 20px; text-align: center; font-size: 0.9em;">{{ item?.cantidad }}</span>
+                <ion-button fill="clear" size="small" color="success" (click)="incrementarCantidad(comanda, i)" style="height: 24px; min-height: 0;">
+                  <ion-icon name="add" size="small" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+              <span *ngIf="filtroComanderoId !== 'todos'" style="font-weight: bold;">x{{ item?.cantidad }}</span>
+            </div>
             <div *ngIf="item?.opciones?.length" class="item-options">
               {{ item.opciones.join(", ") }}
             </div>

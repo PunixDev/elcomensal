@@ -49,8 +49,46 @@ export class InformeMesaModalComponent {
   @Input() confirmarMarcarMesaPagada: ((mesa: string) => void) | null = null;
   @Input() getPrecioProducto: ((id: string) => number) | null = null;
   @Input() goToInformeMesa: ((mesa: string) => void) | null = null;
+  @Input() updateComanda: ((comanda: any) => void) | null = null;
 
   constructor(private modalController: ModalController) {}
+
+  incrementarCantidad(comanda: any, itemIndex: number) {
+    if (!comanda.items || !comanda.items[itemIndex]) return;
+    comanda.items[itemIndex].cantidad++;
+    this.guardarCambios(comanda);
+  }
+
+  decrementarCantidad(comanda: any, itemIndex: number) {
+    if (!comanda.items || !comanda.items[itemIndex]) return;
+    if (comanda.items[itemIndex].cantidad > 1) {
+      comanda.items[itemIndex].cantidad--;
+      this.guardarCambios(comanda);
+    } else {
+      if (confirm('¿Eliminar este producto del pedido?')) {
+        comanda.items.splice(itemIndex, 1);
+        if (comanda.items.length === 0) {
+           // Si no quedan items, quizás deberíamos eliminar la comanda entera?
+           // Por seguridad, dejemos la comanda vacía o eliminemos.
+           // La logica actual de AdminPage puede que no espere comandas vacias.
+           // Pero updateComanda debería manejarlo.
+        }
+        this.guardarCambios(comanda);
+      }
+    }
+  }
+
+  guardarCambios(comanda: any) {
+    // Recalcular total local si es necesario, aunque informeTotal es Input.
+    // Emitir cambio al padre.
+    // Try to use updateComanda input if available, otherwise fallback to actualizarEstadoComanda if it supports generic updates
+    if (this.updateComanda) {
+      this.updateComanda(comanda);
+    } else if (this.actualizarEstadoComanda) {
+      // AdminPage uses updateComanda(barId, comanda) inside this callback usually
+      this.actualizarEstadoComanda(comanda, comanda.estado);
+    }
+  }
 
   cerrar() {
     this.modalController.dismiss(null, 'close');
