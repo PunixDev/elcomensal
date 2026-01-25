@@ -26,6 +26,13 @@ export interface Categoria {
   nombreIt?: string;
   orden?: number;
   oculta?: boolean;
+  comanderoId?: string;
+}
+
+export interface Comandero {
+  id: string;
+  numero: number;
+  descripcion: string;
 }
 
 export interface Producto {
@@ -390,6 +397,28 @@ export class DataService {
 
   deletePromotion(barId: string, id: string) {
     const ref = doc(this.firestore, `bares/${barId}/promotions/${id}`);
+    return deleteDoc(ref);
+  }
+  // --- COMANDEROS ---
+  getComanderos(barId: string): Observable<Comandero[]> {
+    const key = `comanderos-${barId}`;
+    const ref = collection(this.firestore, `bares/${barId}/comanderos`);
+    const q = query(ref, orderBy('numero', 'asc'));
+    return this.getCachedObservable(key, collectionData(q, { idField: 'id' })) as Observable<Comandero[]>;
+  }
+
+  addComandero(barId: string, comandero: Omit<Comandero, 'id'>) {
+    const ref = collection(this.firestore, `bares/${barId}/comanderos`);
+    return addDoc(ref, comandero);
+  }
+
+  updateComandero(barId: string, comandero: Comandero) {
+    const ref = doc(this.firestore, `bares/${barId}/comanderos/${comandero.id}`);
+    return setDoc(ref, comandero, { merge: true });
+  }
+
+  deleteComandero(barId: string, id: string) {
+    const ref = doc(this.firestore, `bares/${barId}/comanderos/${id}`);
     return deleteDoc(ref);
   }
 }

@@ -23,8 +23,10 @@ import {
   IonCardContent,
   IonBadge,
   IonSearchbar,
+  IonSelect,
+  IonSelectOption,
 } from '@ionic/angular/standalone';
-import { DataService, Categoria } from '../data.service';
+import { DataService, Categoria, Comandero } from '../data.service';
 import { Observable, Subscription, firstValueFrom } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from '../language.service';
@@ -56,7 +58,10 @@ import { CategorySearchFilterPipe } from './categorySearchFilter.pipe';
     IonCardTitle,
     IonCardContent,
     IonBadge,
+    IonBadge,
     IonSearchbar,
+    IonSelect,
+    IonSelectOption,
     CommonModule,
     FormsModule,
     TranslateModule,
@@ -74,13 +79,19 @@ export class CategoriasPage implements OnInit {
   mensajeExito = '';
   backendUrl: string;
   searchTerm = '';
-
+  comanderos$: Observable<Comandero[]>;
+  nuevoComanderoId: string | null = null;
+  editComanderoId: string | null = null;
+  private comanderosList: Comandero[] = [];
+  private comanderosSub?: Subscription;
+  
   constructor(
     private dataService: DataService,
     private languageService: LanguageService
   ) {
     this.barId = this.dataService.getBarId();
     this.categorias$ = this.dataService.getCategorias(this.barId);
+    this.comanderos$ = this.dataService.getComanderos(this.barId);
     this.backendUrl =
       window.location.hostname === 'localhost'
         ? 'http://localhost:3000'
@@ -95,17 +106,23 @@ export class CategoriasPage implements OnInit {
           typeof cat.orden === 'number' ? cat.orden : this.ordenes[cat.id] ?? 0;
       });
     });
+
+    this.comanderosSub = this.comanderos$.subscribe((list) => {
+      this.comanderosList = list || [];
+    });
   }
 
   ngOnDestroy() {
     this.categoriasSub?.unsubscribe();
+    this.comanderosSub?.unsubscribe();
   }
 
   async agregarCategoria() {
     if (this.nuevaCategoria.trim()) {
+      const nombreLimpio = this.nuevaCategoria.trim();
       // Preparar el objeto para traducción
       const request = {
-        nombre: this.nuevaCategoria.trim(),
+        nombre: nombreLimpio,
         nombreEn: '',
         nombreFr: '',
         nombreDe: '',
@@ -118,20 +135,39 @@ export class CategoriasPage implements OnInit {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(request),
         });
+        
+        if (!response.ok) throw new Error('Network response not ok');
+        
         const result = await response.json();
         if (result.success) {
-          this.dataService.addCategoria(this.barId, result.data);
-          this.nuevaCategoria = '';
-          this.mensajeExito = 'Categoría añadida correctamente';
-          setTimeout(() => {
-            this.mensajeExito = '';
-          }, 2500);
+          const newCat: any = {
+             ...result.data,
+             comanderoId: this.nuevoComanderoId || undefined,
+          };
+          this.dataService.addCategoria(this.barId, newCat);
         } else {
-          alert('Error en la traducción de la categoría');
+          throw new Error('Translation failed');
         }
       } catch (error) {
-        console.error('Error al traducir la categoría:', error);
-        alert('Error al traducir la categoría');
+        console.error('Error al traducir la categoría, guardando local:', error);
+        // Fallback: Add category with only the primary name
+        const fallbackCat: any = {
+          nombre: nombreLimpio,
+          nombreEn: nombreLimpio,
+          nombreFr: nombreLimpio,
+          nombreDe: nombreLimpio,
+          nombreIt: nombreLimpio,
+          comanderoId: this.nuevoComanderoId || undefined,
+          orden: 99
+        };
+        this.dataService.addCategoria(this.barId, fallbackCat);
+      } finally {
+        this.nuevaCategoria = '';
+        this.nuevoComanderoId = null;
+        this.mensajeExito = 'Categoría añadida correctamente';
+        setTimeout(() => {
+          this.mensajeExito = '';
+        }, 3000);
       }
     }
   }
@@ -143,13 +179,37 @@ export class CategoriasPage implements OnInit {
   iniciarEdicion(categoria: Categoria) {
     this.editando = categoria.id;
     this.editNombre = categoria.nombre as string;
+    this.editComanderoId = categoria.comanderoId || null;
   }
 
   async guardarEdicion(id: string) {
     if (this.editando && this.editNombre.trim()) {
-      // Preparar el objeto para traducción
+      const categorias = await firstValueFrom(this.categorias$);
+      const original = categorias.find(c => c.id === id);
+      const nombreLimpio = this.editNombre.trim();
+
+      // Check if only the comandero changed
+      if (original && original.nombre === nombreLimpio && original.comanderoId === (this.editComanderoId || null)) {
+        this.editando = null;
+        return;
+      }
+
+      // If name hasn't changed, just update the comandero without translating
+      if (original && original.nombre === nombreLimpio) {
+        const categoria: Categoria = {
+          ...original,
+          comanderoId: this.editComanderoId || undefined,
+        };
+        this.dataService.updateCategoria(this.barId, categoria);
+        this.editando = null;
+        this.editNombre = '';
+        this.editComanderoId = null;
+        return;
+      }
+
+      // If name changed, try to translate
       const request = {
-        nombre: this.editNombre.trim(),
+        nombre: nombreLimpio,
         nombreEn: '',
         nombreFr: '',
         nombreDe: '',
@@ -162,21 +222,35 @@ export class CategoriasPage implements OnInit {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(request),
         });
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
         const result = await response.json();
         if (result.success) {
           const categoria: Categoria = {
             id: this.editando!,
             ...result.data,
+            comanderoId: this.editComanderoId || undefined,
           };
           this.dataService.updateCategoria(this.barId, categoria);
-          this.editando = null;
-          this.editNombre = '';
         } else {
-          alert('Error en la traducción de la categoría');
+          throw new Error('Translation result unsuccessful');
         }
       } catch (error) {
-        console.error('Error al traducir la categoría:', error);
-        alert('Error al traducir la categoría');
+        console.error('Error al traducir la categoría, guardando sin traducción:', error);
+        // Fallback: Save without updating other translations if service is down
+        if (original) {
+          const categoria: Categoria = {
+            ...original,
+            nombre: nombreLimpio,
+            comanderoId: this.editComanderoId || undefined,
+          };
+          this.dataService.updateCategoria(this.barId, categoria);
+        }
+      } finally {
+        this.editando = null;
+        this.editNombre = '';
+        this.editComanderoId = null;
       }
     }
   }
@@ -184,6 +258,7 @@ export class CategoriasPage implements OnInit {
   cancelarEdicion() {
     this.editando = null;
     this.editNombre = '';
+    this.editComanderoId = null;
   }
 
   async guardarOrden(id: string) {
@@ -253,5 +328,11 @@ export class CategoriasPage implements OnInit {
       ...categoria,
       oculta: nuevoEstado,
     });
+  }
+
+  getComanderoName(id?: string): string {
+    if (!id) return 'General';
+    const c = this.comanderosList.find(com => com.id === id);
+    return c ? c.descripcion : 'General';
   }
 }

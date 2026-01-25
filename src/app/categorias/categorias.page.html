@@ -37,6 +37,16 @@
                   ></ion-input>
                   <ion-icon name="pricetag-outline" slot="end"></ion-icon>
                 </ion-item>
+                
+                <ion-item fill="outline" mode="md" class="form-item-new">
+                  <ion-label position="stacked">Comandero</ion-label>
+                  <ion-select [(ngModel)]="nuevoComanderoId" name="nuevoComandero" interface="popover" placeholder="Seleccionar...">
+                    <ion-select-option [value]="null">Ninguno</ion-select-option>
+                    <ion-select-option *ngFor="let c of comanderos$ | async" [value]="c.id">
+                      {{ c.descripcion }} ({{ c.numero }})
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
               </div>
 
               <ion-button
@@ -88,14 +98,20 @@
                           <h3 class="category-name-text">{{ getNombreCategoria(categoria) }}</h3>
                         </div>
                       </div>
-                      <div class="category-order-input">
-                        <ion-label position="stacked">{{ 'CATEGORIES.ORDER' | translate }}</ion-label>
-                        <ion-input
-                          type="number"
-                          [(ngModel)]="ordenes[categoria.id]"
-                          (ionBlur)="guardarOrden(categoria.id)"
-                          class="compact-input"
-                        ></ion-input>
+                      <div class="category-meta-info">
+                        <div class="category-comandero-badge">
+                          <ion-icon name="print-outline"></ion-icon>
+                          <span>{{ getComanderoName(categoria.comanderoId) }}</span>
+                        </div>
+                        <div class="category-order-input">
+                          <ion-label position="stacked">{{ 'CATEGORIES.ORDER' | translate }}</ion-label>
+                          <ion-input
+                            type="number"
+                            [(ngModel)]="ordenes[categoria.id]"
+                            (ionBlur)="guardarOrden(categoria.id)"
+                            class="compact-input"
+                          ></ion-input>
+                        </div>
                       </div>
                     </div>
 
@@ -127,6 +143,16 @@
                         <ion-item fill="outline" mode="md" class="form-item-new compact">
                           <ion-label position="stacked">{{ 'CATEGORIES.NAME' | translate }}</ion-label>
                           <ion-input [(ngModel)]="editNombre" (keyup.enter)="guardarEdicion(categoria.id)"></ion-input>
+                        </ion-item>
+
+                        <ion-item fill="outline" mode="md" class="form-item-new compact">
+                          <ion-label position="stacked">Comandero</ion-label>
+                          <ion-select [(ngModel)]="editComanderoId" interface="popover" placeholder="Seleccionar...">
+                            <ion-select-option [value]="null">Ninguno</ion-select-option>
+                            <ion-select-option *ngFor="let c of comanderos$ | async" [value]="c.id">
+                              {{ c.descripcion }} ({{ c.numero }})
+                            </ion-select-option>
+                          </ion-select>
                         </ion-item>
                         <div class="edit-actions">
                           <ion-button fill="solid" color="success" size="small" (click)="guardarEdicion(categoria.id)">

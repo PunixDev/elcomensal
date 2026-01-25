@@ -144,8 +144,40 @@ ion-content {
   color: #222;
 }
 
+.category-meta-info {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.category-comandero-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba($primary-color, 0.05);
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px dashed rgba($primary-color, 0.2);
+  min-width: 80px;
+
+  ion-icon {
+    font-size: 1rem;
+    color: $primary-color;
+  }
+
+  span {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: $primary-color;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+}
+
 .category-order-input {
-  width: 70px;
+  width: 60px;
   text-align: right;
   
   ion-label {
@@ -154,6 +186,7 @@ ion-content {
     color: #888;
     text-transform: uppercase;
     margin-bottom: 4px;
+    text-align: center;
   }
 
   .compact-input {

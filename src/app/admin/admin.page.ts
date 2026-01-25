@@ -27,6 +27,7 @@ import {
   PopoverController,
   AlertController,
   MenuController,
+  IonChip,
 } from '@ionic/angular/standalone';
 import { ModalController } from '@ionic/angular/standalone';
 import { InformeMesaModalComponent } from '../informe-mesa-modal/informe-mesa-modal.component';
@@ -65,6 +66,7 @@ import { Observable, firstValueFrom, Subscription } from 'rxjs';
     IonSpinner,
     IonModal,
     IonInput,
+    IonChip,
     CommonModule,
     FormsModule,
     TranslateModule,
@@ -87,6 +89,9 @@ export class AdminPage implements OnInit, OnDestroy {
   comandas$: Observable<any[]>;
   productos$: Observable<any[]>;
   usuarios$: Observable<any[]>;
+  categorias$: Observable<any[]>;
+  comanderos$: Observable<any[]>;
+  
   comandas: any[] = [];
   comandasPorMesa: { [mesa: string]: any[] } = {};
   mesasOrdenadas: Array<{ key: string; value: any[] }> = [];
@@ -99,20 +104,21 @@ export class AdminPage implements OnInit, OnDestroy {
   nuevaPassword: string = '';
   barId: string;
   productos: any[] = [];
-  mesaActual: string = ''; // Nueva variable para guardar la mesa actual
+  categorias: any[] = [];
+  comanderos: any[] = [];
+  filtroComanderoId: string = 'todos';
+
+  mesaActual: string = '';
   isSubscribed: boolean = true;
   trialActive: boolean = false;
   remainingTrialDays: number = 0;
   isLoading: boolean = true;
-  // Controla si la tarjeta superior está desplegada (true) o plegada (false)
   cardExpanded: boolean = true;
-  // Controla si el enlace "Gestionar suscripción" aparece en el menú lateral
   showManageInMenu: boolean = false;
-  // Nombre del producto de la suscripción (Basic, Estándar, Premium, etc.)
   subscriptionProductName: string | null = null;
 
   modificarCabecera() {
-    // Crear input file dinámicamente
+    // ... (unchanged)
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -152,6 +158,8 @@ export class AdminPage implements OnInit, OnDestroy {
     this.comandas$ = this.dataService.getComandas(this.barId);
     this.productos$ = this.dataService.getProductos(this.barId);
     this.usuarios$ = this.dataService.getUsuarios(this.barId);
+    this.categorias$ = this.dataService.getCategorias(this.barId);
+    this.comanderos$ = this.dataService.getComanderos(this.barId);
   }
 
   toggleMenu() {
@@ -295,6 +303,18 @@ export class AdminPage implements OnInit, OnDestroy {
     this.subs.push(
       this.productos$.subscribe((productos) => {
         this.productos = productos;
+        this.recomputeMesasOrdenadas();
+      })
+    );
+    this.subs.push(
+      this.categorias$.subscribe((cats) => {
+        this.categorias = cats;
+        this.recomputeMesasOrdenadas();
+      })
+    );
+    this.subs.push(
+      this.comanderos$.subscribe((coms) => {
+        this.comanderos = coms;
       })
     );
 
@@ -302,6 +322,20 @@ export class AdminPage implements OnInit, OnDestroy {
     setTimeout(() => {
       this.cardExpanded = false;
     }, 5000);
+  }
+  
+  cambiarFiltroComandero(id: string) {
+    this.filtroComanderoId = id;
+    this.recomputeMesasOrdenadas();
+  }
+
+  isItemVisible(itemId: string): boolean {
+    if (this.filtroComanderoId === 'todos') return true;
+    const prod = this.productos.find(p => p.id === itemId);
+    if (!prod) return false;
+    const cat = this.categorias.find(c => c.id === prod.categoria);
+    if (!cat) return false;
+    return cat.comanderoId === this.filtroComanderoId;
   }
 
   ngOnDestroy() {
@@ -416,8 +450,18 @@ export class AdminPage implements OnInit, OnDestroy {
       console.error('Comanda inválida:', comanda);
       return;
     }
-    comanda.estado = estado;
-    this.dataService.updateComanda(this.barId, comanda);
+    // IMPORTANT: Retrieve the original comanda from the main list.
+    // The 'comanda' passed here might be a filtered copy from getComandasComida,
+    // which may have missing items. We must NOT save the filtered copy.
+    const originalComanda = this.comandas.find(c => c.id === comanda.id);
+    if (originalComanda) {
+      const updated = { ...originalComanda, estado: estado };
+      this.dataService.updateComanda(this.barId, updated);
+    } else {
+      console.warn('Original comanda not found, using passed object (risk of data loss if filtered)');
+      comanda.estado = estado;
+      this.dataService.updateComanda(this.barId, comanda);
+    }
   }
 
   marcarMesaPagada(mesa: string) {
@@ -471,10 +515,32 @@ export class AdminPage implements OnInit, OnDestroy {
    * Dentro de la misma prioridad, ordena por la fecha más reciente (desc).
    */
   recomputeMesasOrdenadas() {
-    const entradas = Object.keys(this.comandasPorMesa).map((k) => ({
+    let entradas = Object.keys(this.comandasPorMesa).map((k) => ({
       key: k,
       value: this.comandasPorMesa[k] || [],
     }));
+    
+    // Filter mesas based on visible items
+    entradas = entradas.filter(mesa => {
+      const v = mesa.value || [];
+      // If filtering by comandero, exclude 'pago_pendiente' or 'call_waiter'?
+      // Assuming we want to show the table if it has ANY relevant item or special status that affects the comandero?
+      // Actually user said: "desde cocina solamente vean los productos que le afectan".
+      // So if I am Kitchen, I only see tables with Kitchen items.
+      
+      // If filtering is active...
+      if (this.filtroComanderoId !== 'todos') {
+         const hasVisibleItems = v.some(c => 
+           c.items.some((i: any) => i.id !== 'call_waiter' && this.isItemVisible(i.id))
+         );
+         // What if it is a waiter call? Typically waiter calls go to everyone or specific?
+         // Let's assume Waiter Calls (call_waiter) are relevant to EVERYONE or maybe just Bar/Waiters.
+         // For now, if filtered, show only if has visible items (food/drink).
+         return hasVisibleItems;
+      }
+      
+      return true;
+    });
 
     const mesaPriority = (m: { key: string; value: any[] }) => {
       const v = m.value || [];
@@ -483,13 +549,30 @@ export class AdminPage implements OnInit, OnDestroy {
       // Aquí definimos prioridad:
       // -1: llamada camarero (muy urgente)
       // 0: pago pendiente
-      // 1: pedido no preparado
+      // 1: pedido no preparado (solo de items visibles)
       // 2: todo ok/preparado
+      
+      // Note: If we are in "Cocina" mode, maybe "Pago pendiente" or "Call Waiter" is not relevant?
+      // But typically "Call Waiter" is high urgency. Let's keep it visible in 'todos' but hidden in specific comandero view?
+      // In the filter above, I filtered out mesas without visible items.
+      
       if (v.some((c) => c.items.some((i: any) => i.id === 'call_waiter'))) return -1;
       if (v.some((c) => c.estado === 'pago_pendiente')) return 0;
-      // Filtrar comandas que solo sean llamadas al camarero para no afectar la logica de cocina si no queremos
+      
+      // Filtrar comandas que solo sean llamadas al camarero para no afectar la logica de cocina
       const pedidosComida = v.filter(c => !c.items.some((i:any) => i.id === 'call_waiter'));
-      if (pedidosComida.some((c) => c.estado !== 'preparado')) return 1;
+      
+      // IMPORTANT: Check status of VISIBLE items only
+      const hasUnprepared = pedidosComida.some(c => 
+        c.items.some((i: any) => this.isItemVisible(i.id)) && // Should contain at least one visible item
+        c.estado !== 'preparado' 
+        // Note: c.estado is per comanda, not per item.
+        // If the comanda is not prepared, it is not prepared for EVERYONE.
+        // But if I am Kitchen, and the order has Drink(Bar) and Food(Kitchen), and it is 'pendiente'.
+        // It shows as 'pendiente'.
+      );
+      
+      if (hasUnprepared) return 1;
       return 2;
     };
 
@@ -608,11 +691,22 @@ export class AdminPage implements OnInit, OnDestroy {
 
   async verInformeMesa(mesa: string) {
     const productos = await firstValueFrom(this.productos$);
-    const comandas = this.comandasPorMesa[mesa] || [];
-    // Ordenar las comandas: primero las que son accionables
-    // - prioridad 0: estado 'preparando' (muestran botón 'Preparado')
-    // - prioridad 1: estados distintos de 'preparado' y 'pago_pendiente' (muestran botón 'En preparación')
-    // - prioridad 2: resto (por ejemplo 'preparado' o 'pago_pendiente')
+    let comandas = this.comandasPorMesa[mesa] || [];
+    
+    // Filter items inside comandas based on active filter
+    if (this.filtroComanderoId !== 'todos') {
+        comandas = comandas.map(c => {
+            const filteredItems = c.items.filter((i: any) => 
+                // Always show Waiter Calls if necessary, or filter them too. 
+                // Previous logic excluded Waiter Calls from food lists properly.
+                // Here we want to show items RELEVANT to the comandero.
+                i.id !== 'call_waiter' && this.isItemVisible(i.id)
+            );
+            return { ...c, items: filteredItems };
+        }).filter(c => c.items.length > 0);
+    }
+
+    // Ordenar las comandas (using existing logic, but on filtered list)
     const rank = (c: any) => {
       if (!c || typeof c !== 'object') return 3;
       if (c.estado === 'preparando') return 0;
@@ -627,7 +721,8 @@ export class AdminPage implements OnInit, OnDestroy {
       const tb = b && b.fecha ? new Date(b.fecha).getTime() : 0;
       return tb - ta; // más recientes primero
     });
-    this.informeTotal = comandas.reduce((total, comanda) => {
+    
+    this.informeTotal = this.informeMesa.reduce((total: number, comanda: any) => {
       return (
         total +
         comanda.items.reduce((subtotal: number, item: any) => {
@@ -636,7 +731,7 @@ export class AdminPage implements OnInit, OnDestroy {
         }, 0)
       );
     }, 0);
-    console.log('Total de la mesa', mesa, ':', this.informeTotal);
+    console.log('Total de la mesa (filtrado)', mesa, ':', this.informeTotal);
     this.mesaActual = mesa; // Guardamos la mesa actual para imprimir/descargar
     const modal = await this.modalController.create({
       component: InformeMesaModalComponent,
@@ -645,6 +740,9 @@ export class AdminPage implements OnInit, OnDestroy {
         informeTotal: this.informeTotal,
         mesaActual: mesa,
         productos: this.productos,
+        categorias: this.categorias,
+        comanderos: this.comanderos,
+        filtroComanderoId: this.filtroComanderoId,
         actualizarEstadoComanda: (comanda: any, estado: string) =>
           this.actualizarEstadoComanda(comanda, estado),
         confirmarMarcarMesaPagada: (m: string) =>
@@ -699,6 +797,10 @@ export class AdminPage implements OnInit, OnDestroy {
 
   goToCategorias() {
     this.router.navigate(['/categorias']);
+  }
+
+  goToComanderos() {
+    this.router.navigate(['/comanderos']);
   }
 
   goToProductos() {
@@ -859,10 +961,16 @@ export class AdminPage implements OnInit, OnDestroy {
     return v.some((c) => c.items.some((i: any) => i.id === 'call_waiter'));
   }
   
-  // Helper para obtener las comandas de comida (excluyendo llamadas)
+  // Helper para obtener las comandas de comida (excluyendo llamadas) y filtrando por comandero
   getComandasComida(mesa: { key: string; value: any[] }): any[] {
     const v = mesa.value || [];
-    return v.filter((c) => !c.items.some((i: any) => i.id === 'call_waiter'));
+    // We map to new objects to avoid mutating the original comanda with valid items for other views
+    return v.map(c => {
+       const filteredItems = c.items.filter((i: any) => 
+         i.id !== 'call_waiter' && this.isItemVisible(i.id)
+       );
+       return { ...c, items: filteredItems };
+    }).filter(c => c.items.length > 0);
   }
 
   // Método para "atender" la llamada (borrar la notificacion)

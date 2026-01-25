@@ -20,6 +20,10 @@
   </ion-header>
   <ion-content>
     <ion-list>
+      <ion-item (click)="goToComanderos()">
+        <ion-icon name="list-circle" slot="start" aria-hidden="true"></ion-icon>
+        Gestionar Comanderos
+      </ion-item>
       <ion-item (click)="goToCategorias()">
         <ion-icon name="albums" slot="start" aria-hidden="true"></ion-icon>
         {{ 'ADMIN.MANAGE_CATEGORIES' | translate }}
@@ -275,6 +279,16 @@
       </div>
     </ion-card>
   </div>
+  
+  <div class="comanderos-filter">
+    <ion-chip [color]="filtroComanderoId === 'todos' ? 'primary' : 'medium'" (click)="cambiarFiltroComandero('todos')">
+      <ion-label>Todos</ion-label>
+    </ion-chip>
+    <ion-chip *ngFor="let c of comanderos$ | async" [color]="filtroComanderoId === c.id ? 'primary' : 'medium'" (click)="cambiarFiltroComandero(c.id)">
+      <ion-label>{{ c.descripcion }}</ion-label>
+    </ion-chip>
+  </div>
+
   <ion-grid>
     <ion-row>
       <ion-col size="12">

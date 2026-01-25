@@ -45,6 +45,11 @@ export const routes: Routes = [
       import('./productos/productos.page').then((m) => m.ProductosPage),
   },
   {
+    path: 'comanderos',
+    loadComponent: () =>
+      import('./comanderos/comanderos.page').then((m) => m.ComanderosPage),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./login/login.page').then((m) => m.LoginPage),
   },

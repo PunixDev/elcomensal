@@ -20,7 +20,7 @@
     <div class="action-bar-modal no-print">
       <ion-button fill="soft" color="primary" (click)="imprimirInformeMesa()" size="small">
         <ion-icon name="print-outline" slot="start"></ion-icon>
-        Cocina
+        {{ filtroComanderoId === 'todos' ? 'Imprimir' : getComanderoName(filtroComanderoId) }}
       </ion-button>
       <ion-button fill="soft" color="tertiary" (click)="imprimirTotal()" size="small">
         <ion-icon name="receipt-outline" slot="start"></ion-icon>
@@ -59,7 +59,7 @@
           <span>{{ comanda?.observaciones }}</span>
         </div>
 
-        <div class="comanda-actions no-print">
+        <div class="comanda-actions no-print" *ngIf="filtroComanderoId === 'todos'">
           <ion-button
             color="warning"
             size="small"
