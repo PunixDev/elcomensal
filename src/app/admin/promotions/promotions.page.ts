@@ -142,7 +142,7 @@ import { Observable } from 'rxjs';
             </ion-list>
             
             <div class="ion-padding">
-                <ion-button expand="block" (click)="savePromotion()">Guardar</ion-button>
+                <ion-button expand="block" (click)="savePromotion()" [disabled]="!isFormValid()">Guardar</ion-button>
             </div>
           </ion-content>
         </ng-template>
@@ -265,5 +265,17 @@ export class PromotionsPage implements OnInit {
   getDayName(day: number) {
       const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
       return days[day];
+  }
+
+  isFormValid(): boolean {
+    if (!this.currentPromo.name || !this.currentPromo.name.trim()) return false;
+    if (!this.currentPromo.days || this.currentPromo.days.length === 0) return false;
+    if (!this.currentPromo.startTime || !this.currentPromo.endTime) return false;
+    
+    if (this.currentPromo.type === 'discount_percent') {
+        if (!this.currentPromo.value || this.currentPromo.value <= 0) return false;
+    }
+    
+    return true;
   }
 }
