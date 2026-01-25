@@ -624,6 +624,10 @@ export class AdminPage implements OnInit, OnDestroy {
     return 0;
   }
 
+  getComensales(mesa: { key: string; value: any[] }): number | undefined {
+    return mesa.value?.find((c) => c.numeroComensales)?.numeroComensales;
+  }
+
   badgeColor(mesa: { key: string; value: any[] }) {
     const v = mesa.value || [];
     if (v.some((c) => c.estado === 'pago_pendiente')) return 'danger';

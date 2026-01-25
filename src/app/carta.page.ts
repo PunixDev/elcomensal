@@ -419,7 +419,8 @@ export class CartaPage implements OnInit, OnDestroy {
       component: ConfirmPedidoModalComponent,
       componentProps: {
         items: itemsParaModal,
-        total: totalCalculado
+        total: totalCalculado,
+        existingDiners: this.historialComandasMesa.find((c: any) => c.numeroComensales)?.numeroComensales
       },
       cssClass: 'confirm-order-modal' // Opcional, por si queremos estilos específicos
     });
@@ -429,11 +430,11 @@ export class CartaPage implements OnInit, OnDestroy {
     const { data, role } = await modal.onWillDismiss();
 
     if (role === 'confirm' && data && data.confirm) {
-      this.procesarEnvioPedido(data.observaciones);
+      this.procesarEnvioPedido(data.observaciones, data.numeroComensales);
     }
   }
 
-  procesarEnvioPedido(observaciones: string) {
+  procesarEnvioPedido(observaciones: string, numeroComensales?: number) {
     // Validar que todos los productos con opciones tengan opción seleccionada
     for (const key of this.seleccionadosKeys()) {
       const prod = this.productos.find(
@@ -472,6 +473,7 @@ export class CartaPage implements OnInit, OnDestroy {
       }),
       estado: 'pendiente',
       observaciones: observaciones || '',
+      numeroComensales: numeroComensales
     };
     this.dataService.addComanda(this.barId, pedido);
     this.seleccionados = {};

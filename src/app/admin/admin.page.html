@@ -331,7 +331,12 @@
 
                     <ion-card-header>
                       <div class="mesa-header-top">
-                        <div class="mesa-number">Mesa {{mesa.key}}</div>
+                        <div class="mesa-number">
+                          Mesa {{mesa.key}}
+                          <span *ngIf="getComensales(mesa)" style="font-size: 0.8em; color: #666; margin-left: 0.5em;">
+                            <ion-icon name="people" style="vertical-align: middle;"></ion-icon> {{ getComensales(mesa) }}
+                          </span>
+                        </div>
                         <div class="time-ago">{{ getTimeAgo(getLatestFecha(mesa)) }}</div>
                       </div>
                       <div class="mesa-status-row">

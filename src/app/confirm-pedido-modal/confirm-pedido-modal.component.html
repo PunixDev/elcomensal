@@ -35,6 +35,18 @@
     </div>
 
     <div class="observations-section">
+      <!-- Input de comensales solo si no está definido previamente -->
+      <ion-item lines="none" class="obs-item" *ngIf="existingDiners === null || existingDiners === undefined">
+        <ion-label position="stacked">{{ 'MENU.DINERS' | translate }} <span class="text-danger">*</span></ion-label>
+        <ion-input
+          type="number"
+          min="1"
+          [(ngModel)]="numeroComensales"
+          placeholder="{{ 'MENU.DINERS_PLACEHOLDER' | translate }}"
+          class="custom-input"
+        ></ion-input>
+      </ion-item>
+
       <ion-item lines="none" class="obs-item">
         <ion-label position="stacked">{{ 'MENU.OBSERVATIONS' | translate }}</ion-label>
         <ion-textarea
@@ -57,7 +69,8 @@
         </ion-button>
       </ion-col>
       <ion-col size="6">
-        <ion-button expand="block" color="success" (click)="confirmar()">
+        <ion-button expand="block" color="success" (click)="confirmar()" 
+          [disabled]="(existingDiners === null || existingDiners === undefined) && (!numeroComensales || numeroComensales <= 0)">
           {{ 'COMMON.SEND' | translate }}
           <ion-icon name="send-outline" slot="end"></ion-icon>
         </ion-button>

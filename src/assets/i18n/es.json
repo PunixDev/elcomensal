@@ -292,7 +292,9 @@
     "OUT_OF_STOCK": "Agotado",
     "CONFIRM_ORDER": "Confirmar Pedido",
     "REVIEW_ORDER_TEXT": "Por favor, revisa los artículos y las cantidades antes de enviar.",
-    "OBSERVATIONS_PLACEHOLDER": "Ej. Sin cebolla, carne muy hecha..."
+    "OBSERVATIONS_PLACEHOLDER": "Ej. Sin cebolla, carne muy hecha...",
+    "DINERS": "Número de Comensales",
+    "DINERS_PLACEHOLDER": "Introduce el número de personas"
   },
   "QR_GENERATOR": {
     "TITLE": "Generador de Códigos QR",
