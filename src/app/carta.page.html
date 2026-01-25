@@ -130,16 +130,27 @@
       <!-- Botón Solicitar Pago -->
       <div
         *ngIf="mesa && historialComandasMesa.length && !pagoSolicitado"
-        style="padding: 0 1rem 1rem"
+        style="padding: 0 1rem 1rem; display: flex; gap: 10px;"
       >
         <ion-button
           expand="block"
           color="warning"
           (click)="solicitarPago()"
-          style="--border-radius: 12px; font-weight: 700; height: 48px"
+          style="--border-radius: 12px; font-weight: 700; height: 48px; flex: 1;"
         >
-          <ion-icon name="cash-outline" slot="start"></ion-icon>
+          <ion-icon name="cash-outline"></ion-icon>
           {{ 'MENU.REQUEST_PAYMENT' | translate }}
+        </ion-button>
+        
+        <ion-button
+          expand="block"
+          fill="outline"
+          color="medium"
+          (click)="abrirCalculadoraSeparada()"
+          style="--border-radius: 12px; font-weight: 700; height: 48px; flex: 1;"
+        >
+          <ion-icon name="calculator-outline"></ion-icon>
+          {{ 'COMMON.CALCULATE_SEPARATELY' | translate }}
         </ion-button>
       </div>
     </div>
@@ -403,14 +414,25 @@
         <span>{{ 'MENU.PAYMENT_REQUESTED' | translate }}</span>
       </div>
     </div>
-    <ion-button
-      color="primary"
-      (click)="descargarInformeMesa()"
-      style="--border-radius: 12px; font-weight: 700"
-    >
-      <ion-icon name="download" slot="start"></ion-icon>
-      PDF
-    </ion-button>
+    <div style="display: flex; gap: 8px;">
+      <ion-button
+        color="secondary"
+        (click)="abrirCalculadoraSeparada()"
+        style="--border-radius: 12px; font-weight: 700"
+      >
+        <ion-icon name="calculator-outline" slot="start"></ion-icon>
+        Calcular
+      </ion-button>
+      
+      <ion-button
+        color="primary"
+        (click)="descargarInformeMesa()"
+        style="--border-radius: 12px; font-weight: 700"
+      >
+        <ion-icon name="download" slot="start"></ion-icon>
+        PDF
+      </ion-button>
+    </div>
   </div>
 
   <!-- Imagen Ampliada -->

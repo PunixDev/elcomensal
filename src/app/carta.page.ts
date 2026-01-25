@@ -31,6 +31,7 @@ import { HttpClient } from '@angular/common/http';
 import { doc, getDoc } from '@angular/fire/firestore';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfirmPedidoModalComponent } from './confirm-pedido-modal/confirm-pedido-modal.component';
+import { CalculadoraSeparadaModalComponent } from './calculadora-separada-modal/calculadora-separada-modal.component';
 import { LanguageSelectorComponent } from './language-selector.component';
 import { PopoverController, AlertController, ToastController } from '@ionic/angular';
 import { LanguageService } from './language.service';
@@ -501,6 +502,17 @@ export class CartaPage implements OnInit, OnDestroy {
     this.seleccionados = {};
     this.opcionSeleccionTemp = {};
     alert('La mesa ha sido limpiada.');
+  }
+  
+  async abrirCalculadoraSeparada() {
+    const modal = await this.modalController.create({
+      component: CalculadoraSeparadaModalComponent,
+      componentProps: {
+        historial: this.historialComandasMesa,
+        productos: this.productos
+      }
+    });
+    await modal.present();
   }
 
   async descargarInformeMesa() {

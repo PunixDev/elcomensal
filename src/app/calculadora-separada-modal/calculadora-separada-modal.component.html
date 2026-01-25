@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ 'COMMON.CALCULATE_SEPARATELY' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="intro-text">
+    <p>{{ 'MENU.SELECT_ITEMS_TO_CALCULATE' | translate }}</p>
+  </div>
+
+  <ion-list>
+    <ion-item *ngFor="let item of groupedItems" lines="full">
+      <ion-label class="ion-text-wrap" style="flex: 1;">
+        <h2>{{ item.nombre }}</h2>
+        <p *ngIf="item.opciones.length">{{ item.opciones.join(', ') }}</p>
+        <p style="font-size: 0.9em; color: var(--ion-color-medium);">
+           {{ item.precio | currency:'EUR':'symbol':'1.2-2' }}/ud • Total: {{ item.totalQty }}
+        </p>
+      </ion-label>
+      
+      <div slot="end" style="display: flex; align-items: center; gap: 8px;">
+         <ion-button size="small" fill="clear" color="danger" (click)="decrement(item)" [disabled]="item.selectedQty <= 0">
+            <ion-icon name="remove-circle-outline" slot="icon-only"></ion-icon>
+         </ion-button>
+         <span style="font-weight: 800; min-width: 20px; text-align: center;">{{ item.selectedQty }}</span>
+         <ion-button size="small" fill="clear" color="success" (click)="increment(item)" [disabled]="item.selectedQty >= item.totalQty">
+            <ion-icon name="add-circle-outline" slot="icon-only"></ion-icon>
+         </ion-button>
+      </div>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <div class="total-bar ion-padding-horizontal" style="display: flex; justify-content: space-between; align-items: center; height: 100%;">
+      <span style="font-size: 1.1em;">{{ 'MENU.SELECTED_TOTAL' | translate }}:</span>
+      <span style="font-size: 1.5em; font-weight: 800; color: var(--ion-color-success);">{{ totalSeleccionado | currency:'EUR':'symbol':'1.2-2' }}</span>
+    </div>
+  </ion-toolbar>
+</ion-footer>
