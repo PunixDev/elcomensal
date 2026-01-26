@@ -29,7 +29,7 @@ import {
   IonText
 } from '@ionic/angular/standalone';
 import { DataService } from './data.service';
-import { Observable, firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom, Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LanguageSelectorComponent } from './language-selector.component';
@@ -84,6 +84,8 @@ export class HistorialPage implements OnInit {
   agrupadoPorMesa: any = {};
   mesas: string[] = [];
   resumenDia: { total: number; mesas: number } = { total: 0, mesas: 0 };
+  adminPrinterName: string = '';
+  private adminSub: Subscription | null = null;
 
   constructor(
     private dataService: DataService,
@@ -93,12 +95,23 @@ export class HistorialPage implements OnInit {
   ) {
     this.barId = this.dataService.getBarId();
     this.historial$ = this.dataService.getHistorial(this.barId);
+
+    // Cargar config del bar para la impresora admin
+    this.adminSub = this.dataService.getBarConfig(this.barId).subscribe(config => {
+      this.adminPrinterName = config?.adminPrinterName || '';
+    });
   }
 
   async ngOnInit() {
     // Al abrir la página, mostrar los pedidos de hoy
     this.filtroFecha = new Date().toISOString().slice(0, 10);
     await this.aplicarFiltrosAsync();
+  }
+
+  ngOnDestroy() {
+    if (this.adminSub) {
+      this.adminSub.unsubscribe();
+    }
   }
 
   setFecha(event: any) {
@@ -152,7 +165,7 @@ export class HistorialPage implements OnInit {
     );
   }
 
-  imprimirTicket(registro: any) {
+  async imprimirTicket(registro: any) {
     if (!registro) return;
 
     const fechaTicket = new Date(registro.pagadoEn || registro.fecha).toLocaleString();
@@ -185,9 +198,7 @@ export class HistorialPage implements OnInit {
       });
     }
 
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      printWindow.document.write(`
+    const html = `
         <html>
           <head>
             <title>Ticket - ${this.translateService.instant('HISTORY.TABLE')} ${mesa}</title>
@@ -215,12 +226,28 @@ export class HistorialPage implements OnInit {
             <div class="footer">
               <p>${this.translateService.instant('COMMON.THANKS_VISIT')}</p>
             </div>
-            <script>
-              window.onload = function() { window.print(); window.close(); }
-            </script>
           </body>
         </html>
-      `);
+    `;
+
+    const electronAPI = (window as any).electronAPI;
+    if (electronAPI && this.adminPrinterName) {
+      try {
+        await electronAPI.printToPrinter(html, this.adminPrinterName);
+        console.log('History ticket printed via Native Bridge');
+      } catch (e) {
+        this.fallbackPrint(html, `Ticket Mesa ${mesa}`);
+      }
+    } else {
+      this.fallbackPrint(html, `Ticket Mesa ${mesa}`);
+    }
+  }
+
+  fallbackPrint(html: string, title: string) {
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.write(`<script>window.onload = function() { window.print(); window.close(); }</script>`);
       printWindow.document.close();
     }
   }

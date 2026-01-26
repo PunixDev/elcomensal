@@ -1,7 +1,20 @@
 import type { CapacitorElectronConfig } from '@capacitor-community/electron';
 import { getCapacitorElectronConfig, setupElectronDeepLinking } from '@capacitor-community/electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import { app, MenuItem, ipcMain, BrowserWindow } from 'electron';
+import { app, MenuItem, ipcMain, BrowserWindow, shell } from 'electron';
+
+// ... (other imports, setup, and print-to-printer handler unchanged)
+
+ipcMain.handle('open-external', async (event, url) => {
+  console.log(`Opening external URL: ${url}`);
+  try {
+    await shell.openExternal(url);
+    return { success: true };
+  } catch (err) {
+    console.error(`Failed to open external URL: ${url}`, err);
+    return { success: false, error: err };
+  }
+});
 import electronIsDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import { autoUpdater } from 'electron-updater';

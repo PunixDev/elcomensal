@@ -59,6 +59,8 @@ import { TranslateModule } from '@ngx-translate/core';
 export class ComanderosPage implements OnInit {
   comanderos$: Observable<Comandero[]>;
   barId: string;
+  adminPrinterName: string = '';
+  private adminSub: Subscription | null = null;
   
   // Form fields
   nuevoNumero: number | null = null;
@@ -74,9 +76,24 @@ export class ComanderosPage implements OnInit {
   constructor(private dataService: DataService) {
     this.barId = this.dataService.getBarId();
     this.comanderos$ = this.dataService.getComanderos(this.barId);
+    
+    // Cargar config del bar para la impresora admin
+    this.adminSub = this.dataService.getBarConfig(this.barId).subscribe(config => {
+      this.adminPrinterName = config?.adminPrinterName || '';
+    });
   }
 
   ngOnInit() {}
+
+  ngOnDestroy() {
+    if (this.adminSub) {
+      this.adminSub.unsubscribe();
+    }
+  }
+
+  async guardarAdminPrinter() {
+    await this.dataService.updateAdminPrinter(this.barId, this.adminPrinterName.trim());
+  }
 
   async agregarComandero() {
     if (this.nuevoNumero !== null && this.nuevaDescripcion.trim()) {

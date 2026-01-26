@@ -7,5 +7,6 @@ require('./rt/electron-rt');
 console.log('User Preload!');
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  printToPrinter: (html: string, printerName: string) => ipcRenderer.invoke('print-to-printer', html, printerName)
+  printToPrinter: (html: string, printerName: string) => ipcRenderer.invoke('print-to-printer', html, printerName),
+  openExternal: (url: string) => ipcRenderer.invoke('open-external', url)
 });

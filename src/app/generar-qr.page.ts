@@ -27,6 +27,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { PopoverController } from '@ionic/angular';
+import { DataService } from './data.service';
 import { LanguageService } from './language.service';
 import { LanguageSelectorComponent } from './language-selector.component';
 
@@ -77,14 +78,21 @@ export class GenerarQrPage {
   generatedQrs: Array<{ name: string; url: string; cardUrl: string }> = [];
   
   barId: string = '';
+  adminPrinterName: string = '';
 
   constructor(
     private router: Router,
     private popoverController: PopoverController,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private dataService: DataService
   ) {
     const usuario = localStorage.getItem('usuario');
     this.barId = usuario ? usuario : 'bar-demo';
+    
+    // Configuración del bar
+    this.dataService.getBarConfig(this.barId).subscribe(config => {
+      this.adminPrinterName = config?.adminPrinterName || '';
+    });
   }
 
   goToAdmin() {
@@ -146,66 +154,86 @@ export class GenerarQrPage {
     document.body.removeChild(link);
   }
 
-  imprimirQR(qr: { name: string; url: string }) {
-    const win = window.open('', '_blank');
-    if (win) {
-      win.document.write(`
-        <html><head><title>Imprimir QR Mesa ${qr.name}</title></head><body style='text-align:center; font-family: sans-serif; padding: 20px;'>
-        <div style="border: 2px solid #eee; padding: 20px; border-radius: 15px; display: inline-block;">
-          <h2 style="color: #1268be; margin-top: 0;">Mesa ${qr.name}</h2>
-          <img src='${qr.url}' style='background:#fff; padding:10px; border: 1px solid #ddd; border-radius:8px; width: 250px; height: 250px;'/><br><br>
-          <p style="color: #666; font-size: 0.9em;">Escanea para ver nuestra carta</p>
-        </div>
-        <script>window.onload = function() { window.print(); window.close(); }</script>
-        </body></html>
-      `);
-      win.document.close();
+  async imprimirQR(qr: { name: string; url: string }) {
+    const html = `
+      <html><head><title>Imprimir QR Mesa ${qr.name}</title></head><body style='text-align:center; font-family: sans-serif; padding: 20px;'>
+      <div style="border: 2px solid #eee; padding: 20px; border-radius: 15px; display: inline-block;">
+        <h2 style="color: #1268be; margin-top: 0;">Mesa ${qr.name}</h2>
+        <img src='${qr.url}' style='background:#fff; padding:10px; border: 1px solid #ddd; border-radius:8px; width: 250px; height: 250px;'/><br><br>
+        <p style="color: #666; font-size: 0.9em;">Escanea para ver nuestra carta</p>
+      </div>
+      </body></html>
+    `;
+
+    const electronAPI = (window as any).electronAPI;
+    if (electronAPI && this.adminPrinterName) {
+      try {
+        await electronAPI.printToPrinter(html, this.adminPrinterName);
+        console.log('QR printed via Native Bridge');
+      } catch (e) {
+        this.fallbackPrint(html, `QR Mesa ${qr.name}`);
+      }
+    } else {
+      this.fallbackPrint(html, `QR Mesa ${qr.name}`);
     }
   }
 
-  imprimirTodos() {
+  async imprimirTodos() {
     if (this.generatedQrs.length === 0) return;
+    let content = `
+      <html><head><title>Imprimir todos los QRs</title>
+      <style>
+        body { font-family: sans-serif; padding: 10px; }
+        .qr-container { 
+          display: inline-block; 
+          width: 30%; 
+          margin: 1%; 
+          padding: 15px; 
+          border: 1px solid #eee; 
+          text-align: center; 
+          page-break-inside: avoid;
+          border-radius: 10px;
+        }
+        .qr-container h2 { margin-top: 0; color: #1268be; font-size: 1.2em; }
+        .qr-container img { width: 100%; max-width: 180px; }
+        .qr-container p { font-size: 0.8em; color: #666; }
+        @media print {
+          .qr-container { border: 1px solid #ddd; }
+        }
+      </style>
+      </head><body>
+    `;
+
+    this.generatedQrs.forEach((qr) => {
+      content += `
+        <div class="qr-container">
+          <h2>Mesa ${qr.name}</h2>
+          <img src='${qr.url}' />
+          <p>Escanea para ver la carta</p>
+        </div>
+      `;
+    });
+
+    content += `</body></html>`;
+
+    const electronAPI = (window as any).electronAPI;
+    if (electronAPI && this.adminPrinterName) {
+      try {
+        await electronAPI.printToPrinter(content, this.adminPrinterName);
+        console.log('All QRs printed via Native Bridge');
+      } catch (e) {
+        this.fallbackPrint(content, 'Todos los QRs');
+      }
+    } else {
+      this.fallbackPrint(content, 'Todos los QRs');
+    }
+  }
+
+  fallbackPrint(html: string, title: string) {
     const win = window.open('', '_blank');
     if (win) {
-      let content = `
-        <html><head><title>Imprimir todos los QRs</title>
-        <style>
-          body { font-family: sans-serif; padding: 10px; }
-          .qr-container { 
-            display: inline-block; 
-            width: 30%; 
-            margin: 1%; 
-            padding: 15px; 
-            border: 1px solid #eee; 
-            text-align: center; 
-            page-break-inside: avoid;
-            border-radius: 10px;
-          }
-          .qr-container h2 { margin-top: 0; color: #1268be; font-size: 1.2em; }
-          .qr-container img { width: 100%; max-width: 180px; }
-          .qr-container p { font-size: 0.8em; color: #666; }
-          @media print {
-            .qr-container { border: 1px solid #ddd; }
-          }
-        </style>
-        </head><body>
-      `;
-
-      this.generatedQrs.forEach((qr) => {
-        content += `
-          <div class="qr-container">
-            <h2>Mesa ${qr.name}</h2>
-            <img src='${qr.url}' />
-            <p>Escanea para ver la carta</p>
-          </div>
-        `;
-      });
-
-      content += `
-        <script>window.onload = function() { window.print(); window.close(); }</script>
-        </body></html>
-      `;
-      win.document.write(content);
+      win.document.write(html);
+      win.document.write(`<script>window.onload = function() { window.print(); window.close(); }</script>`);
       win.document.close();
     }
   }

@@ -405,7 +405,15 @@ export class AdminPage implements OnInit, OnDestroy {
                 publicOrigin = 'https://elrestaurante.store';
               }
               const url = `${publicOrigin}/carta/${this.barId}?mesa=${data.mesa}`;
-              window.open(url, '_blank');
+              
+              const electronAPI = (window as any).electronAPI;
+              if (electronAPI && electronAPI.openExternal) {
+                // Abre en el navegador del sistema si es Electron
+                electronAPI.openExternal(url);
+              } else {
+                // Abre en nueva pestaña si es web normal
+                window.open(url, '_blank');
+              }
             }
           },
         },

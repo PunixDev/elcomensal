@@ -117,6 +117,18 @@ export class DataService {
     return getDoc(ref).then(snap => snap.data());
   }
 
+  // Obtiene la configuración global del bar (impresora admin, etc.)
+  getBarConfig(barId: string): Observable<any> {
+    const ref = doc(this.firestore, `bares/${barId}`);
+    return docData(ref);
+  }
+
+  // Actualiza la impresora de administración
+  async updateAdminPrinter(barId: string, printerName: string) {
+    const ref = doc(this.firestore, `bares/${barId}`);
+    await setDoc(ref, { adminPrinterName: printerName }, { merge: true });
+  }
+
   // Guarda la imagen de cabecera en bares/{barId}/cabecera
   async guardarCabeceraImagen(barId: string, imagenBase64: string) {
     const ref = doc(this.firestore, `bares/${barId}/cabecera/imagen`);
