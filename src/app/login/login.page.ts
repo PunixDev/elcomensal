@@ -123,7 +123,7 @@ export class LoginPage implements OnInit {
   ) {
     if (!correo) return;
     const backendUrl =
-      window.location.hostname === 'localhost'
+      window.location.hostname === 'localhost' && window.location.protocol === 'http:'
         ? 'http://localhost:3000'
         : 'https://backendelcomensal.onrender.com';
     try {

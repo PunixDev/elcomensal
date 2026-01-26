@@ -100,7 +100,7 @@ export class InformeMesaModalComponent {
     return c ? (c.descripcion || `Comandero ${c.numero}`) : 'General';
   }
 
-  imprimirInformeMesa() {
+  async imprimirInformeMesa() {
     if (!this.informeMesa || !this.informeMesa.length) return;
 
     // 1. Filtrar solo las que están en estado "Recibido"
@@ -147,46 +147,54 @@ export class InformeMesaModalComponent {
 
     // 3. Ejecutar impresiones para cada grupo
     // Nota: window.print() es bloqueante en algunos navegadores, pero procedemos
-    Object.keys(grupos).forEach((cId) => {
+    // 3. Execute printing for each group
+    const electronAPI = (window as any).electronAPI;
+
+    for (const cId of Object.keys(grupos)) {
       const grupo = grupos[cId];
-      let contenido = `<div style="font-family: 'Courier New', Courier, monospace; max-width: 300px; margin: 0 auto; color: #000;">`;
-      contenido += `<h1 style="text-align: center; margin-bottom: 5px; font-size: 1.5em; border-bottom: 2px solid #000;">${grupo.comanderoNombre.toUpperCase()}</h1>`;
-      contenido += `<h2 style="text-align: center; margin-top: 0;">MESA ${this.mesaActual}</h2>`;
-      contenido += `<div style="text-align: center; font-size: 0.8em; margin-bottom: 15px;">${new Date().toLocaleString()}</div>`;
+      let html = `<div style="font-family: 'Courier New', Courier, monospace; max-width: 250px; color: #000; font-size: 14px;">`;
+      html += `<h1 style="text-align: center; font-size: 1.4em; border-bottom: 2px solid #000; margin-bottom: 5px;">${grupo.comanderoNombre.toUpperCase()}</h1>`;
+      html += `<h2 style="text-align: center; font-size: 1.8em; margin: 5px 0;">MESA ${this.mesaActual}</h2>`;
+      html += `<div style="text-align: center; font-size: 0.7em; margin-bottom: 10px;">${new Date().toLocaleString()}</div>`;
 
       Object.keys(grupo.comandas).forEach((comId) => {
         const comData = grupo.comandas[comId];
-        contenido += `<div style="margin-bottom: 15px; border-top: 1px dashed #000; padding-top: 5px;">`;
-        contenido += `<ul style="list-style: none; padding: 0; margin: 5px 0;">`;
+        html += `<div style="border-top: 1px dashed #000; padding-top: 5px; margin-bottom: 10px;">`;
+        html += `<ul style="list-style: none; padding: 0; margin: 5px 0;">`;
 
         comData.items.forEach((item: any) => {
-          contenido += `<li style="font-size: 1.25em; margin-bottom: 5px;"><strong>${item.cantidad}x</strong> ${item.nombre}</li>`;
+          html += `<li style="font-size: 1.3em; margin-bottom: 3px;"><strong>${item.cantidad}x</strong> ${item.nombre}</li>`;
           if (item.opciones && item.opciones.length) {
-            contenido += `<li style="font-size: 0.95em; padding-left: 20px; font-style: italic;">- ${item.opciones.join(', ')}</li>`;
+            html += `<li style="font-size: 0.9em; padding-left: 15px; font-style: italic;">- ${item.opciones.join(', ')}</li>`;
           }
         });
 
-        contenido += `</ul>`;
+        html += `</ul>`;
         if (comData.observaciones) {
-          contenido += `<div style="font-size: 1em; background: #eee; padding: 5px; border: 1px solid #ccc;"><strong>OBS:</strong> ${comData.observaciones}</div>`;
+          html += `<div style="font-size: 0.9em; background: #f0f0f0; padding: 4px; border: 1px solid #ddd;"><strong>OBS:</strong> ${comData.observaciones}</div>`;
         }
-        contenido += `</div>`;
+        html += `</div>`;
       });
 
-      contenido += `<div style="text-align: center; margin-top: 20px; font-weight: bold; border-top: 2px solid #000; padding-top: 5px;">*** FIN TICKET ***</div>`;
-      contenido += `</div>`;
+      html += `<div style="text-align: center; margin-top: 15px; font-weight: bold; border-top: 1px solid #000;">*** FIN TICKET ***</div>`;
+      html += `</div>`;
 
-      const w = window.open('', '_blank');
-      if (w) {
-        w.document.write(
-          `<!doctype html><html><head><title>${grupo.comanderoNombre} - Mesa ${this.mesaActual}</title></head><body>${contenido}</body></html>`
-        );
-        w.document.close();
-        w.focus();
-        w.print();
-        w.close();
+      // Get printer name from comanderos list
+      const comandero = this.comanderos.find(c => c.id === cId);
+      const printerName = comandero?.printerName;
+
+      if (electronAPI && printerName) {
+        try {
+          await electronAPI.printToPrinter(html, printerName);
+          console.log(`Printed to ${printerName} via Native Bridge`);
+        } catch (err) {
+          console.error(`Native printing failed for ${printerName}`, err);
+          this.fallbackPrint(html, grupo.comanderoNombre, this.mesaActual);
+        }
+      } else {
+        this.fallbackPrint(html, grupo.comanderoNombre, this.mesaActual);
       }
-    });
+    }
 
     // 4. Actualizar estados automáticamente al imprimir
     aImprimir.forEach((comanda) => {
@@ -194,7 +202,7 @@ export class InformeMesaModalComponent {
     });
   }
 
-  imprimirTotal() {
+  async imprimirTotal() {
     if (!this.informeMesa || !this.informeMesa.length) return;
 
     // Construir contenido para imprimir el total (todas las comandas)
@@ -232,15 +240,32 @@ export class InformeMesaModalComponent {
     contenido += `<div style="text-align: center; margin-top: 20px; font-weight: bold;">*** GRACIAS POR SU VISITA ***</div>`;
     contenido += `</div>`;
 
+    const electronAPI = (window as any).electronAPI;
+    if (electronAPI) {
+        try {
+            // General printing for the whole mesa (usually Bar printer or standard)
+            // If no generic printer is specified, it might prompt or use default system one via OS dialog
+            // For the total, we simply send it to the bridge
+            await electronAPI.printToPrinter(contenido, ""); // Empty printer name uses system default
+        } catch (e) {
+            this.fallbackPrint(contenido, "Total", this.mesaActual);
+        }
+    } else {
+        this.fallbackPrint(contenido, "Total", this.mesaActual);
+    }
+  }
+
+  fallbackPrint(contenido: string, title: string, mesa: string) {
     const w = window.open('', '_blank');
-    if (!w) return;
-    w.document.write(
-      `<!doctype html><html><head><title>Total - Mesa ${this.mesaActual}</title></head><body>${contenido}</body></html>`
-    );
-    w.document.close();
-    w.focus();
-    w.print();
-    w.close();
+    if (w) {
+      w.document.write(
+        `<!doctype html><html><head><title>${title} - Mesa ${mesa}</title></head><body>${contenido}</body></html>`
+      );
+      w.document.close();
+      w.focus();
+      w.print();
+      w.close();
+    }
   }
 
   async descargarInformeMesa() {

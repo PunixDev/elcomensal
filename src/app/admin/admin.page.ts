@@ -116,6 +116,11 @@ export class AdminPage implements OnInit, OnDestroy {
   cardExpanded: boolean = true;
   showManageInMenu: boolean = false;
   subscriptionProductName: string | null = null;
+  
+  // Logic for automatic printing
+  private printingInitialized = false;
+  autoPrintEnabled = true; 
+  private qzConnected = false;
 
   modificarCabecera() {
     // ... (unchanged)
@@ -171,7 +176,7 @@ export class AdminPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.backendUrl =
-      window.location.hostname === 'localhost'
+      window.location.hostname === 'localhost' && window.location.protocol === 'http:'
         ? 'http://localhost:3000'
         : 'https://backendelcomensal.onrender.com';
     // Leer valor guardado previamente (si existe)
@@ -297,6 +302,21 @@ export class AdminPage implements OnInit, OnDestroy {
           if (!this.comandasPorMesa[c.mesa]) this.comandasPorMesa[c.mesa] = [];
           this.comandasPorMesa[c.mesa].push(c);
         });
+
+        // AUTO-PRINT LOGIC
+        if (this.printingInitialized && this.autoPrintEnabled) {
+             const newOrders = todas.filter(c => 
+                c.estado !== 'preparando' && 
+                c.estado !== 'preparado' && 
+                c.estado !== 'pago_pendiente' &&
+                !c.items.some((i: any) => i.id === 'call_waiter') // Don't print waiter calls usually
+             );
+             if (newOrders.length > 0) {
+                 this.autoPrintComandas(newOrders);
+             }
+        }
+        this.printingInitialized = true;
+
         this.recomputeMesasOrdenadas();
       })
     );
@@ -322,6 +342,23 @@ export class AdminPage implements OnInit, OnDestroy {
     setTimeout(() => {
       this.cardExpanded = false;
     }, 5000);
+
+    this.initQZ();
+  }
+
+  async initQZ() {
+    const qz = (window as any).qz;
+    if (!qz) return;
+
+    try {
+      if (!qz.websocket.isActive()) {
+        await qz.websocket.connect();
+        console.log('QZ Tray connected');
+        this.qzConnected = true;
+      }
+    } catch (e) {
+      console.error('Error connecting to QZ Tray', e);
+    }
   }
   
   cambiarFiltroComandero(id: string) {
@@ -363,7 +400,11 @@ export class AdminPage implements OnInit, OnDestroy {
           text: 'Ir',
           handler: (data) => {
             if (data.mesa) {
-              const url = `${window.location.origin}/carta/${this.barId}?mesa=${data.mesa}`;
+              let publicOrigin = window.location.origin;
+              if (publicOrigin.startsWith('capacitor-electron')) {
+                publicOrigin = 'https://elrestaurante.store';
+              }
+              const url = `${publicOrigin}/carta/${this.barId}?mesa=${data.mesa}`;
               window.open(url, '_blank');
             }
           },
@@ -1047,5 +1088,131 @@ export class AdminPage implements OnInit, OnDestroy {
     llamadas.forEach((c) => {
        this.dataService.deleteComanda(this.barId, c.id);
     });
+  }
+
+  getComanderoName(comanderoId: string | null): string {
+    if (!comanderoId) return 'General';
+    const c = this.comanderos.find((com) => com.id === comanderoId);
+    return c ? (c.descripcion || `Comandero ${c.numero}`) : 'General';
+  }
+
+  async autoPrintComandas(aImprimir: any[]) {
+    if (!aImprimir || !aImprimir.length) return;
+
+    // 1. Group items by Comandero
+    const grupos: { [id: string]: any } = {};
+
+    aImprimir.forEach((comanda) => {
+      comanda.items.forEach((item: any) => {
+        const prod = this.productos.find((p) => p.id === item.id);
+        const catId = prod?.categoria;
+        const cat = this.categorias.find((c) => c.id === catId);
+        const cId = cat?.comanderoId || 'null';
+
+        if (!grupos[cId]) {
+          const comandero = this.comanderos.find(c => c.id === cId);
+          grupos[cId] = {
+            comanderoNombre: this.getComanderoName(cId),
+            printerName: comandero?.printerName || null,
+            comandas: {},
+          };
+        }
+
+        if (!grupos[cId].comandas[comanda.id]) {
+          grupos[cId].comandas[comanda.id] = {
+            fecha: comanda.fecha,
+            observaciones: comanda.observaciones,
+            items: [],
+            mesa: comanda.mesa,
+          };
+        }
+        grupos[cId].comandas[comanda.id].items.push(item);
+      });
+    });
+
+    // 2. Execute printing for each group
+    const qz = (window as any).qz;
+
+    for (const cId of Object.keys(grupos)) {
+      const grupo = grupos[cId];
+      let html = `<div style="font-family: 'Courier New', Courier, monospace; max-width: 250px; color: #000; font-size: 14px;">`;
+      html += `<h1 style="text-align: center; font-size: 1.4em; border-bottom: 2px solid #000; margin-bottom: 5px;">${grupo.comanderoNombre.toUpperCase()}</h1>`;
+      
+      const mesasInvolved = [...new Set(Object.values(grupo.comandas).map((c: any) => c.mesa))].join(', ');
+      html += `<h2 style="text-align: center; font-size: 1.8em; margin: 5px 0;">MESA ${mesasInvolved}</h2>`;
+      html += `<div style="text-align: center; font-size: 0.7em; margin-bottom: 10px;">${new Date().toLocaleString()}</div>`;
+
+      Object.keys(grupo.comandas).forEach((comId) => {
+        const comData = grupo.comandas[comId];
+        html += `<div style="border-top: 1px dashed #000; padding-top: 5px; margin-bottom: 10px;">`;
+        html += `<ul style="list-style: none; padding: 0; margin: 5px 0;">`;
+
+        comData.items.forEach((item: any) => {
+          html += `<li style="font-size: 1.3em; margin-bottom: 3px;"><strong>${item.cantidad}x</strong> ${item.nombre}</li>`;
+          if (item.opciones && item.opciones.length) {
+            html += `<li style="font-size: 0.9em; padding-left: 15px; font-style: italic;">- ${item.opciones.join(', ')}</li>`;
+          }
+        });
+
+        html += `</ul>`;
+        if (comData.observaciones) {
+          html += `<div style="font-size: 0.9em; background: #f0f0f0; padding: 4px; border: 1px solid #ddd;"><strong>OBS:</strong> ${comData.observaciones}</div>`;
+        }
+        html += `</div>`;
+      });
+
+      html += `<div style="text-align: center; margin-top: 15px; font-weight: bold; border-top: 1px solid #000;">*** FIN TICKET ***</div>`;
+      html += `</div>`;
+
+      // Integrated Native Printing (Electron)
+      const electronAPI = (window as any).electronAPI;
+      if (electronAPI && grupo.printerName) {
+        try {
+          await electronAPI.printToPrinter(html, grupo.printerName);
+          console.log(`Printed to ${grupo.printerName} via Native Electron Bridge`);
+        } catch (err) {
+          console.error(`Native printing failed for ${grupo.printerName}`, err);
+          this.fallbackPrint(html, grupo.comanderoNombre, mesasInvolved);
+        }
+      } else if (this.qzConnected && grupo.printerName) {
+        // Fallback for QZ Tray if still present/used
+        try {
+          const qz = (window as any).qz;
+          const config = qz.configs.create(grupo.printerName);
+          const data = [{
+            type: 'pixel',
+            format: 'html',
+            flavor: 'plain',
+            data: html
+          }];
+          await qz.print(config, data);
+          console.log(`Printed to ${grupo.printerName} via QZ`);
+        } catch (err) {
+          console.error(`Error printing to ${grupo.printerName} via QZ`, err);
+          this.fallbackPrint(html, grupo.comanderoNombre, mesasInvolved);
+        }
+      } else {
+        // Fallback to standard window.print()
+        this.fallbackPrint(html, grupo.comanderoNombre, mesasInvolved);
+      }
+    }
+
+    // 3. Update states automatically
+    aImprimir.forEach((comanda) => {
+      this.actualizarEstadoComanda(comanda, 'preparando');
+    });
+  }
+
+  fallbackPrint(contenido: string, title: string, mesa: string) {
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(
+        `<!doctype html><html><head><title>${title} - Mesa ${mesa}</title></head><body>${contenido}</body></html>`
+      );
+      w.document.close();
+      w.focus();
+      w.print();
+      w.close();
+    }
   }
 }

@@ -33,6 +33,7 @@ export interface Comandero {
   id: string;
   numero: number;
   descripcion: string;
+  printerName?: string;
 }
 
 export interface Producto {

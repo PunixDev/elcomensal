@@ -63,11 +63,13 @@ export class ComanderosPage implements OnInit {
   // Form fields
   nuevoNumero: number | null = null;
   nuevaDescripcion: string = '';
+  nuevaImpresora: string = '';
 
   // Edit fields
   editando: string | null = null;
   editNumero: number | null = null;
   editDescripcion: string = '';
+  editImpresora: string = '';
 
   constructor(private dataService: DataService) {
     this.barId = this.dataService.getBarId();
@@ -81,9 +83,11 @@ export class ComanderosPage implements OnInit {
       await this.dataService.addComandero(this.barId, {
         numero: this.nuevoNumero,
         descripcion: this.nuevaDescripcion.trim(),
+        printerName: this.nuevaImpresora.trim(),
       });
       this.nuevoNumero = null;
       this.nuevaDescripcion = '';
+      this.nuevaImpresora = '';
     }
   }
 
@@ -97,6 +101,7 @@ export class ComanderosPage implements OnInit {
     this.editando = comandero.id;
     this.editNumero = comandero.numero;
     this.editDescripcion = comandero.descripcion;
+    this.editImpresora = comandero.printerName || '';
   }
 
   async guardarEdicion() {
@@ -105,6 +110,7 @@ export class ComanderosPage implements OnInit {
         id: this.editando,
         numero: this.editNumero,
         descripcion: this.editDescripcion.trim(),
+        printerName: this.editImpresora.trim(),
       });
       this.cancelarEdicion();
     }
@@ -114,5 +120,6 @@ export class ComanderosPage implements OnInit {
     this.editando = null;
     this.editNumero = null;
     this.editDescripcion = '';
+    this.editImpresora = '';
   }
 }

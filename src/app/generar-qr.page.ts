@@ -112,8 +112,14 @@ export class GenerarQrPage {
     }
 
     mesasToGenerate.forEach((mesa) => {
+      let publicOrigin = window.location.origin;
+      // Si estamos en Electron (protocolo capacitor-electron), forzar la URL web real
+      if (publicOrigin.startsWith('capacitor-electron')) {
+        publicOrigin = 'https://elrestaurante.store';
+      }
+      
       const baseUrl =
-        window.location.origin +
+        publicOrigin +
         '/carta/' +
         encodeURIComponent(this.barId) +
         '?mesa=' +
