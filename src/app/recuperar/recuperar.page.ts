@@ -16,6 +16,7 @@ import {
   IonIcon,
   IonCard,
   IonCardContent,
+  IonSpinner,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -45,6 +46,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
     IonIcon,
     IonCard,
     IonCardContent,
+    IonSpinner,
     CommonModule,
     FormsModule,
     RouterModule,
@@ -61,44 +63,33 @@ export class RecuperarPage {
   exito = '';
   mostrarCambio = false;
 
+  loading = false;
+
   constructor(
     private dataService: DataService,
     private router: Router,
     private translate: TranslateService
   ) {}
 
-  async buscarUsuario() {
+  async enviarEnlaceRecuperacion() {
+    if (!this.correo) return;
     this.error = '';
     this.exito = '';
-    this.mostrarCambio = false;
-    const res = await this.dataService.buscarUsuarioPorCorreo(this.correo);
-    if (res) {
-      this.usuario = res.usuario;
-      this.barId = res.barId;
-      this.mostrarCambio = true;
-    } else {
-      this.error = this.translate.instant('RECOVER.ERROR_NOT_FOUND');
-    }
-  }
+    this.loading = true;
 
-  async cambiarPassword() {
-    this.error = '';
-    this.exito = '';
-    if (this.nuevaPassword !== this.confirmarPassword) {
-      this.error = this.translate.instant('RECOVER.ERROR_PASSWORDS_NOT_MATCH');
-      return;
+    const res = await this.dataService.recuperarPassword(this.correo);
+    if (res.success) {
+      this.exito = this.translate.instant('RECOVER.SUCCESS_MESSAGE');
+      // Limpiar el campo para evitar envíos múltiples accidentales
+      this.correo = '';
+    } else {
+      if (res.error === 'auth/user-not-found') {
+        this.error = this.translate.instant('RECOVER.ERROR_NOT_FOUND');
+      } else {
+        this.error = this.translate.instant('RECOVER.ERROR_MESSAGE');
+      }
     }
-    try {
-      await this.dataService.cambiarPasswordUsuario(
-        this.barId,
-        this.usuario,
-        this.nuevaPassword
-      );
-      this.exito = this.translate.instant('RECOVER.SUCCESS');
-      setTimeout(() => this.router.navigate(['/login']), 2000);
-    } catch (e) {
-      this.error = this.translate.instant('RECOVER.ERROR_UPDATE');
-    }
+    this.loading = false;
   }
 
   goBack() {

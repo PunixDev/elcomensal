@@ -14,8 +14,14 @@ import {
   where,
   orderBy,
 } from '@angular/fire/firestore';
-import { Observable, firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom, of } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from '@angular/fire/auth';
 
 export interface Categoria {
   id: string;
@@ -91,7 +97,7 @@ export class DataService {
   // Cache sencillo para Observables compartidos para evitar múltiples escuchas
   private cache: { [key: string]: Observable<any> } = {};
 
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore, private auth: Auth) {}
 
   private getCachedObservable<T>(key: string, observableQuery: Observable<T>): Observable<T> {
     if (!this.cache[key]) {
@@ -236,62 +242,51 @@ export class DataService {
 
   // --- REGISTRO DE BARES Y USUARIO ADMIN ---
   async registrarBar(data: BarRegistro) {
-    // Verifica si ya existe un bar con ese correo o usuario admin
-    const baresRef = collection(this.firestore, 'bares');
-    const baresSnap = await firstValueFrom(
-      collectionData(baresRef, { idField: 'id' })
+    // 1. Crear el usuario en Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(
+      this.auth,
+      data.correo,
+      data.password
     );
-    if (
-      baresSnap?.some(
-        (b: any) => b.correo === data.correo || b.usuario === data.usuario
-      )
-    ) {
-      throw new Error('Ya existe un bar con ese correo o usuario');
-    }
-    // Crea el bar
-    const barDoc = await addDoc(baresRef, {
+    const uid = userCredential.user.uid;
+
+    // 2. Crear el documento del bar en Firestore usando el UID de Auth como ID
+    const barRef = doc(this.firestore, `bares/${uid}`);
+    await setDoc(barRef, {
       nombre: data.nombre,
       correo: data.correo,
-      usuario: data.usuario,
+      usuario: data.usuario, // Alias para compatibilidad
       trialStart: data.trialStart,
-      // Guardar el idioma predeterminado del bar si viene en los datos
-      defaultLanguage: (data as any).defaultLanguage || 'es',
+      defaultLanguage: data.defaultLanguage || 'es',
     });
-    // Crea el usuario admin en la subcolección usuarios
-    const usuariosRef = collection(
-      this.firestore,
-      `bares/${barDoc.id}/usuarios`
-    );
+
+    // 3. Crear el perfil de usuario en la subcolección (opcional, para roles futuros)
+    const usuariosRef = collection(this.firestore, `bares/${uid}/usuarios`);
     await addDoc(usuariosRef, {
       usuario: data.usuario,
-      password: data.password,
       correo: data.correo,
       rol: 'admin',
     });
-    return barDoc.id;
+
+    return uid;
   }
 
   // --- RECUPERACIÓN DE CONTRASEÑA ---
+  async recuperarPassword(correo: string) {
+    try {
+      await sendPasswordResetEmail(this.auth, correo.trim());
+      return { success: true };
+    } catch (e: any) {
+      console.error('Error enviando reset email:', e);
+      return { success: false, error: e.code };
+    }
+  }
+
   async buscarUsuarioPorCorreo(
     correo: string
   ): Promise<{ usuario: string; barId: string } | null> {
-    const baresRef = collection(this.firestore, 'bares');
-    const baresSnap = await firstValueFrom(
-      collectionData(baresRef, { idField: 'id' })
-    );
-    for (const bar of baresSnap as any[]) {
-      const usuariosRef = collection(
-        this.firestore,
-        `bares/${bar.id}/usuarios`
-      );
-      const usuariosSnap = await firstValueFrom(
-        collectionData(usuariosRef, { idField: 'id' })
-      );
-      const user = (usuariosSnap as any[]).find((u) => u.correo === correo);
-      if (user) {
-        return { usuario: user.usuario, barId: bar.id };
-      }
-    }
+    // Nota: El flujo de Auth ahora debería ser mediante sendPasswordResetEmail
+    // Aquí devolvemos null ya que no buscamos en colecciones de forma abierta
     return null;
   }
 
@@ -300,47 +295,40 @@ export class DataService {
     usuario: string,
     nuevaPassword: string
   ) {
-    const usuariosRef = collection(this.firestore, `bares/${barId}/usuarios`);
-    const usuariosSnap = await firstValueFrom(
-      collectionData(usuariosRef, { idField: 'id' })
-    );
-    const user = (usuariosSnap as any[]).find((u) => u.usuario === usuario);
-    if (user) {
-      const userDoc = doc(this.firestore, `bares/${barId}/usuarios/${user.id}`);
-      await setDoc(userDoc, { ...user, password: nuevaPassword });
-    } else {
-      throw new Error('Usuario no encontrado');
-    }
+    // Esto se gestiona vía Firebase Auth console o API de reset
   }
 
   /**
-   * Busca un usuario por nombre de usuario y contraseña en todos los bares.
-   * Devuelve { usuario, barId } si encuentra coincidencia, o null si no.
+   * Login usando Firebase Auth.
    */
   async loginMultiBar(
-    usuario: string,
+    correo: string,
     password: string
   ): Promise<{ usuario: any; barId: string } | null> {
-    const baresRef = collection(this.firestore, 'bares');
-    const baresSnap = await firstValueFrom(
-      collectionData(baresRef, { idField: 'id' })
-    );
-    for (const bar of baresSnap as any[]) {
-      const usuariosRef = collection(
-        this.firestore,
-        `bares/${bar.id}/usuarios`
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        this.auth,
+        correo,
+        password
       );
-      const usuariosSnap = await firstValueFrom(
-        collectionData(usuariosRef, { idField: 'id' })
-      );
-      const user = (usuariosSnap as any[]).find(
-        (u) => u.usuario === usuario && u.password === password
-      );
-      if (user) {
-        return { usuario: user, barId: bar.id };
+      const uid = userCredential.user.uid;
+      
+      // Intentamos recuperar los datos del bar asociado a este UID
+      const barRef = doc(this.firestore, `bares/${uid}`);
+      const barSnap = await getDoc(barRef);
+      const barData = barSnap.data();
+
+      if (barData) {
+        return {
+          usuario: { correo: userCredential.user.email, id: uid },
+          barId: uid
+        };
       }
+      return null;
+    } catch (e) {
+      console.error('Error login Auth:', e);
+      return null;
     }
-    return null;
   }
 
   // --- Historial de pedidos ---

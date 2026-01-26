@@ -82,29 +82,29 @@ export class LoginPage implements OnInit {
     this.error = '';
     this.loading = true;
     try {
+      // Nota: 'usuario' en el input ahora se trata como el 'correo' electrónico
       const result = await this.dataService.loginMultiBar(
         this.usuario,
         this.password
       );
       if (result) {
-        console.log('Correo del usuario:', result.usuario.correo);
+        console.log('Login exitoso para:', result.usuario.correo);
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('usuario', result.barId); // Guardar barId real
+        localStorage.setItem('usuario', result.barId); // Aquí result.barId es el UID de Auth
         localStorage.setItem('correo', result.usuario.correo);
-        // Obtener y guardar trialStart
+        
         // Obtener y guardar trialStart
         this.dataService.getTrialStart(result.barId).then((data: any) => {
           const trialStart = data?.trialStart || new Date().toISOString();
           localStorage.setItem('trialStart', trialStart);
         });
 
-        // Intentar obtener el nombre del plan desde el backend y guardarlo en Firestore
-        // (no bloqueamos la navegación; hacemos la operación en segundo plano)
+        // Operación en segundo plano
         this.fetchAndSaveSubscriptionProductName(
           result.barId,
           result.usuario.correo
         ).catch((e) =>
-          console.warn('No se pudo obtener/guardar subscriptionProductName', e)
+          console.warn('No se pudo obtener subscriptionProductName', e)
         );
 
         this.router.navigate(['/admin']);
@@ -112,6 +112,7 @@ export class LoginPage implements OnInit {
         this.error = this.translate.instant('LOGIN.ERROR_INVALID');
       }
     } catch (e) {
+      console.error('Login error:', e);
       this.error = this.translate.instant('LOGIN.ERROR_CONNECTION');
     }
     this.loading = false;
