@@ -362,6 +362,8 @@ export class DataService {
 
   // --- Utilidad: obtener barId actual (desde localStorage o auth) ---
   getBarId(): string {
+    const authUid = this.auth.currentUser?.uid;
+    if (authUid) return authUid;
     return localStorage.getItem('usuario') || 'bar-demo';
   }
 
