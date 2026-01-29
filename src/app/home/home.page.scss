@@ -558,61 +558,6 @@ $shadow-glow: 0 0 20px rgba(37, 99, 235, 0.2);
   }
 }
 
-// Testimonials
-.testimonials-section {
-  padding: 6rem 0;
-  background: linear-gradient(135deg, $primary-blue 0%, $accent-purple 100%);
-  color: white;
-
-  .white-text { color: white; margin-bottom: 4rem; font-size: 2.5rem; font-weight: 800; }
-
-  .testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-  }
-
-  .testimonial-box {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 2.5rem;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-
-    .stars {
-        color: #fbbf24;
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
-    }
-
-    p {
-        font-size: 1.1rem;
-        line-height: 1.6;
-        font-style: italic;
-        margin-bottom: 1.5rem;
-        opacity: 0.95;
-    }
-
-    .author {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        font-weight: 700;
-        
-        .author-avatar {
-            width: 40px;
-            height: 40px;
-            background: white;
-            color: $primary-blue;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-        }
-    }
-  }
-}
 
 // CTA Section
 .cta-section {
