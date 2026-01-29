@@ -467,5 +467,12 @@
       "TOP_PRODUCTS": "Productos Más Vendidos",
       "NO_DATA": "No hay datos disponibles"
     }
+  },
+  "DESKTOP_APP": {
+    "TITLE": "Aplicación de Escritorio",
+    "DESCRIPTION": "Descarga la aplicación para gestionar tu restaurante directamente desde tu ordenador.",
+    "DOWNLOAD_BUTTON": "Descargar para Windows",
+    "VERSION": "Versión 1.0.0",
+    "HELP_TEXT": "Ideal para tener el panel siempre abierto en la barra o recepción."
   }
 }

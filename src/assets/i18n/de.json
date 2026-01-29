@@ -407,5 +407,12 @@
       "TOP_PRODUCTS": "Top Produkte",
       "NO_DATA": "Keine Daten verfügbar"
     }
+  },
+  "DESKTOP_APP": {
+    "TITLE": "Desktop-App",
+    "DESCRIPTION": "Laden Sie die Anwendung herunter, um Ihr Restaurant direkt von Ihrem Computer aus zu verwalten.",
+    "DOWNLOAD_BUTTON": "Download für Windows",
+    "VERSION": "Version 1.0.0",
+    "HELP_TEXT": "Ideal, um das Panel an der Bar oder Rezeption immer offen zu haben."
   }
 }

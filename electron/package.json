@@ -18,7 +18,7 @@
     "electron:start": "npm run build && electron --inspect=5858 ./",
     "electron:pack": "npm run build && electron-builder build --dir -c ./electron-builder.config.json",
     "electron:make": "npm run build && electron-builder build -c ./electron-builder.config.json -p always",
-    "electron:make-local": "npm run build && electron-builder build -c ./electron-builder.config.json"
+    "electron:make-local": "npm run build && electron-builder build -c ./electron-builder.config.json && copy /y \"dist\\elrestauranteqr Setup 1.0.0.exe\" \"..\\src\\assets\\downloads\\desktop-app-setup.exe\""
   },
   "dependencies": {
     "@capacitor-community/electron": "^5.0.0",

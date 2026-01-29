@@ -134,7 +134,7 @@ export class GenerarQrPage {
         encodeURIComponent(mesa);
       
       const qrUrl =
-        'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' +
+        'https://api.qrserver.com/v1/create-qr-code/?size=500x500&format=svg&data=' +
         encodeURIComponent(baseUrl);
       
       this.generatedQrs.push({
@@ -156,11 +156,20 @@ export class GenerarQrPage {
 
   async imprimirQR(qr: { name: string; url: string }) {
     const html = `
-      <html><head><title>Imprimir QR Mesa ${qr.name}</title></head><body style='text-align:center; font-family: sans-serif; padding: 20px;'>
-      <div style="border: 2px solid #eee; padding: 20px; border-radius: 15px; display: inline-block;">
-        <h2 style="color: #1268be; margin-top: 0;">Mesa ${qr.name}</h2>
-        <img src='${qr.url}' style='background:#fff; padding:10px; border: 1px solid #ddd; border-radius:8px; width: 250px; height: 250px;'/><br><br>
-        <p style="color: #666; font-size: 0.9em;">Escanea para ver nuestra carta</p>
+      <html><head><title>Imprimir QR Mesa ${qr.name}</title>
+      <style>
+        @page { size: auto; margin: 0mm; }
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { text-align: center; border: 2px solid #1268be; padding: 40px; border-radius: 20px; width: 80%; max-width: 500px; }
+        .title { color: #1268be; font-size: 3rem; margin-bottom: 20px; font-weight: bold; }
+        .qr-img { width: 100%; height: auto; max-width: 400px; }
+        .footer { color: #666; font-size: 1.2rem; margin-top: 20px; }
+      </style>
+      </head><body>
+      <div class="container">
+        <div class="title">Mesa ${qr.name}</div>
+        <img src='${qr.url}' class="qr-img" /><br>
+        <div class="footer">Escanee para ver nuestra carta</div>
       </div>
       </body></html>
     `;
@@ -183,23 +192,21 @@ export class GenerarQrPage {
     let content = `
       <html><head><title>Imprimir todos los QRs</title>
       <style>
-        body { font-family: sans-serif; padding: 10px; }
+        @page { size: A4; margin: 10mm; }
+        body { font-family: sans-serif; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; }
         .qr-container { 
-          display: inline-block; 
-          width: 30%; 
-          margin: 1%; 
-          padding: 15px; 
-          border: 1px solid #eee; 
+          width: 45%; 
+          margin: 15px; 
+          padding: 20px; 
+          border: 1px solid #1268be; 
           text-align: center; 
           page-break-inside: avoid;
-          border-radius: 10px;
+          border-radius: 15px;
+          box-sizing: border-box;
         }
-        .qr-container h2 { margin-top: 0; color: #1268be; font-size: 1.2em; }
-        .qr-container img { width: 100%; max-width: 180px; }
-        .qr-container p { font-size: 0.8em; color: #666; }
-        @media print {
-          .qr-container { border: 1px solid #ddd; }
-        }
+        .qr-container h2 { margin: 0 0 10px 0; color: #1268be; font-size: 1.8rem; }
+        .qr-container img { width: 100%; max-width: 250px; height: auto; }
+        .qr-container p { font-size: 1rem; color: #666; margin-top: 10px; }
       </style>
       </head><body>
     `;

@@ -150,6 +150,13 @@ export class AdminPage implements OnInit, OnDestroy {
     input.click();
   }
 
+  downloadDesktopApp() {
+    const link = document.createElement('a');
+    link.href = 'assets/downloads/desktop-app-setup.exe';
+    link.download = 'elrestauranteqr-setup.exe';
+    link.click();
+  }
+
   constructor(
     private router: Router,
     private dataService: DataService,

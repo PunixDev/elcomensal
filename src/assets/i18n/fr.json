@@ -396,5 +396,12 @@
       "TOP_PRODUCTS": "Meilleurs Produits",
       "NO_DATA": "Pas de données disponibles"
     }
+  },
+  "DESKTOP_APP": {
+    "TITLE": "Application de Bureau",
+    "DESCRIPTION": "Téléchargez l'application pour gérer votre restaurant directement depuis votre ordinateur.",
+    "DOWNLOAD_BUTTON": "Télécharger pour Windows",
+    "VERSION": "Version 1.0.0",
+    "HELP_TEXT": "Idéal pour garder le panneau toujours ouvert au bar ou à la réception."
   }
 }

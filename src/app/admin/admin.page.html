@@ -75,6 +75,10 @@
         <ion-icon name="log-out" slot="start" aria-hidden="true"></ion-icon>
         {{ 'HEADER.LOGOUT' | translate }}
       </ion-item>
+      <ion-item (click)="downloadDesktopApp()" style="margin-top: 2em; --color: #3880ff;">
+        <ion-icon name="desktop-outline" slot="start" aria-hidden="true"></ion-icon>
+        {{ 'DESKTOP_APP.TITLE' | translate }}
+      </ion-item>
     </ion-list>
   </ion-content>
 </ion-menu>
@@ -277,6 +281,28 @@
           </ng-template>
         </ion-card-content>
       </div>
+    </ion-card>
+  </div>
+
+  <div style="margin: 1em" *ngIf="usuarioLogado === 'admin'">
+    <ion-card color="primary" class="download-card" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+      <ion-card-header>
+        <ion-card-title style="display: flex; align-items: center; gap: 10px;">
+          <ion-icon name="desktop-outline"></ion-icon>
+          {{ 'DESKTOP_APP.TITLE' | translate }}
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p style="margin-bottom: 8px;">{{ 'DESKTOP_APP.DESCRIPTION' | translate }}</p>
+        <p style="font-size: 0.85em; opacity: 0.9; margin-bottom: 15px;">{{ 'DESKTOP_APP.HELP_TEXT' | translate }}</p>
+        <ion-button expand="block" color="light" (click)="downloadDesktopApp()" mode="ios" style="font-weight: bold;">
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          {{ 'DESKTOP_APP.DOWNLOAD_BUTTON' | translate }}
+        </ion-button>
+        <div style="text-align: right; font-size: 0.75em; margin-top: 8px; opacity: 0.8;">
+          {{ 'DESKTOP_APP.VERSION' | translate }}
+        </div>
+      </ion-card-content>
     </ion-card>
   </div>
   
