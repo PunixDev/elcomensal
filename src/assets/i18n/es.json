@@ -251,7 +251,8 @@
     "PRODUCTS_COUNT": "Número de Productos",
     "NO_CATEGORIES": "No hay categorías disponibles",
     "CATEGORY_SAVED": "Categoría guardada exitosamente",
-    "CATEGORY_DELETED": "Categoría eliminada exitosamente"
+    "CATEGORY_DELETED": "Categoría eliminada exitosamente",
+    "ERROR_DELETE_HAS_PRODUCTS": "No se puede eliminar la categoría porque tiene productos asociados. Elimina o mueve los productos primero."
   },
   "MENU": {
     "TITLE": "Carta Digital",

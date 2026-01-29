@@ -25,10 +25,12 @@ import {
   IonSearchbar,
   IonSelect,
   IonSelectOption,
+  AlertController,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { DataService, Categoria, Comandero } from '../data.service';
 import { Observable, Subscription, firstValueFrom } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../language.service';
 import { CategorySearchFilterPipe } from './categorySearchFilter.pipe';
 
@@ -87,7 +89,10 @@ export class CategoriasPage implements OnInit {
   
   constructor(
     private dataService: DataService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private alertController: AlertController,
+    private toastController: ToastController,
+    private translate: TranslateService
   ) {
     this.barId = this.dataService.getBarId();
     this.categorias$ = this.dataService.getCategorias(this.barId);
@@ -172,8 +177,37 @@ export class CategoriasPage implements OnInit {
     }
   }
 
-  eliminarCategoria(id: string) {
-    this.dataService.deleteCategoria(this.barId, id);
+  async eliminarCategoria(id: string) {
+    // 1. Verificar si hay productos asociados
+    const productos = await firstValueFrom(this.dataService.getProductos(this.barId));
+    const tieneProductos = productos.some(p => p.categoria === id);
+
+    if (tieneProductos) {
+      const alert = await this.alertController.create({
+        header: this.translate.instant('COMMON.WARNING'),
+        message: this.translate.instant('CATEGORIES.ERROR_DELETE_HAS_PRODUCTS'),
+        buttons: [this.translate.instant('COMMON.OK')]
+      });
+      await alert.present();
+    } else {
+      const confirmAlert = await this.alertController.create({
+        header: this.translate.instant('COMMON.CONFIRM'),
+        message: this.translate.instant('CATEGORIES.DELETE_CATEGORY') + '?',
+        buttons: [
+          {
+            text: this.translate.instant('COMMON.CANCEL'),
+            role: 'cancel'
+          },
+          {
+            text: this.translate.instant('COMMON.DELETE'),
+            handler: () => {
+              this.dataService.deleteCategoria(this.barId, id);
+            }
+          }
+        ]
+      });
+      await confirmAlert.present();
+    }
   }
 
   iniciarEdicion(categoria: Categoria) {

@@ -284,21 +284,24 @@ export class CartaPage implements OnInit, OnDestroy {
   solicitarPago() {
     // Descargar el historial en PDF antes de solicitar el pago
     this.descargarInformeMesa();
-    this.comandas$.subscribe((comandas) => {
-      this.historialComandasMesa
-        .filter((c: any) => c.mesa == this.mesa && c.estado !== 'pagado')
-        .forEach((c: any) => {
-          c.estado = 'pago_pendiente';
-          this.dataService.updateComanda(this.barId, c);
-        });
-      this.mostrarResumenPago = true;
-      this.pagoSolicitado = true;
-      // Recargar la página una sola vez tras solicitar el pago
-      if (!window['pagoRecargado']) {
-        window['pagoRecargado'] = true;
-        setTimeout(() => window.location.reload(), 300);
-      }
-    });
+    
+    // Usar el historial local que ya tenemos suscrito/cargado
+    this.historialComandasMesa
+      .filter((c: any) => c.mesa == this.mesa && c.estado !== 'pagado')
+      .forEach((c: any) => {
+        c.estado = 'pago_pendiente';
+        this.dataService.updateComanda(this.barId, c);
+      });
+
+    this.mostrarResumenPago = true;
+    this.pagoSolicitado = true;
+
+    // Ya no es necesario recargar la página si los observables de DataService funcionan bien,
+    // pero si se prefiere mantener la lógica de "pago solicitado" visualmente limpia:
+    if (!window['pagoRecargado']) {
+      window['pagoRecargado'] = true;
+      setTimeout(() => window.location.reload(), 500);
+    }
   }
 
   async confirmarSolicitarPago() {
@@ -530,47 +533,104 @@ export class CartaPage implements OnInit, OnDestroy {
   }
 
   async descargarInformeMesa() {
-    // Genera un PDF tipo ticket de bar con el historial de pedidos
     const jsPDF = (await import('jspdf')).jsPDF;
     const doc = new jsPDF({ unit: 'mm', format: [80, 297] }); // Ticket 8cm ancho
+    const pageWidth = 80;
+    const margin = 5;
+    const contentWidth = pageWidth - margin * 2;
     let y = 10;
-    doc.setFontSize(12);
-    doc.text(this.restauranteNombre || 'TICKET', 40, y, { align: 'center' });
-    y += 8;
-    doc.setFontSize(10);
-    doc.text('Mesa: ' + (this.mesa || '-'), 10, y);
-    y += 6;
-    doc.text('Fecha: ' + new Date().toLocaleString(), 10, y);
-    y += 8;
-    doc.setFontSize(11);
-    doc.text('--- PEDIDOS ---', 10, y);
-    y += 6;
-    for (const comanda of this.historialComandasMesa) {
-      doc.setFontSize(9);
-      doc.text(
-        (comanda.fecha ? new Date(comanda.fecha).toLocaleString() : '-') + '',
-        10,
-        y
-      );
+
+    // Helper para líneas divisorias
+    const drawDivider = () => {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text("-".repeat(45), pageWidth / 2, y, { align: 'center' });
       y += 5;
+    };
+
+    // Header: Nombre del Restaurante
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text(this.restauranteNombre?.toUpperCase() || 'TICKET', pageWidth / 2, y, { align: 'center' });
+    y += 8;
+
+    // Info Mesa y Fecha
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(`Mesa: ${this.mesa || '-'}`, margin, y);
+    y += 5;
+    doc.text(`Fecha: ${new Date().toLocaleString()}`, margin, y);
+    y += 7;
+
+    drawDivider();
+
+    // Título Pedidos
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text('RESUMEN DE CONSUMO', pageWidth / 2, y, { align: 'center' });
+    y += 7;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+
+    for (const comanda of this.historialComandasMesa) {
+      // Opcional: mostrar hora de cada pedido
+      const hora = comanda.fecha ? new Date(comanda.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      if (hora) {
+        doc.setFont("helvetica", "oblique");
+        doc.text(`Pedido: ${hora}`, margin, y);
+        y += 4;
+        doc.setFont("helvetica", "normal");
+      }
+
       for (const item of comanda.items) {
+        const prod = this.productos.find((p) => p.id === item.id);
+        const precioUnitario = prod ? prod.precio : 0;
+        const subtotal = precioUnitario * item.cantidad;
+
         const nombreParaMostrar = this.getNombreItemParaMostrar(item);
         const opcionesParaMostrar = this.getOpcionesItemParaMostrar(item);
-        let linea = `${nombreParaMostrar} x${item.cantidad}`;
+        
+        let textoItem = `${item.cantidad}x ${nombreParaMostrar}`;
         if (opcionesParaMostrar && opcionesParaMostrar.length) {
-          linea += ` (${opcionesParaMostrar.join(', ')})`;
+          textoItem += ` (${opcionesParaMostrar.join(', ')})`;
         }
-        const prod = this.productos.find((p) => p.id === item.id);
-        const precio = prod ? prod.precio : 0;
-        linea += `  ${(precio * item.cantidad).toFixed(2)}€`;
-        doc.text(linea, 12, y);
-        y += 5;
+
+        // Dividir texto si es muy largo ( wrapping )
+        const lineas = doc.splitTextToSize(textoItem, contentWidth - 15);
+        
+        // Imprimir líneas del nombre (excepto el precio en la última o primera)
+        lineas.forEach((linea: string, index: number) => {
+          doc.text(linea, margin, y);
+          if (index === lineas.length - 1) {
+            // En la última línea del item, ponemos el precio a la derecha
+            doc.text(`${subtotal.toFixed(2)}€`, pageWidth - margin, y, { align: 'right' });
+          }
+          y += 5;
+          if (y > 280) { doc.addPage(); y = 10; } // Salto de página simple
+        });
       }
       y += 2;
     }
-    y += 4;
-    doc.setFontSize(11);
-    doc.text('TOTAL: ' + this.getTotalHistorialMesa().toFixed(2) + ' €', 10, y);
+
+    y += 3;
+    drawDivider();
+
+    // Total
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text('TOTAL:', margin, y);
+    doc.text(`${this.getTotalHistorialMesa().toFixed(2)} €`, pageWidth - margin, y, { align: 'right' });
+    y += 10;
+
+    // Footer
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text('¡Gracias por su visita!', pageWidth / 2, y, { align: 'center' });
+    y += 5;
+    doc.setFontSize(8);
+    doc.text('Documento no válido como factura', pageWidth / 2, y, { align: 'center' });
+
     doc.save(`ticket_mesa_${this.mesa || 'sin_mesa'}.pdf`);
   }
 

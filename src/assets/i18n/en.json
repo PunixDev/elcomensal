@@ -247,7 +247,8 @@
     "PRODUCTS_COUNT": "Number of Products",
     "NO_CATEGORIES": "No categories available",
     "CATEGORY_SAVED": "Category saved successfully",
-    "CATEGORY_DELETED": "Category deleted successfully"
+    "CATEGORY_DELETED": "Category deleted successfully",
+    "ERROR_DELETE_HAS_PRODUCTS": "Cannot delete category because it has associated products. Delete or move the products first."
   },
   "MENU": {
     "TITLE": "Digital Menu",

@@ -1108,7 +1108,17 @@ export class AdminPage implements OnInit, OnDestroy {
     if (!aImprimir || !aImprimir.length) return;
 
     // 1. Group items by Comandero
-    const grupos: { [id: string]: any } = {};
+    const grupos: { [id: string]: { 
+      comanderoNombre: string, 
+      printerName: string | null, 
+      comandas: { [id: string]: { 
+        fecha: string, 
+        observaciones: string, 
+        items: any[], 
+        mesa: string,
+        numeroComensales?: number
+      }} 
+    } } = {};
 
     aImprimir.forEach((comanda) => {
       comanda.items.forEach((item: any) => {
@@ -1132,6 +1142,7 @@ export class AdminPage implements OnInit, OnDestroy {
             observaciones: comanda.observaciones,
             items: [],
             mesa: comanda.mesa,
+            numeroComensales: comanda.numeroComensales // Capturamos el nro de comensales
           };
         }
         grupos[cId].comandas[comanda.id].items.push(item);
@@ -1146,8 +1157,16 @@ export class AdminPage implements OnInit, OnDestroy {
       let html = `<div style="font-family: 'Courier New', Courier, monospace; max-width: 250px; color: #000; font-size: 14px;">`;
       html += `<h1 style="text-align: center; font-size: 1.4em; border-bottom: 2px solid #000; margin-bottom: 5px;">${grupo.comanderoNombre.toUpperCase()}</h1>`;
       
-      const mesasInvolved = [...new Set(Object.values(grupo.comandas).map((c: any) => c.mesa))].join(', ');
-      html += `<h2 style="text-align: center; font-size: 1.8em; margin: 5px 0;">MESA ${mesasInvolved}</h2>`;
+      const comandasArray = Object.values(grupo.comandas);
+      const mesasInvolved = [...new Set(comandasArray.map((c: any) => c.mesa))].join(', ');
+      const nroComensales = comandasArray.find((c: any) => c.numeroComensales)?.numeroComensales;
+
+      let mesaLabel = `MESA ${mesasInvolved}`;
+      if (nroComensales) {
+        mesaLabel += ` <span style="font-size: 0.7em;">(${nroComensales}P)</span>`;
+      }
+
+      html += `<h2 style="text-align: center; font-size: 1.8em; margin: 5px 0;">${mesaLabel}</h2>`;
       html += `<div style="text-align: center; font-size: 0.7em; margin-bottom: 10px;">${new Date().toLocaleString()}</div>`;
 
       Object.keys(grupo.comandas).forEach((comId) => {
