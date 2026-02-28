@@ -131,8 +131,19 @@
             </ion-card-content>
           </ion-card>
 
-          <div class="footer-actions ion-text-center">
-             <p class="privacy-note">Al registrarte, aceptas nuestros términos y condiciones.</p>
+          <div class="footer-actions ion-text-left" style="padding: 0 1rem; margin-top: 1rem;">
+             <ion-item lines="none" style="--background: transparent;">
+                <ion-checkbox [(ngModel)]="aceptaPrivacidad" slot="start"></ion-checkbox>
+                <ion-label style="white-space: normal; font-size: 0.85em; color: var(--text-muted)">
+                   He leído y acepto la <a [routerLink]="['/politica-privacidad']" target="_blank">Política de Privacidad</a> y el tratamiento de mis datos personales según el RGPD.
+                </ion-label>
+             </ion-item>
+             <ion-item lines="none" style="--background: transparent; margin-top: -10px;">
+                <ion-checkbox [(ngModel)]="aceptaTerminos" slot="start"></ion-checkbox>
+                <ion-label style="white-space: normal; font-size: 0.85em; color: var(--text-muted)">
+                   Acepto los <a [routerLink]="['/terminos-y-condiciones']" target="_blank">Términos y Condiciones de Contratación</a> del servicio SaaS.
+                </ion-label>
+             </ion-item>
           </div>
 
         </ion-col>

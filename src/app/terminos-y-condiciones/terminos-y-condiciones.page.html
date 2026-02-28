@@ -1,0 +1,62 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/registro"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Términos y Condiciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="legal-container">
+    <h1>Términos y Condiciones de Contratación (SaaS)</h1>
+    <p>Última actualización: [FECHA_AQUI]</p>
+
+    <p>
+      El presente documento establece las Condiciones Generales de Contratación del software "ElRestauranteQR" y "BarAdmin" (en adelante, "la Aplicación"), titularidad de [INTRODUCIR_NOMBRE_EMPRESA], con NIF/CIF [INTRODUCIR_CIF] y domicilio en [INTRODUCIR_DOMICILIO] (en adelante, "el Proveedor").
+    </p>
+
+    <h2>1. Objeto del Servicio</h2>
+    <p>
+      La Aplicación ofrece a establecimientos de hostelería ("el Cliente") un sistema integral de gestión que incluye cartas digitales mediante códigos QR, sistema de pedidos a mesa, cobros móviles, gestión de inventario y módulo de control horario laboral.
+    </p>
+
+    <h2>2. Licencia de Uso (SaaS)</h2>
+    <p>
+      El Proveedor concede al Cliente una licencia de uso no exclusiva, intransferible y revocable para utilizar la Aplicación bajo la modalidad de "Software as a Service" (SaaS). El Cliente no adquiere la propiedad del software, sino el derecho a usarlo durante el periodo de suscripción abonado.
+    </p>
+
+    <h2>3. Periodo de Prueba y Suscripciones</h2>
+    <ul>
+      <li><strong>Prueba Gratuita:</strong> Los nuevos registros disfrutan automáticamente de un periodo de prueba gratuito de [XX] días.</li>
+      <li><strong>Suscripción de Pago:</strong> Finalizada la prueba, el acceso se restringe hasta que se active una suscripción mediante pago recurrente.</li>
+    </ul>
+
+    <h2>4. Precios y Pagos (Stripe)</h2>
+    <p>
+      Los pagos de las suscripciones se realizan de forma segura mediante la pasarela de pago <strong>Stripe</strong>. Al introducir su tarjeta, el Cliente autoriza a Stripe a realizar cargos recurrentes mensuales o anuales según el plan elegido.<br>
+      El Proveedor no almacena en ningún momento los datos de las tarjetas de crédito del Cliente.
+    </p>
+
+    <h2>5. Pasarela de Pagos Móviles a la Mesa</h2>
+    <p>
+      Si el Cliente habilita la funcionalidad de "Pagar On-line" en su carta (usando Google Pay, Apple Pay o Tarjeta), debe comprender que la Aplicación actúa únicamente como software facilitador (Marketplace/Connect). El dinero abonado por los comensales viaja directamente a la cuenta de Stripe del Cliente.<br>
+      El Proveedor no retiene fondos de los comensales y no es responsable de disputas, <em>chargebacks</em>, o devoluciones que los comensales finales hagan contra el establecimiento. La facturación a los comensales recae única y exclusivamente en el Cliente.
+    </p>
+
+    <h2>6. Política de Cancelación y Devoluciones</h2>
+    <p>
+      El Cliente puede cancelar su suscripción en cualquier momento desde su panel de control. La cancelación evitará futuros cargos, pero no dará derecho a la devolución (parcial o total) del periodo en curso ya facturado, manteniendo el acceso continuo a la plataforma hasta el final del mes(o año) pagado.
+    </p>
+
+    <h2>7. Disponibilidad y Soporte (SLA)</h2>
+    <p>
+      El Proveedor realiza sus mejores esfuerzos para mantener una operatividad del 99%. No obstante, al depender de servicios en la nube de terceros (Google Cloud/Firebase), no se garantiza la ausencia absoluta de interrupciones o errores en el acceso causados por mantenimiento u otras incidencias mayores.
+    </p>
+
+    <h2>8. Legislación y Fuero</h2>
+    <p>
+      Estas condiciones generales se rigen por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y tribunales de la ciudad de [INTRODUCIR_CIUDAD].
+    </p>
+  </div>
+</ion-content>

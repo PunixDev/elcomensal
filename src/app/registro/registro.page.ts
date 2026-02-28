@@ -18,6 +18,7 @@ import {
   IonIcon,
   IonCard,
   IonCardContent,
+  IonCheckbox,
   PopoverController,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
@@ -52,6 +53,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     IonIcon,
     IonCard,
     IonCardContent,
+    IonCheckbox,
     CommonModule,
     FormsModule,
     RouterModule,
@@ -65,6 +67,9 @@ export class RegistroPage {
   correo = '';
   error = '';
   exito = '';
+  
+  aceptaPrivacidad = false;
+  aceptaTerminos = false;
 
   constructor(
     private dataService: DataService,
@@ -92,6 +97,12 @@ export class RegistroPage {
       this.error = this.translate.instant('REGISTER.ERROR_FIELDS');
       return;
     }
+    
+    if (!this.aceptaPrivacidad || !this.aceptaTerminos) {
+      this.error = 'Debes leer y aceptar explícitamente la Política de Privacidad y los Términos de Servicio para continuar.';
+      return;
+    }
+    
     try {
       await this.dataService.registrarBar({
         nombre: this.nombreBar,

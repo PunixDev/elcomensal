@@ -1,0 +1,70 @@
+/* Cookie Banner Styles */
+.cookie-banner-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99999;
+    padding: 16px;
+    box-sizing: border-box;
+    pointer-events: none; /* Let clicks pass through the container... */
+}
+
+.cookie-banner-content {
+    background: var(--ion-background-color, #ffffff);
+    color: var(--ion-text-color, #000000);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    pointer-events: auto; /* ...but capture clicks on the actual banner */
+    border: 1px solid var(--ion-color-step-150, #e0e0e0);
+}
+
+.cookie-text h3 {
+    margin: 0 0 12px 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ion-color-primary, #3880ff);
+}
+
+.cookie-text p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--ion-color-step-600, #666666);
+}
+
+.cookie-text a {
+    color: var(--ion-color-primary, #3880ff);
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.cookie-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+@media (min-width: 768px) {
+    .cookie-banner-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .cookie-text {
+        flex: 1;
+        padding-right: 24px;
+    }
+    
+    .cookie-actions {
+        flex-direction: column;
+        min-width: 200px;
+    }
+}

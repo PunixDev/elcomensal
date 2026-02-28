@@ -32,6 +32,10 @@
         <ion-icon name="fast-food" slot="start" aria-hidden="true"></ion-icon>
         {{ 'ADMIN.MANAGE_PRODUCTS' | translate }}
       </ion-item>
+      <ion-item (click)="goToEmpleados()">
+        <ion-icon name="people" slot="start" aria-hidden="true"></ion-icon>
+        Empleados y Control Horario
+      </ion-item>
       <ion-item
         (click)="goToGenerarQR()"
         [disabled]="!isSubscribed && !trialActive"
@@ -160,6 +164,14 @@
               <ion-button
                 fill="clear"
                 size="small"
+                (click)="goToFichar()"
+                title="Terminal de Fichaje"
+              >
+                <ion-icon name="time-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-button
+                fill="clear"
+                size="small"
                 (click)="irAMesa($event)"
                 title="{{ 'ADMIN.GO_TO_TABLE' | translate }}"
               >
@@ -279,6 +291,17 @@
               </ng-container>
             </ng-template>
           </ng-template>
+          
+          <ion-button
+            color="success"
+            expand="block"
+            (click)="goToFichar()"
+            style="margin-top: 1em"
+          >
+            <ion-icon name="time-outline" slot="start"></ion-icon>
+            Abrir Terminal de Fichaje
+          </ion-button>
+          
         </ion-card-content>
       </div>
     </ion-card>
@@ -529,6 +552,37 @@
                 </ion-button>
               </ion-item>
             </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="12" size-md="6">
+        <ion-card color="light">
+          <ion-card-header>
+            <ion-card-title>Configuración de Pagos (Stripe)</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p style="margin-bottom: 1em; font-size: 0.9em; color: var(--ion-color-medium)">
+              Introduce tus claves de <strong>Stripe</strong> para permitir a los clientes pagar la cuenta directamente desde la Carta usando Google Pay, Apple Pay o Tarjeta, recibiendo el dinero en tu propia cuenta.
+            </p>
+            <ion-item>
+              <ion-label position="floating">Stripe Publishable Key (pk_...)</ion-label>
+              <ion-input
+                [(ngModel)]="stripePublishableKey"
+                name="stripePublishableKey"
+              ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Stripe Secret Key (sk_...)</ion-label>
+              <ion-input
+                [(ngModel)]="stripeSecretKey"
+                name="stripeSecretKey"
+                type="password"
+              ></ion-input>
+            </ion-item>
+            <ion-button expand="block" color="primary" (click)="guardarStripeKeys()" style="margin-top: 1em;">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              Guardar Claves de Pago
+            </ion-button>
           </ion-card-content>
         </ion-card>
       </ion-col>

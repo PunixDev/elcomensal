@@ -117,6 +117,9 @@ export class AdminPage implements OnInit, OnDestroy {
   showManageInMenu: boolean = false;
   subscriptionProductName: string | null = null;
   
+  stripePublishableKey: string = '';
+  stripeSecretKey: string = '';
+  
   // Logic for automatic printing
   private printingInitialized = false;
   autoPrintEnabled = true; 
@@ -580,7 +583,7 @@ export class AdminPage implements OnInit, OnDestroy {
     }
   }
 
-  marcarMesaPagada(mesa: string) {
+  async marcarMesaPagada(mesa: string) {
     // Normalizar el nombre de la mesa al guardar en historial
     const mesaNormalizada = String(mesa).trim().toLowerCase();
     const hoy = new Date().toISOString();
@@ -599,7 +602,7 @@ export class AdminPage implements OnInit, OnDestroy {
 
     // Guardar únicamente el informe resumen de la mesa (Ticket Total)
     if (pedidosMesa.length) {
-      const informeMesa = {
+      let informeMesa: any = {
         mesa: mesaNormalizada,
         pedidos: pedidosMesa,
         total: pedidosMesa.reduce((sum, p) => sum + (p.total || 0), 0),
@@ -608,6 +611,36 @@ export class AdminPage implements OnInit, OnDestroy {
         fechaDia: hoyDia,
         tipo: 'resumen_mesa',
       };
+
+      try {
+        // Llamada a la API de facturación de terceros para cumplir con Verifactu/TicketBAI
+        const businessData = { nif: 'B12345678', nombre: 'Restaurante / Bar' }; // TODO: Cargar configuración real del local
+        const res = await fetch(`${this.backendUrl}/generate-invoice`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderData: informeMesa, businessData })
+        });
+        
+        if (res.ok) {
+           const billingResult = await res.json();
+           if (billingResult.success) {
+              informeMesa = {
+                ...informeMesa,
+                factura: {
+                  invoiceNumber: billingResult.invoiceNumber || '',
+                  qrUrl: billingResult.qrUrl || '',
+                  tbaiCode: billingResult.tbaiCode || ''
+                }
+              };
+           }
+        } else {
+           console.error('Error del proveedor al generar factura:', await res.text());
+           // Continuamos el proceso aunque falle la factura para no bloquear el punto de venta
+        }
+      } catch (err) {
+        console.error('Error de red al llamar a generate-invoice', err);
+      }
+
       this.dataService.addHistorial(this.barId, informeMesa);
     }
 
@@ -917,7 +950,15 @@ export class AdminPage implements OnInit, OnDestroy {
   }
 
   goToCategorias() {
-    this.router.navigate(['/categorias']);
+    this.router.navigate(['/categorias', { barId: this.barId }]);
+  }
+
+  goToEmpleados() {
+    this.router.navigate(['/empleados', { barId: this.barId }]);
+  }
+
+  goToFichar() {
+    this.router.navigate(['/fichar', { barId: this.barId }]);
   }
 
   goToComanderos() {
@@ -946,6 +987,33 @@ export class AdminPage implements OnInit, OnDestroy {
 
   goToEstadisticas() {
     this.router.navigate(['/admin/estadisticas']);
+  }
+
+  async cargarStripeKeys() {
+    try {
+      if (!this.barId) return;
+      const keys = await this.dataService.getStripeConfig(this.barId);
+      if (keys) {
+        this.stripePublishableKey = keys.publishableKey || '';
+        this.stripeSecretKey = keys.secretKey || '';
+      }
+    } catch (e) {
+      console.error('Error cargando claves stripe', e);
+    }
+  }
+
+  async guardarStripeKeys() {
+    try {
+      if (!this.barId) return;
+      await this.dataService.updateStripeConfig(this.barId, { 
+        publishableKey: this.stripePublishableKey, 
+        secretKey: this.stripeSecretKey 
+      });
+      alert('Claves de pagos guardadas correctamente.');
+    } catch (e) {
+      console.error('Error guardando claves stripe', e);
+      alert('Error al guardar claves.');
+    }
   }
 
   imprimirInformeMesa() {

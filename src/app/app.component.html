@@ -1,3 +1,25 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
+
+  <!-- Cookie Consent Banner -->
+  <div *ngIf="showCookieBanner" class="cookie-banner-container">
+    <div class="cookie-banner-content">
+      <div class="cookie-text">
+        <h3>Tu Privacidad es Importante</h3>
+        <p>
+          Utilizamos cookies propias y de terceros para fines analíticos, mejorar nuestros servicios y mostrarle publicidad (cuando corresponda) relacionada con sus preferencias mediante el análisis de sus hábitos de navegación. <br />
+          Puede aceptar todas las cookies pulsando el botón "Aceptar Todas", o revisar y configurar su uso en nuestra 
+          <a [routerLink]="['/politica-cookies']">Política de Cookies</a> limitando aquellas cookies no técnicas.
+        </p>
+      </div>
+      <div class="cookie-actions">
+        <ion-button color="primary" expand="block" class="btn-accept" (click)="acceptCookies()">
+          Aceptar Todas
+        </ion-button>
+        <ion-button color="medium" fill="outline" expand="block" class="btn-reject" (click)="declineCookies()">
+          Rechazar No Necesarias
+        </ion-button>
+      </div>
+    </div>
+  </div>
 </ion-app>

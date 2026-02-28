@@ -1,0 +1,100 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Terminal de Fichaje</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding terminal-bg">
+  <div class="terminal-container">
+    
+    <!-- PASO 1: Ingreso de PIN -->
+    <div *ngIf="!empleadoIdentificado" class="pin-section">
+      <h2 class="terminal-title">Introduce tu PIN</h2>
+      
+      <div class="pin-display">
+        <ion-icon name="ellipse" *ngFor="let dot of [1,2,3,4]; let i = index" 
+                  [color]="i < pin.length ? 'primary' : 'medium'"></ion-icon>
+      </div>
+
+      <div class="keypad">
+        <ion-grid>
+          <ion-row *ngFor="let row of [[1,2,3], [4,5,6], [7,8,9], ['borrar', 0, 'enter']]">
+            <ion-col *ngFor="let key of row" size="4" class="key-col">
+              
+              <!-- Botón numérico -->
+              <ion-button *ngIf="key !== 'borrar' && key !== 'enter'" 
+                          expand="block" class="key-btn" color="light" 
+                          (click)="teclaPulsada(key)">
+                {{ key }}
+              </ion-button>
+              
+              <!-- Botón Borrar -->
+              <ion-button *ngIf="key === 'borrar'" 
+                          expand="block" class="key-btn action-key" color="warning" 
+                          (click)="teclaPulsada(key)" [disabled]="pin.length === 0">
+                <ion-icon name="backspace-outline"></ion-icon>
+              </ion-button>
+              
+              <!-- Botón Enter (Opcional si se auto-envía, útil por si acaso) -->
+              <ion-button *ngIf="key === 'enter'" 
+                          expand="block" class="key-btn action-key" color="primary" 
+                          (click)="teclaPulsada(key)" [disabled]="pin.length < 4">
+                <ion-icon name="checkmark-outline"></ion-icon>
+              </ion-button>
+              
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
+
+    <!-- PASO 2: Confirmación Fichaje -->
+    <div *ngIf="empleadoIdentificado" class="action-section animate__animated animate__fadeIn">
+      <ion-card class="empleado-card">
+        <ion-card-content class="ion-text-center">
+          <ion-icon name="person-circle" color="primary" class="avatar-icon"></ion-icon>
+          <h2>¡Hola, <strong>{{ empleadoIdentificado.nombre }}</strong>!</h2>
+          
+          <div *ngIf="ultimoFichaje" class="estado-previo ion-margin-top">
+            <p>Último registro:</p>
+            <ion-badge [color]="ultimoFichaje.tipo === 'ENTRADA' ? 'success' : 'danger'">
+              {{ ultimoFichaje.tipo }}
+            </ion-badge>
+            <p class="hora-previo">{{ ultimoFichaje.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+          
+          <div *ngIf="!ultimoFichaje" class="estado-previo ion-margin-top">
+            <p color="medium">No hay registros previos.</p>
+          </div>
+
+          <div class="botones-fichaje ion-margin-top">
+            <!-- Sugerir automáticamente la acción opuesta -->
+            <ion-button expand="block" color="success" class="fichaje-btn" 
+                        *ngIf="!ultimoFichaje || ultimoFichaje?.tipo === 'SALIDA'"
+                        (click)="registrarFichaje('ENTRADA')">
+              <ion-icon slot="start" name="log-in-outline"></ion-icon>
+              FICHAR ENTRADA
+            </ion-button>
+
+            <ion-button expand="block" color="danger" class="fichaje-btn" 
+                        *ngIf="ultimoFichaje?.tipo === 'ENTRADA'"
+                        (click)="registrarFichaje('SALIDA')">
+              <ion-icon slot="start" name="log-out-outline"></ion-icon>
+              FICHAR SALIDA
+            </ion-button>
+            
+            <!-- Botón para cancelar y volver atrás -->
+            <ion-button expand="block" fill="clear" color="medium" class="ion-margin-top" (click)="resetear()">
+              Cancelar
+            </ion-button>
+          </div>
+
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+  </div>
+</ion-content>

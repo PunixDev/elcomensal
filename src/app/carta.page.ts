@@ -85,6 +85,7 @@ export class CartaPage implements OnInit, OnDestroy {
   categoriaSeleccionada: string = '';
   pagoSolicitado: boolean = false;
   barId: string = '';
+  googleReviewUrl: string = '';
   mostrarResumenPago: boolean = false;
   modalResumenAbierto = false;
   mostrarHistorial: boolean = false;
@@ -156,6 +157,23 @@ export class CartaPage implements OnInit, OnDestroy {
 
         // Si el barId viene de la URL (usuario no logueado), fuerza la carga desde Firestore
         console.log('[DEBUG] Llamada a Firestore con barId:', this.barId);
+        
+        const pagoRealizado = qparams['pagoRealizado'];
+        if (pagoRealizado === 'true') {
+          // Remove query param from url silently
+          window.history.replaceState({}, document.title, window.location.pathname + `?mesa=${this.mesa}&barId=${this.barId}`);
+          setTimeout(() => {
+             this.procesarPagoExitoso();
+          }, 1000);
+        }
+
+        // Cargar configuración adicional (Reviews, Impresoras...)
+        this.dataSubs.push(
+          this.dataService.getBarConfig(this.barId).subscribe(config => {
+              this.googleReviewUrl = config?.googleReviewUrl || '';
+          })
+        );
+        
         // Recuperar imagen de cabecera
         this.dataSubs.push(
           this.dataService
@@ -281,7 +299,7 @@ export class CartaPage implements OnInit, OnDestroy {
     }
   }
 
-  solicitarPago() {
+  async solicitarPago() {
     // Descargar el historial en PDF antes de solicitar el pago
     this.descargarInformeMesa();
     
@@ -300,8 +318,44 @@ export class CartaPage implements OnInit, OnDestroy {
     // pero si se prefiere mantener la lógica de "pago solicitado" visualmente limpia:
     if (!window['pagoRecargado']) {
       window['pagoRecargado'] = true;
-      setTimeout(() => window.location.reload(), 500);
+      // Comprobamos si hay URL de google para reseñas antes de recargar
+      if (this.googleReviewUrl) {
+         await this.mostrarAlertaResena();
+      } else {
+         setTimeout(() => window.location.reload(), 500);
+      }
+    } else if (this.googleReviewUrl) {
+       await this.mostrarAlertaResena();
     }
+  }
+
+  async mostrarAlertaResena() {
+    const alert = await this.alertController.create({
+      header: '¡Gracias por tu visita!',
+      message: '¿Te ha gustado la experiencia? Nos ayudaría mucho si nos dejas una pequeña reseña en Google.',
+      buttons: [
+        {
+          text: 'En otro momento',
+          role: 'cancel',
+          handler: () => {
+             setTimeout(() => window.location.reload(), 500);
+          }
+        },
+        {
+          text: 'Dejar reseña',
+          handler: () => {
+            window.open(this.googleReviewUrl, '_blank');
+            setTimeout(() => window.location.reload(), 500);
+          }
+        }
+      ]
+    });
+    await alert.present();
+    
+    // Fallback if dismissed by backdrop click
+    alert.onDidDismiss().then(() => {
+        setTimeout(() => window.location.reload(), 500);
+    });
   }
 
   async confirmarSolicitarPago() {
@@ -315,8 +369,8 @@ export class CartaPage implements OnInit, OnDestroy {
         },
         {
           text: this.translateService.instant('MENU.CONFIRM'),
-          handler: () => {
-            this.solicitarPago();
+          handler: async () => {
+            await this.solicitarPago();
           }
         }
       ]
@@ -496,6 +550,86 @@ export class CartaPage implements OnInit, OnDestroy {
     this.dataService.addComanda(this.barId, pedido);
     this.seleccionados = {};
     this.opcionSeleccionTemp = {};
+  }
+
+  async iniciarPagoStripe() {
+    try {
+      const stripeConfig = await this.dataService.getStripeConfig(this.barId);
+      if (!stripeConfig || !stripeConfig.secretKey) {
+        const errorMsg = this.translateService.instant('MENU.ONLINE_PAYMENT_UNAVAILABLE') || 'Este restaurante no ha configurado los pagos por móvil.';
+        alert(errorMsg);
+        return;
+      }
+
+      this.mostrarResumenPago = false;
+      const loader = await this.toastController.create({
+        message: 'Conectando con la pasarela de pago segura...',
+        duration: 2500
+      });
+      loader.present();
+
+      const backendUrl = window.location.hostname === 'localhost' && window.location.protocol === 'http:'
+        ? 'http://localhost:3000'
+        : 'https://backendelcomensal.onrender.com';
+
+      const total = this.getTotalHistorialMesa();
+      
+      const returnUrl = window.location.origin + window.location.pathname + `?mesa=${this.mesa}&barId=${this.barId}&pagoRealizado=true`;
+
+      const response = await fetch(`${backendUrl}/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: total,
+          secretKey: stripeConfig.secretKey,
+          mesa: this.mesa,
+          barNombre: this.restauranteNombre || 'Restaurante',
+          returnUrl: returnUrl,
+        })
+      });
+
+      const data = await response.json();
+      if (data.url) {
+        // Guardar estado localmente por si recarga la página
+        window.location.href = data.url;
+      } else {
+        console.error(data);
+        alert('Error iniciando el método de pago.');
+      }
+    } catch(err) {
+      console.error(err);
+      alert('Error de conexión con el banco. Inténtalo de nuevo.');
+    }
+  }
+
+  async procesarPagoExitoso() {
+    this.mostrarResumenPago = false;
+    this.pagoSolicitado = false;
+    this.comandaMesa = null;
+
+    // We can clear the bill
+    for (const c of this.historialComandasMesa) {
+       await this.dataService.deleteComanda(this.barId, c.id);
+    }
+    
+    this.historialComandasMesa = [];
+    this.seleccionados = {};
+    this.opcionSeleccionTemp = {};
+
+    const alert = await this.alertController.create({
+      header: '¡Pago completado!',
+      message: 'Tu pago online se ha procesado con éxito. ¡Gracias por tu visita!',
+      buttons: ['Aceptar']
+    });
+    await alert.present();
+    
+    // Si tiene google reviews configurado, lo mostramos
+    if (this.googleReviewUrl) {
+       // Esperar a que el usuario cierre el alert de éxito para no pisarse?
+       alert.onDidDismiss().then(() => {
+          this.mostrarAlertaResena();
+       });
+    }
   }
 
   async pagarMesa() {

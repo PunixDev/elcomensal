@@ -92,6 +92,21 @@ export interface Promotion {
   active: boolean;
 }
 
+export interface Empleado {
+  id: string;
+  nombre: string;
+  pin: string;
+  activo: boolean;
+}
+
+export interface Fichaje {
+  id: string;
+  empleadoId: string;
+  empleadoNombre: string;
+  fecha: string;
+  tipo: 'ENTRADA' | 'SALIDA';
+}
+
 @Injectable({ providedIn: 'root' })
 export class DataService {
   // Cache sencillo para Observables compartidos para evitar múltiples escuchas
@@ -129,10 +144,32 @@ export class DataService {
     return docData(ref);
   }
 
+  // Obtiene las claves de Stripe del restaurante (solo para admin, en admin.page o cuando va a cobrar en carta.page)
+  async getStripeConfig(barId: string): Promise<{ publishableKey?: string, secretKey?: string } | null> {
+    const ref = doc(this.firestore, `bares/${barId}/configuracion/stripe`);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      return snap.data() as { publishableKey?: string, secretKey?: string };
+    }
+    return null;
+  }
+
+  // Guarda las claves de Stripe del restaurante
+  async updateStripeConfig(barId: string, keys: { publishableKey: string, secretKey: string }) {
+    const ref = doc(this.firestore, `bares/${barId}/configuracion/stripe`);
+    await setDoc(ref, keys, { merge: true });
+  }
+
   // Actualiza la impresora de administración
   async updateAdminPrinter(barId: string, printerName: string) {
     const ref = doc(this.firestore, `bares/${barId}`);
     await setDoc(ref, { adminPrinterName: printerName }, { merge: true });
+  }
+
+  // Actualiza la URL de reseñas de Google
+  async updateGoogleReviewUrl(barId: string, url: string) {
+    const ref = doc(this.firestore, `bares/${barId}`);
+    await setDoc(ref, { googleReviewUrl: url }, { merge: true });
   }
 
   // Guarda la imagen de cabecera en bares/{barId}/cabecera
@@ -423,5 +460,42 @@ export class DataService {
   deleteComandero(barId: string, id: string) {
     const ref = doc(this.firestore, `bares/${barId}/comanderos/${id}`);
     return deleteDoc(ref);
+  }
+
+  // --- EMPLEADOS ---
+  getEmpleados(barId: string): Observable<Empleado[]> {
+    const key = `empleados-${barId}`;
+    const ref = collection(this.firestore, `bares/${barId}/empleados`);
+    // Order by name
+    const q = query(ref, orderBy('nombre', 'asc'));
+    return this.getCachedObservable(key, collectionData(q, { idField: 'id' })) as Observable<Empleado[]>;
+  }
+
+  addEmpleado(barId: string, empleado: Omit<Empleado, 'id'>) {
+    const ref = collection(this.firestore, `bares/${barId}/empleados`);
+    return addDoc(ref, empleado);
+  }
+
+  updateEmpleado(barId: string, empleado: Empleado) {
+    const ref = doc(this.firestore, `bares/${barId}/empleados/${empleado.id}`);
+    return setDoc(ref, empleado, { merge: true });
+  }
+
+  deleteEmpleado(barId: string, id: string) {
+    const ref = doc(this.firestore, `bares/${barId}/empleados/${id}`);
+    return deleteDoc(ref);
+  }
+
+  // --- FICHAJES (CONTROL HORARIO) ---
+  getFichajes(barId: string): Observable<Fichaje[]> {
+    const key = `fichajes-${barId}`;
+    const ref = collection(this.firestore, `bares/${barId}/fichajes`);
+    const q = query(ref, orderBy('fecha', 'desc'));
+    return this.getCachedObservable(key, collectionData(q, { idField: 'id' })) as Observable<Fichaje[]>;
+  }
+
+  addFichaje(barId: string, fichaje: Omit<Fichaje, 'id'>) {
+    const ref = collection(this.firestore, `bares/${barId}/fichajes`);
+    return addDoc(ref, fichaje);
   }
 }

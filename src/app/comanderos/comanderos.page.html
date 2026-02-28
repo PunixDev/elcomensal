@@ -33,6 +33,28 @@
           </ion-card-content>
         </ion-card>
 
+        <ion-card color="light">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="star-outline" slot="start"></ion-icon>
+              Reseñas en Google
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item lines="none">
+              <ion-label position="floating">Enlace de Reseñas de Google</ion-label>
+              <ion-input [(ngModel)]="googleReviewUrl" placeholder="p.ej. https://g.page/r/.../review"></ion-input>
+            </ion-item>
+            <ion-button expand="block" fill="outline" color="primary" (click)="guardarGoogleReviewUrl()">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              Guardar URL de Reseñas
+            </ion-button>
+            <p style="font-size: 0.8em; color: #666; margin-top: 10px;">
+              Este enlace se mostrará a los clientes animándolos a dejar una reseña una vez pidan la cuenta.
+            </p>
+          </ion-card-content>
+        </ion-card>
+
         <ion-card>
           <ion-card-header>
             <ion-card-title>Añadir Comandero</ion-card-title>

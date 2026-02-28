@@ -198,6 +198,22 @@ export class HistorialPage implements OnInit {
       });
     }
 
+    let facturaHtml = '';
+    if (registro.factura) {
+      facturaHtml = `
+        <div style="margin-top: 15px; text-align: center; border-top: 1px dotted #000; padding-top: 10px;">
+          <strong style="display: block; font-size: 14px; margin-bottom: 5px;">TICKETBAI / VERIFACTU</strong>
+          ${registro.factura.invoiceNumber ? `<div style="font-size: 10px; margin-bottom: 3px;">Factura: <strong>${registro.factura.invoiceNumber}</strong></div>` : ''}
+          ${registro.factura.tbaiCode ? `<div style="font-size: 10px; margin-bottom: 5px;">ID: ${registro.factura.tbaiCode}</div>` : ''}
+          ${registro.factura.qrUrl ? `
+            <div style="margin-top: 5px;">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(registro.factura.qrUrl)}" alt="QR Factura" width="100" height="100"/>
+            </div>` 
+          : ''}
+        </div>
+      `;
+    }
+
     const html = `
         <html>
           <head>
@@ -205,14 +221,14 @@ export class HistorialPage implements OnInit {
             <style>
               body { font-family: 'Courier New', Courier, monospace; width: 80mm; margin: 0 auto; padding: 10px; }
               .header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
-              .footer { text-align: center; border-top: 1px solid #000; padding-top: 10px; margin-top: 10px; font-size: 12px; }
-              .total { display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-top: 15px; border-top: 1px double #000; padding-top: 5px; }
+              .footer { text-align: center; border-top: 1px dashed #000; padding-top: 10px; margin-top: 15px; font-size: 12px; }
+              .total { display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-top: 15px; border-top: 1px solid #000; padding-top: 5px; }
               @media print { body { width: 100%; } }
             </style>
           </head>
           <body>
             <div class="header">
-              <h2 style="margin: 0;">${this.translateService.instant('HISTORY.TICKET_PAYMENT')}</h2>
+              <h2 style="margin: 0;">${registro.factura ? 'FACTURA SIMPLIFICADA' : this.translateService.instant('HISTORY.TICKET_PAYMENT')}</h2>
               <div style="font-size: 12px; margin-top: 5px;">${this.translateService.instant('HISTORY.TABLE')}: ${mesa.toUpperCase()}</div>
               <div style="font-size: 10px;">${this.translateService.instant('HISTORY.DATE')}: ${fechaTicket}</div>
             </div>
@@ -223,6 +239,7 @@ export class HistorialPage implements OnInit {
               <span>${this.translateService.instant('HISTORY.TOTAL')}</span>
               <span>${total}</span>
             </div>
+            ${facturaHtml}
             <div class="footer">
               <p>${this.translateService.instant('COMMON.THANKS_VISIT')}</p>
             </div>

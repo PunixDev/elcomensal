@@ -103,5 +103,25 @@ export const routes: Routes = [
       import('./sobre-nosotros/sobre-nosotros.page').then(
         (m) => m.SobreNosotrosPage
       ),
+  },  {
+    path: 'empleados',
+    loadComponent: () => import('./empleados/empleados.page').then( m => m.EmpleadosPage)
   },
+  {
+    path: 'fichar',
+    loadComponent: () => import('./fichar/fichar.page').then( m => m.FicharPage)
+  },
+  {
+    path: 'politica-privacidad',
+    loadComponent: () => import('./politica-privacidad/politica-privacidad.page').then( m => m.PoliticaPrivacidadPage)
+  },
+  {
+    path: 'politica-cookies',
+    loadComponent: () => import('./politica-cookies/politica-cookies.page').then( m => m.PoliticaCookiesPage)
+  },
+  {
+    path: 'terminos-y-condiciones',
+    loadComponent: () => import('./terminos-y-condiciones/terminos-y-condiciones.page').then( m => m.TerminosYCondicionesPage)
+  },
+
 ];

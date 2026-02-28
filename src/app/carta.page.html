@@ -400,31 +400,46 @@
   </ion-modal>
 
   <!-- Estado Pago -->
-  <div *ngIf="pagoSolicitado" class="estado-pago-bar">
-    <div style="display: flex; flex-direction: column; flex: 1">
-      <div style="display: flex; align-items: center; gap: 8px; color: #92400e; font-weight: 800">
-        <ion-icon name="alert-circle" size="large"></ion-icon>
-        <span>{{ 'MENU.PAYMENT_REQUESTED' | translate }}</span>
+  <div *ngIf="pagoSolicitado" class="estado-pago-bar" style="padding: 1rem; background: var(--ion-color-warning-tint, #fef3c7); border-radius: 12px; margin: 1rem;">
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 8px; color: #92400e; font-weight: 800">
+          <ion-icon name="alert-circle" size="large"></ion-icon>
+          <span>{{ 'MENU.PAYMENT_REQUESTED' | translate }}</span>
+        </div>
       </div>
-    </div>
-    <div style="display: flex; gap: 8px;">
-      <ion-button
-        color="secondary"
-        (click)="abrirCalculadoraSeparada()"
-        style="--border-radius: 12px; font-weight: 700"
-      >
-        <ion-icon name="calculator-outline" slot="start"></ion-icon>
-        Calcular
-      </ion-button>
       
       <ion-button
-        color="primary"
-        (click)="descargarInformeMesa()"
-        style="--border-radius: 12px; font-weight: 700"
+        expand="block"
+        color="success"
+        (click)="iniciarPagoStripe()"
+        style="--border-radius: 12px; font-weight: 700; height: 48px;"
       >
-        <ion-icon name="download" slot="start"></ion-icon>
-        PDF
+        <ion-icon name="card-outline" slot="start"></ion-icon>
+        Pagar On-line (Apple/Google Pay)
       </ion-button>
+
+      <div style="display: flex; gap: 8px;">
+        <ion-button
+          color="secondary"
+          (click)="abrirCalculadoraSeparada()"
+          style="--border-radius: 12px; font-weight: 700; flex: 1"
+          fill="outline"
+        >
+          <ion-icon name="calculator-outline" slot="start"></ion-icon>
+          Calcular
+        </ion-button>
+        
+        <ion-button
+          color="primary"
+          (click)="descargarInformeMesa()"
+          style="--border-radius: 12px; font-weight: 700; flex: 1"
+          fill="outline"
+        >
+          <ion-icon name="download" slot="start"></ion-icon>
+          PDF
+        </ion-button>
+      </div>
     </div>
   </div>
 

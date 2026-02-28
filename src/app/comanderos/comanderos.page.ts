@@ -60,6 +60,7 @@ export class ComanderosPage implements OnInit {
   comanderos$: Observable<Comandero[]>;
   barId: string;
   adminPrinterName: string = '';
+  googleReviewUrl: string = '';
   private adminSub: Subscription | null = null;
   
   // Form fields
@@ -77,9 +78,10 @@ export class ComanderosPage implements OnInit {
     this.barId = this.dataService.getBarId();
     this.comanderos$ = this.dataService.getComanderos(this.barId);
     
-    // Cargar config del bar para la impresora admin
+    // Cargar config del bar para la impresora admin y google reviews
     this.adminSub = this.dataService.getBarConfig(this.barId).subscribe(config => {
       this.adminPrinterName = config?.adminPrinterName || '';
+      this.googleReviewUrl = config?.googleReviewUrl || '';
     });
   }
 
@@ -93,6 +95,10 @@ export class ComanderosPage implements OnInit {
 
   async guardarAdminPrinter() {
     await this.dataService.updateAdminPrinter(this.barId, this.adminPrinterName.trim());
+  }
+
+  async guardarGoogleReviewUrl() {
+    await this.dataService.updateGoogleReviewUrl(this.barId, this.googleReviewUrl.trim());
   }
 
   async agregarComandero() {

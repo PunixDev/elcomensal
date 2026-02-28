@@ -1,0 +1,65 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/registro"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Política de Privacidad</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="legal-container">
+    <h1>Política de Privacidad</h1>
+    <p>Última actualización: [FECHA_AQUI]</p>
+
+    <p>
+      En cumplimiento del Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016 (RGPD), y de la Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD), te informamos sobre el tratamiento de tus datos personales.
+    </p>
+
+    <h2>1. Responsable del Tratamiento</h2>
+    <p>
+      El responsable del tratamiento de los datos recabados en la aplicación "ElRestauranteQR" y "BarAdmin" es:<br>
+      <strong>Razón Social:</strong> [INTRODUCIR_NOMBRE_EMPRESA]<br>
+      <strong>NIF/CIF:</strong> [INTRODUCIR_CIF]<br>
+      <strong>Domicilio Social:</strong> [INTRODUCIR_DOMICILIO]<br>
+      <strong>Email de contacto para privacidad:</strong> [INTRODUCIR_EMAIL]
+    </p>
+
+    <h2>2. ¿Qué datos personales recogemos y para qué?</h2>
+    <p>Según el tipo de usuario, recopilamos los siguientes datos:</p>
+    <ul>
+      <li><strong>Si eres Cliente (Dueño del bar):</strong> Nombre de usuario, correo electrónico, nombre comercial del bar y datos de suscripción/facturación. Estos datos son necesarios para crear tu cuenta, gestionar tu suscripción (SaaS) mediante Stripe y emitir la facturación.</li>
+      <li><strong>Si eres Empleado:</strong> Nombre/Alias, PIN de fichaje y registros de fichaje de jornada laboral. Estos datos son introducidos por tu empleador (el dueño del bar) y son necesarios para el cumplimiento legal del control horario.</li>
+      <li><strong>Si eres Comensal (Cliente del bar):</strong> No solicitamos creación de cuentas ni registramos nombres para ver la carta. No obstante, al solicitar pagos online a través de Stripe, sus datos de pago son gestionados directamente de forma segura por la pasarela de pagos.</li>
+    </ul>
+
+    <h2>3. Legitimación para el tratamiento</h2>
+    <p>
+      La base legal para el tratamiento de tus datos es la ejecución del contrato de prestación de servicios (aceptación de Términos y Condiciones), y tu consentimiento expreso otorgado al registrarte en la plataforma marcando la casilla correspondiente.
+    </p>
+
+    <h2>4. Terceros y Cesión de Datos</h2>
+    <p>Para la correcta prestación de servicios, tus datos pueden ser compartidos de forma segura con los siguientes proveedores que actúan como Encargados del Tratamiento:</p>
+    <ul>
+      <li><strong>Google Firebase:</strong> Servicios de base de datos en tiempo real, autenticación y alojamiento en la nube (Servidores dentro de la UE).</li>
+      <li><strong>Stripe:</strong> Pasarela de pago segura para el procesamiento de suscripciones y pagos de terminales móviles.</li>
+    </ul>
+    <p>No se cederán datos a otros terceros salvo obligación legal.</p>
+
+    <h2>5. Tiempo de conservación</h2>
+    <p>
+      Los datos personales se conservarán mientras se mantenga la relación comercial (suscripción activa), más el tiempo necesario para cumplir con las obligaciones y responsabilidades legales aplicables (ej. 4 años para datos fiscales, 4 años para registros de control horario laboral).
+    </p>
+
+    <h2>6. Tus Derechos (Derechos ARCO y RGPD)</h2>
+    <p>Tienes derecho a obtener confirmación sobre si estamos tratando tus datos personales. Asimismo, puedes:</p>
+    <ul>
+      <li>Acceder a tus datos personales.</li>
+      <li>Solicitar la rectificación de los datos inexactos.</li>
+      <li>Solicitar la supresión ("derecho al olvido") cuando, entre otros motivos, ya no sean necesarios.</li>
+      <li>Oponerte al tratamiento de tus datos.</li>
+      <li>Solicitar la limitación u portabilidad de los datos.</li>
+    </ul>
+    <p>Para ejercer estos derechos, debes enviar un correo electrónico a <strong>[INTRODUCIR_EMAIL]</strong>, adjuntando una copia de tu DNI o documento equivalente.</p>
+  </div>
+</ion-content>
